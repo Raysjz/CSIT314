@@ -1,8 +1,5 @@
 # csit314 
 
-## Using gitignore
-https://stackoverflow.com/questions/45400361/why-is-gitignore-not-ignoring-my-files
-
 ## Getting started
 
 To make it easy for you to get started with GitLab, here's a list of recommended next steps.
@@ -20,3 +17,11 @@ git remote add origin https://gitlab.com/Barrette5276/csit314.git
 git branch -M main
 git push -uf origin main
 ```
+## Using gitignore to ignore files
+https://stackoverflow.com/questions/45400361/why-is-gitignore-not-ignoring-my-files
+
+
+## Running  
+- For backend : npm run dev
+- For frontend : cd frontend 
+                 npm run dev
