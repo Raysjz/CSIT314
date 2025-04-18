@@ -1,6 +1,7 @@
 # csit314 
 
-
+## Using gitignore
+https://stackoverflow.com/questions/45400361/why-is-gitignore-not-ignoring-my-files
 
 ## Getting started
 
