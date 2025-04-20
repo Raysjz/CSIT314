@@ -14,14 +14,14 @@ npm install -g @railway/cli
 
 
 
+
 ## IMPT : Using gitignore to ignore files
 https://stackoverflow.com/questions/45400361/why-is-gitignore-not-ignoring-my-files
 
 
 ## Running  
-- For backend : 1)npm run dev
-- For frontend : 1)cd frontend 
-                 2)npm run dev
+- railway init
+- railway up
 
 
 ## Test
