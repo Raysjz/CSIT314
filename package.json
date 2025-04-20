@@ -1,7 +1,7 @@
 {
-  "name": "softwaremethology",
+  "name": "csit314",
   "version": "1.0.0",
-  "description": "",
+  "description": "1)github Desktop\r 2)Clone repository from internet\r  - https://gitlab.com/Barrette5276/csit314.git\r  - Use access token as password and own username as username\r 3)https://nodejs.org/en",
   "main": "backend/server.js",
   "scripts": {
     "dev": "nodemon backend/server.js"
@@ -20,5 +20,13 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "nodemon": "^3.1.9"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/Barrette5276/csit314.git"
+  },
+  "bugs": {
+    "url": "https://gitlab.com/Barrette5276/csit314/issues"
+  },
+  "homepage": "https://gitlab.com/Barrette5276/csit314#readme"
 }

@@ -43,6 +43,12 @@ app.get("/test", (req, res) => {
   res.send("Hello from the test route");
 });
 
+if (PORT == 3000){
 app.listen(PORT, () => {
   console.log("🚀 Server is running on port " + PORT);
+  console.log(`Server active at: %chttp://localhost:${PORT}`, 'color: blue; text-decoration: underline;'); // This creates a clickable URL in most modern terminals
 });
+}else{
+  console.log(`Your backend app is live at: %chttps://astonishing-dream-production.up.railway.app}`, 'color: blue; text-decoration: underline;'); // This creates a clickable URL in most modern terminals
+  console.log(`Your frontend app is live at: %chttps://dusty-house-production.up.railway.app/login}`, 'color: blue; text-decoration: underline;');
+}
