@@ -20,8 +20,9 @@ https://stackoverflow.com/questions/45400361/why-is-gitignore-not-ignoring-my-fi
 
 
 ## How to run railway
-- railway init
+- ~~~railway init~~
 - railway up
+- railway link
 
 - Backend : https://astonishing-dream-production.up.railway.app/
 - Frontend : https://dusty-house-production.up.railway.app/login
