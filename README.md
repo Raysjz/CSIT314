@@ -23,8 +23,8 @@ https://stackoverflow.com/questions/45400361/why-is-gitignore-not-ignoring-my-fi
 - railway init
 - railway up
 
-Backend : https://astonishing-dream-production.up.railway.app/
-Frontend : https://dusty-house-production.up.railway.app/login
+- Backend : https://astonishing-dream-production.up.railway.app/
+- Frontend : https://dusty-house-production.up.railway.app/login
 
 ## Test
 - GetAllproducts : http://localhost:3000/api/products
