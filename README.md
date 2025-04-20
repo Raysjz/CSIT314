@@ -10,6 +10,9 @@
  - Use access token as password and own username as username
 3)https://nodejs.org/en
 
+npm install -g @railway/cli
+
+
 
 ## IMPT : Using gitignore to ignore files
 https://stackoverflow.com/questions/45400361/why-is-gitignore-not-ignoring-my-files
