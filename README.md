@@ -10,16 +10,22 @@
  - Use access token as password and own username as username
 3)https://nodejs.org/en
 
+npm install -g @railway/cli
+
+
+
 
 ## IMPT : Using gitignore to ignore files
 https://stackoverflow.com/questions/45400361/why-is-gitignore-not-ignoring-my-files
 
 
-## Running  
-- For backend : 1)npm run dev
-- For frontend : 1)cd frontend 
-                 2)npm run dev
+## How to run railway
+- ~~~railway init~~
+- railway up
+- railway link
 
+- Backend : https://astonishing-dream-production.up.railway.app/
+- Frontend : https://dusty-house-production.up.railway.app/login
 
 ## Test
 - GetAllproducts : http://localhost:3000/api/products
