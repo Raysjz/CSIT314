@@ -1,8 +1,6 @@
 # CSIT314 
 
-## Getting started
-
-### Installation Required
+## Installation Required
 1. Download github Desktop
 2. Clone repository from internet
     - https://gitlab.com/Barrette5276/csit314.git
@@ -12,12 +10,11 @@
 4. Install XAMPP
     - https://sourceforge.net/projects/xampp/
 
-
 ## Getting started
 - [Checking Output]php index.php  
 - [Starting Local Server]php -S localhost:3000 
 
-<details><summary>Differences of UA and UP</summary>
+### Differences of UA and UP
 - USER ACCOUNT
     1. username
     2. id
