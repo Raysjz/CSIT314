@@ -9,6 +9,8 @@
  - Use access token as password and own username as username
 3)Install PHP
 - https://www.youtube.com/watch?v=n04w2SzGr_U
+4)Install XAMPP
+- https://sourceforge.net/projects/xampp/
 
 
 ## Getting started
