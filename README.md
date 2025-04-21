@@ -12,8 +12,8 @@
 
 
 ## Getting started
-php index.php  (Checking Output)
-php -S localhost:3000
+- [Checking Output]php index.php  
+- [Starting Local Server]php -S localhost:3000 
 
 <details><summary>Differences of UA and UP</summary>
 - USER ACCOUNT
