@@ -10,6 +10,11 @@
 3)Install PHP
 - https://www.youtube.com/watch?v=n04w2SzGr_U
 
+
+## Getting started
+php index.php  (Checking Output)
+php -S localhost:3000
+
 <details><summary>Differences of UA and UP</summary>
 - USER ACCOUNT
 
