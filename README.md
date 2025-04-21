@@ -8,15 +8,13 @@
  - https://gitlab.com/Barrette5276/csit314.git
  - Use access token as password and own username as username
 
-<details><summary>Click to expand</summary>
-### Differences of UA and UP
+<details><summary>Differences of UA and UP</summary>
 - USER ACCOUNT
 
 1. username
 2. id
 3. address
 4. password
-
 
 - USER PROFILE [ category of profile]
 
