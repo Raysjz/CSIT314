@@ -9,6 +9,10 @@
     - https://www.youtube.com/watch?v=n04w2SzGr_U
 4. Install XAMPP
     - https://sourceforge.net/projects/xampp/
+5. Install PG ADMIN
+    - https://www.pgadmin.org/download/pgadmin-4-windows/
+    - https://www.youtube.com/watch?v=WFT5MaZN6g4
+    - https://www.youtube.com/watch?v=wD2E8IdBQIE&t=217s
 
 ## Getting started
 - [Checking Output]php index.php  
