@@ -1,38 +1,33 @@
 # CSIT314 
 
-## Installation Required
-1. Download github Desktop
-2. Clone repository from internet
-    - https://gitlab.com/Barrette5276/csit314.git
-    - Use access token as password and own username as username
-3. Install PHP
-    - https://www.youtube.com/watch?v=n04w2SzGr_U
-4. Install XAMPP
-    - https://sourceforge.net/projects/xampp/
-5. Install PG ADMIN
-- [ ] **Database name  : csit314-database**
-- [ ] **password : 1234**
+## Getting started
 
-    - https://www.pgadmin.org/download/pgadmin-4-windows/
-    - https://www.youtube.com/watch?v=WFT5MaZN6g4
-    - https://www.youtube.com/watch?v=wD2E8IdBQIE&t=217s
-
+### Installation Required
+1)Download github Desktop
+2)Clone repository from internet
+ - https://gitlab.com/Barrette5276/csit314.git
+ - Use access token as password and own username as username
+3)Install PHP
+- https://www.youtube.com/watch?v=n04w2SzGr_U
 
 
 ## Getting started
 - [Checking Output]php index.php  
 - [Starting Local Server]php -S localhost:3000 
 
-### Differences of UA and UP
+<details><summary>Differences of UA and UP</summary>
 - USER ACCOUNT
-    1. username
-    2. id
-    3. address
-    4. password
+
+1. username
+2. id
+3. address
+4. password
+
 - USER PROFILE [ category of profile]
-Dropdown list
-    1. user admin
-    2. home owner
-    3. cleaner
-    4. platform management
+
+dropdown list
+1. user admin
+2. home owner
+3. cleaner
+4. platform management
 </details>
