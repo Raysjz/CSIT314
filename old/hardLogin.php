@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $_SESSION['username'] = $username;
             $_SESSION['profile'] = $profile;
 
-            header("Location: hardIndex.php"); // REDIRECT
+            header("Location: hardDashboard.php"); // REDIRECT
             exit;
         } else {
             $login_error = "Incorrect profile selected for this user.";
@@ -65,7 +65,7 @@ ob_end_flush();
 </head>
 <body>
     <h2>Login Form</h2>
-    <form method="POST" action="hardlogin.php">
+    <form method="POST" action="hardLogin.php">
         <label for="username">Username:</label>
         <input type="text" name="username" required>
 
