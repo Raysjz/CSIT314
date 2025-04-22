@@ -1,60 +1,35 @@
 <?php
 session_start();
+require_once('controllers/LoginController.php');
 
-// Handle form submission
 $login_error = '';
 
-
-require 'db.php';
-
-// Debug: Check if form submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    echo "<pre>";
-    print_r($_POST);  // Debug: Print submitted form data
-    echo "</pre>";
-
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
     $profile = $_POST['profile'] ?? '';
 
-    /* Debug
-    // You can add further checks or echo values
-    echo "[POST]Username: $username<br>";
-    echo "[POST]Password: $password<br>";
-    echo "[POST]Profile: $profile<br>";
-    */
-}
+    $controller = new LoginController();
+    $result = $controller->authenticate($username, $password, $profile);
 
-    // Only query if username and profile are not empty
-    if (!empty($username) && !empty($profile)) {
-        $result = pg_query_params($conn, "SELECT * FROM users WHERE username = $1 AND profile = $2", array($username, $profile));
-        $user = pg_fetch_assoc($result);
+    if (isset($result['success']) && $result['success']) {
+        $user = $result['user'];
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['username'] = $user['username'];
+        $_SESSION['profile'] = $user['profile'];
+        $_SESSION['is_admin'] = $user['isuseradmin'];
+        $_SESSION['is_suspended'] = $user['issuspended'];
 
-        if ($user) {
-            // Optional: handle password match
-            if ($password === $user['password']) {
-                // Set session for each 
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['username'] = $user['username'];
-                $_SESSION['profile'] = $user['profile'];
-                $_SESSION['is_admin'] = $user['isuseradmin'];
-                $_SESSION['is_suspended'] = $user['issuspended'];
-
-                // Redirect based on admin
-                if ($user['isuseradmin'] === 'Yes') {
-                    header("Location: admin_dashboard.php");
-                } else {
-                    header("Location: user_dashboard.php");
-                }
-                exit;
-            } else {
-                $login_error = '❌ Incorrect password.';
-            }
+        if ($user['isuseradmin'] === 'Yes') {
+            header("Location: admin_dashboard.php");
         } else {
-            $login_error = '❌ No user found with that username/profile.';
+            header("Location: user_dashboard.php");
         }
+        exit;
+    } else {
+        $login_error = $result['error'];
     }
-
+}
 ?>
 
 <!--
