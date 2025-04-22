@@ -6,15 +6,12 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 
-
 ?>
-
-
 
 
 <!DOCTYPE html>
 <html>
-<head><title>Welcome</title></head>
+<head><title>User Dashboard</title></head>
 <body>
 <h2>Welcome, <?php echo $_SESSION['username']; ?>!</h2>
 <p>You are logged in as: <strong><?php echo $_SESSION['profile']; ?></strong></p>

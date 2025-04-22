@@ -1,21 +1,54 @@
 <?php
-$host = "ep-tight-wave-a1qu4q86-pooler.ap-southeast-1.aws.neon.tech";
-$db   = "neondb";
-$user = "neondb_owner";
-$pass = "npg_jbZC5Yyxcr3R";
-$port = "5432";
-$sslmode = "require";
-$endpoint_id = "ep-tight-wave-a1qu4q86";
+// Database connection
+$conn = pg_connect("
+    host=localhost
+    port=5432
+    dbname=csit314-database
+    user=postgres
+    password=1234
+");
 
-// URL-encoded: options=--endpoint=ep-tight-wave-a1qu4q86 → options=%2D%2Dendpoint%3Dep-tight-wave-a1qu4q86
-$dsn = "pgsql:host=$host;port=$port;dbname=$db;sslmode=$sslmode;options=%2D%2Dendpoint%3D$endpoint_id";
-
-try {
-    $pdo = new PDO($dsn, $user, $pass);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    echo "✅ Connected to Neon!";
-} catch (PDOException $e) {
-    echo "❌ Connection failed: " . $e->getMessage();
-    exit;
+// Check connection status
+if (!$conn) {
+    die("❌ Database connection failed.");
+} else {
+    //echo "✅ Connected to PostgreSQL successfully.<br><br>";
 }
+
+class Database {
+    private static $host = 'localhost';
+    private static $port = '5432';
+    private static $dbname = 'csit314-database';
+    private static $user = 'postgres';
+    private static $password = '1234';
+
+    // 1)PDO connection (OOP-friendly)
+    public static function getPDO() {
+        $dsn = "pgsql:host=" . self::$host . ";port=" . self::$port . ";dbname=" . self::$dbname;
+
+        try {
+            $conn = new PDO($dsn, self::$user, self::$password);
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            return $conn;
+        } catch (PDOException $e) {
+            die("❌ PDO Connection failed: " . $e->getMessage());
+        }
+    }
+
+    // 2)pg_connect connection (procedural)
+    public static function getPgConnect() {
+        $connStr = "host=" . self::$host .
+                   " port=" . self::$port .
+                   " dbname=" . self::$dbname .
+                   " user=" . self::$user .
+                   " password=" . self::$password;
+
+        $conn = pg_connect($connStr);
+        if (!$conn) {
+            die("❌ pg_connect failed.");
+        }
+        return $conn;
+    }
+}
+
 ?>

@@ -1,95 +1,91 @@
 <?php
-ob_start();
 session_start();
-// Enable error reporting
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
 // Handle form submission
 $login_error = '';
 
 
-$conn = pg_connect("
-    host=localhost
-    port=5432
-    dbname=csit314-database
-    user=postgres
-    password=1234
-");
+require 'db.php';
 
-if (!$conn) {
-    die("Database connection failed.");
+// Debug: Check if form submitted
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    echo "<pre>";
+    print_r($_POST);  // Debug: Print submitted form data
+    echo "</pre>";
+
+    $username = $_POST['username'] ?? '';
+    $password = $_POST['password'] ?? '';
+    $profile = $_POST['profile'] ?? '';
+
+    /* Debug
+    // You can add further checks or echo values
+    echo "[POST]Username: $username<br>";
+    echo "[POST]Password: $password<br>";
+    echo "[POST]Profile: $profile<br>";
+    */
 }
 
-$message = '';
+    // Only query if username and profile are not empty
+    if (!empty($username) && !empty($profile)) {
+        $result = pg_query_params($conn, "SELECT * FROM users WHERE username = $1 AND profile = $2", array($username, $profile));
+        $user = pg_fetch_assoc($result);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+        if ($user) {
+            // Optional: handle password match
+            if ($password === $user['password']) {
+                // Set session for each 
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['username'] = $user['username'];
+                $_SESSION['profile'] = $user['profile'];
+                $_SESSION['is_admin'] = $user['isuseradmin'];
+                $_SESSION['is_suspended'] = $user['issuspended'];
 
-    $result = pg_query_params($conn, "SELECT * FROM users WHERE username = $1", array($username));
-    $user = pg_fetch_assoc($result);
-
-    if ($user) {
-        echo "<br>User ID: " . $user['id'] . "<br>";
-        echo "Username: " . $user['username'] . "<br>";
-        echo "Profile: " . $user['profile'] . "<br>";
-        echo "Admin Status: " . $user['isuseradmin'] . "<br>";
-    }
-    if (password_verify($password, $user['password'])) {
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['username'] = $user['username'];
-        $_SESSION['profile'] = $user['profile'];  
-        $_SESSION['isAdmin'] = $user['isuseradmin'];
-        
-        // Debugging the session data
-        var_dump($_SESSION);  // This will show the session data
-        
-        // Redirect based on user type (Admin or regular user)
-        if ($user['isuseradmin'] === 'Yes') {
-            header("Location: admin_dashboard.php");
-            exit;
-        }
-         else {
-            header("Location: user_dashboard.php");
-            exit;
+                // Redirect based on admin
+                if ($user['isuseradmin'] === 'Yes') {
+                    header("Location: admin_dashboard.php");
+                } else {
+                    header("Location: user_dashboard.php");
+                }
+                exit;
+            } else {
+                $login_error = '❌ Incorrect password.';
+            }
+        } else {
+            $login_error = '❌ No user found with that username/profile.';
         }
     }
-    
-    
-} 
-ob_end_flush();
+
 ?>
 
+<!--
 <!DOCTYPE html>
 <html lang="en">
             <body>
-<form class="login-box" method="post" action="login.php">
-                <h2>Welcome</h2>
-                <?php if ($login_error): ?>
-                    <div class="error"><?= htmlspecialchars($login_error) ?></div>
-                <?php endif; ?>
-                <input type="text" name="username" placeholder="Username" required><br>
-                <input type="password" name="password" placeholder="Password" required><br>
+                <form class="login-box" method="post" action="login.php">
+                    <h2>Welcome</h2>
+                    <?php if ($login_error): ?>
+                        <div class="error"><?= htmlspecialchars($login_error) ?></div>
+                    <?php endif; ?>
+                    <input type="text" name="username" placeholder="Username" required><br>
+                    <input type="password" name="password" placeholder="Password" required><br>
 
-                <label for="profile">User Profile:</label>
-                <select name="profile" required>
-                    <option value="">-- Select Profile --</option>
-                    <option value="User Admin">User Admin</option>
-                    <option value="Home Owner">Home Owner</option>
-                    <option value="Cleaner">Cleaner</option>
-                    <option value="Platform Management">Platform Management</option>
-                </select><br>
+                    <label for="profile">User Profile:</label>
+                    <select name="profile" required>
+                        <option value="">-- Select Profile --</option>
+                        <option value="User Admin">User Admin</option>
+                        <option value="Home Owner">Home Owner</option>
+                        <option value="Cleaner">Cleaner</option>
+                        <option value="Platform Management">Platform Management</option>
+                    </select><br>
 
-                <input type="submit" value="Login">
+                    <input type="submit" value="Login">
             </form>
 
 
 
-                </body>
-<!--
+        </body>
 
+    -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -204,4 +200,4 @@ ob_end_flush();
 </body>
 </html>
 
---->
+            
