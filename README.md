@@ -9,11 +9,12 @@
  - Use access token as password and own username as username
 3)Install PHP
 - https://www.youtube.com/watch?v=n04w2SzGr_U
-
+4)PGadmin 4
+- https://www.youtube.com/watch?v=WFT5MaZN6g4
+5)PostgreSQL
+- https://www.youtube.com/watch?v=wD2E8IdBQIE&t=217s
 
 ## Getting started
-- [Checking Output]php index.php  
-- [Starting Local Server]php -S localhost:3000 
 
 <details><summary>Differences of UA and UP</summary>
 - USER ACCOUNT
