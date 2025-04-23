@@ -57,9 +57,9 @@ $user = !empty($filteredUsers) ? $filteredUsers[0] : ['username' => '', 'email' 
 <div class="navbar">
     <div class="navbar-left">
         <a href="ViewUA.php">View Account</a>
-        <a href="CreateUA.php">View Profile</a>
-        <a href="CreateUP.php">Create Account</a>
-        <a href="ViewUP.php">Create Profile</a>
+        <a href="ViewUP.php">View Profile</a>
+        <a href="CreateUA.php">Create Account</a> 
+        <a href="CreateUP.php">Create Profile</a> 
     </div>
     <div class="navbar-right">
         <a href="logout.php">Logout</a>
