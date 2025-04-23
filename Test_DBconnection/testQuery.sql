@@ -48,9 +48,3 @@ VALUES
 (2,'homeowner','1234','Home Owner','No','No');
 (3, 'cleaner', '1234', 'Cleaner', 'No', 'No'),
 (4, 'platformmgmt', '1234', 'Platform Management', 'No', 'No');
-
-
-INSERT INTO products (name, price, image)
-VALUES 
-('Premium Headphones', 99.00, 'https://www.apple.com/sg/shop/product/MQTR3PA/A/beats-studio-pro-wireless-headphones-sandstone'),
-('Nothing Ear Noise Cancelling True Wireless Earphones', 199.00, 'https://www.stereo.com.sg/cdn/shop/files/9072024_42747_pm_nothing_1__1_1.jpg?v=1726777011&width=600');
