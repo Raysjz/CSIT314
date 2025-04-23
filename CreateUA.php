@@ -163,7 +163,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </style>
     <div class="container">
         <h1>Create Account</h1>
-        <form id="createForm" action="create_account_process.php" method="post" onsubmit="return handleFormSubmit(event)">
+        <form id="createForm" action="CreateUA.php" method="post" onsubmit="return handleFormSubmit(event)">
             
             <label for="fullname">Full Name</label>
             <input type="text" id="fullname" name="fullname" required>
@@ -173,6 +173,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <label for="email">Email</label>
             <input type="email" id="email" name="email" required>
+
+            <label for="address">Address:</label>
+            <input type="text" name="address" id="address" required><br><br>
 
             <label for="password">Password</label>
             <input type="password" id="password" name="password" required>
@@ -186,7 +189,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </select>
 
             <div class="form-actions">
-                <button type="button" class="back-btn" onclick="location.href='index.php'">Back</button>
+                <button type="button" class="back-btn" onclick="location.href='admin_dashboard.php'">Back</button>
                 <button type="submit">Create Account</button>
             </div>
         </form>
