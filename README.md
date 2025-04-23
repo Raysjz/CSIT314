@@ -7,11 +7,12 @@
 2. Clone repository from internet
  - https://gitlab.com/Barrette5276/csit314.git
  - Use access token as password and own username as username
-3. PHP
+3. Install PHP
 - https://www.youtube.com/watch?v=n04w2SzGr_U
-4. PGadmin 4
+4. Install PostgreSQL
+- https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
 - https://www.youtube.com/watch?v=WFT5MaZN6g4
-5. PostgreSQL
+5. Connecting PostgreSQL to PHP with XAMPP
 - https://www.youtube.com/watch?v=wD2E8IdBQIE&t=217s
 
 ## Getting started
