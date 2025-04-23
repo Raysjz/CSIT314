@@ -3,15 +3,15 @@
 ## Getting started
 
 ### Installation Required
-1)Download github Desktop
-2)Clone repository from internet
+1. Download github Desktop
+2. Clone repository from internet
  - https://gitlab.com/Barrette5276/csit314.git
  - Use access token as password and own username as username
-3)Install PHP
+3. PHP
 - https://www.youtube.com/watch?v=n04w2SzGr_U
-4)PGadmin 4
+4. PGadmin 4
 - https://www.youtube.com/watch?v=WFT5MaZN6g4
-5)PostgreSQL
+5. PostgreSQL
 - https://www.youtube.com/watch?v=wD2E8IdBQIE&t=217s
 
 ## Getting started
