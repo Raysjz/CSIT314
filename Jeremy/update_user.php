@@ -52,7 +52,7 @@ if (!$userToUpdate) {
 </head>
 <body>
 
-<?php require 'navbar.php'; ?>
+<?php require_once(__DIR__ . '/../boundary/adminNavbar.php'); ?>
     <div class="container">
         <h1>Update User</h1>
         <form action="update_user_process.php" method="post">
