@@ -1,5 +1,5 @@
 <?php
-require_once('adminNavbar.php'); // Include the navbar file
+require_once(__DIR__ . '/adminNavbar.php');
 session_start();
 
 /* Debug

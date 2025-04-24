@@ -15,6 +15,6 @@ if (!isset($_SESSION['user_id'])) {
 <body>
 <h2>Welcome, <?php echo $_SESSION['username']; ?>!</h2>
 <p>You are logged in as: <strong><?php echo $_SESSION['profile']; ?></strong></p>
-<a href="logout.php">Logout</a>
+<a href="/CSIT314/logout.php">Logout</a>
 </body>
 </html>

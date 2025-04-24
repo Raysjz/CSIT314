@@ -1,5 +1,5 @@
 <?php
-
+// Database Connection
 class Database {
     private static $host = 'localhost';
     private static $port = '5432';
@@ -37,88 +37,66 @@ class Database {
 }
 
 
-class userAccount {
+require_once('db.php'); // Ensure this is here to include the Database class
+
+class UserAccount {
     protected $id;
     protected $username;
     protected $password;
     protected $profile;
-    protected $isSuspended;
 
-    public function __construct($id, $username, $password, $profile, $isSuspended) {
+    public function __construct($id, $username, $password, $profile) {
         $this->id = $id;
         $this->username = $username;
         $this->password = $password;
         $this->profile = $profile;
-        $this->isSuspended = $isSuspended; // Set the isSuspended property
-    }
-
-     // Getter methods for protected properties
-     public function getId() {
-        return $this->id;
-    }
-
-    public function getUsername() {
-        return $this->username;
-    }
-
-    public function getProfile() {
-        return $this->profile;
-    }
-
-    public function getIsSuspended() {
-        return $this->isSuspended;
     }
 
     // Validate user input data
     public function validateUA() {
-        if (empty($this->username) || empty($this->password) || empty($this->profile)) {
+        if (empty($this->username) || empty($this->password)) {
             return "All fields are required.";
         }
-    
-        $db = Database::getPDO();
-    
+
+        $db = Database::getPDO(); 
+
         // Check if username already exists
-        $stmt = $db->prepare("SELECT * FROM userAccount WHERE username = :username");
+        $stmt = $db->prepare("SELECT * FROM useraccount WHERE username = :username");
         $stmt->bindParam(':username', $this->username);
         $stmt->execute();
         if ($stmt->rowCount() > 0) {
             return "Username already taken.";
         }
-    
+        $stmt->execute();
+        if ($stmt->rowCount() > 0) {
+            return "Username already taken.";
+        }
+
         return "Validation passed.";
     }
-    
-
 
     // Save user to the database
     public function saveUser() {
         $db = Database::getPDO(); 
-    
-        // Insert user to the database with the isSuspended field
-        $stmt = $db->prepare("INSERT INTO userAccount (username, password, profile, isSuspended) 
-                              VALUES (:username, :password, :profile, :isSuspended)");
-    
-        // Bind parameters
+
+        $stmt = $db->prepare("INSERT INTO useraccount (username, password, profile) 
+                              VALUES (:username,:password, :profile)");
         $stmt->bindParam(':username', $this->username);
         $stmt->bindParam(':password', $this->password);
-        $stmt->bindParam(':profile', $this->profile);
-        $stmt->bindParam(':isSuspended', $this->isSuspended, PDO::PARAM_BOOL); // Bind isSuspended field
-    
-        // Execute the query and return success/failure message
-        return $stmt->execute() ;
+        $stmt->bindParam(':role', $this->profile);
+
+        return $stmt->execute() ? "✅ User account have been successfully created." : "❌ Error creating user account.";
     }
 	
-    // Method to view all user accounts
+	// Method to view all user accounts
     public function viewUA() {
         $db = Database::getPDO();   // Reuse the existing database connection from db.php
-
-        // Querying from the correct table (assuming it's 'useraccount')
-        $stmt = $db->prepare("SELECT * FROM useraccount");
+        $stmt = $db->prepare("SELECT * FROM users");
         $stmt->execute();
-
-        // Fetch all user accounts as an array of associative arrays
+        
+        // Fetch all user accounts as an array of UserAccount objects
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+        
         // Map the results to UserAccount objects
         $userAccounts = [];
         foreach ($result as $row) {
@@ -126,13 +104,11 @@ class userAccount {
                 $row['id'],
                 $row['username'],
                 $row['password'],
-                $row['profile'],
-                isset($row['isSuspended']) ? (bool)$row['isSuspended'] : false  // Cast to boolean for consistency
+                $row['profile']
             );
         }
-
+        
         return $userAccounts;
     }
-
 }
 ?>

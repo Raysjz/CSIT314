@@ -1,15 +1,13 @@
 <?php
 session_start();
 
-require_once(__DIR__ . '/entities/db.php');
-
 //-------------------------------Start of Login Boundary--------------------------------
 
 $login_error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // The controller will handle the login logic
-    $controller = new LoginController();
+    $controller = new UserAccountController();  // Correctly instantiate the controller
     $result = $controller->authenticate($_POST['username'], $_POST['password'], $_POST['profile']);
 
     if (isset($result['success']) && $result['success']) {
@@ -21,9 +19,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Redirect based on profile
         if ($result['user']['profile'] === 'User Admin') {
-            header("Location: boundary/adminDashboard.php");
+            header("Location: /CSIT314/boundary/adminDashboard.php");
         } else {
-            header("Location: userDashboard.php");
+            header("Location: /CSIT314/boundary/userDashboard.php");
         }
         exit;
     } else {
@@ -32,39 +30,86 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+
 //-------------------------------End of Login Boundary--------------------------------
+
 
 //-------------------------------Start of Login Controller--------------------------------
 
-class LoginController {
+class UserAccountController {
+    // Correct instantiation of UserAccount with necessary parameters
     public function authenticate($username, $password, $profile) {
-        // Instantiate the LoginEntity to handle the actual authentication logic
-        $loginEntity = new LoginEntity();  // Correct class name
-        return $loginEntity->validateUser($username, $password, $profile);  // Correct method call
-    }
+    // Instantiate the UserAccount Entity to handle the actual authentication logic
+    // Pass the correct parameters to the constructor (id, username, password, profile, isSuspended)
+    $userAccount = new UserAccount(
+        null,  // ID is auto-generated (can be null)
+        $username,
+        $password,
+        $profile,
+        false  // Default to false for isSuspended if not provided
+    );
+
+    return $userAccount->validateUser($username, $password, $profile);  // Correct method call
 }
+
+}
+
 
 //-------------------------------End of Login Controller--------------------------------
 
-//-------------------------------Start of Login Entity-------------------------------------
+//-------------------------------Start of useraccount Entity-------------------------------------
 
+// Database connection
+class Database {
+    private static $host = 'localhost';
+    private static $port = '5432';
+    private static $dbname = 'csit314-database';
+    private static $user = 'postgres';
+    private static $password = '1234';
 
+    // 1)PDO connection (OOP-friendly)
+    public static function getPDO() {
+        $dsn = "pgsql:host=" . self::$host . ";port=" . self::$port . ";dbname=" . self::$dbname;
 
-class loginEntity {
+        try {
+            $conn = new PDO($dsn, self::$user, self::$password);
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            return $conn;
+        } catch (PDOException $e) {
+            die("❌ PDO Connection failed: " . $e->getMessage());
+        }
+    }
+
+    // 2)pg_connect connection (procedural)
+    public static function getPgConnect() {
+        $connStr = "host=" . self::$host .
+                   " port=" . self::$port .
+                   " dbname=" . self::$dbname .
+                   " user=" . self::$user .
+                   " password=" . self::$password;
+
+        $conn = pg_connect($connStr);
+        if (!$conn) {
+            die("❌ pg_connect failed.");
+        }
+        return $conn;
+    }
+}
+
+class UserAccount {
     public function validateUser($username, $password, $profile) {
-        $conn = Database::getPgConnect(); // Use pg_connect if that's your choice
-
+        $conn = Database::getPgConnect(); // Ensure database connection is correct
+    
         if (empty($username) || empty($profile)) {
             return ['error' => 'Username and profile are required.'];
         }
-
+    
         // Query database to find user with username and profile
         $result = pg_query_params($conn, "SELECT * FROM useraccount WHERE username = $1 AND profile = $2", [$username, $profile]);
         $user = pg_fetch_assoc($result);
-
+    
         if ($user) {
             if ($password === $user['password']) { // 🔐 Or use password_verify() if hashed
-                // Return user details on success
                 return [
                     'success' => true,
                     'user' => $user
@@ -78,7 +123,7 @@ class loginEntity {
     }
 }
 
-//-------------------------------End of Login Entity-------------------------------------
+//-------------------------------End of useraccount Entity-------------------------------------
 
 
 ?>
