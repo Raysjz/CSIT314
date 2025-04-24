@@ -17,6 +17,12 @@
 
 ## Getting started
 
+User Stories
+No read - View
+Delete -> Suspend
+
+Shortlist -> search for cleaning services
+
 <details><summary>Differences of UA and UP</summary>
 - USER ACCOUNT
 
