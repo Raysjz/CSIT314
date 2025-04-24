@@ -1,66 +1,88 @@
 <?php
 session_start();
-require_once('controllers/LoginController.php');
+
+require_once(__DIR__ . '/entities/db.php');
+
+//-------------------------------Start of Login Boundary--------------------------------
 
 $login_error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'] ?? '';
-    $password = $_POST['password'] ?? '';
-    $profile = $_POST['profile'] ?? '';
-
+    // The controller will handle the login logic
     $controller = new LoginController();
-    $result = $controller->authenticate($username, $password, $profile);
+    $result = $controller->authenticate($_POST['username'], $_POST['password'], $_POST['profile']);
 
     if (isset($result['success']) && $result['success']) {
-        $user = $result['user'];
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['username'] = $user['username'];
-        $_SESSION['profile'] = $user['profile'];
-        $_SESSION['is_admin'] = $user['isuseradmin'];
-        $_SESSION['is_suspended'] = $user['issuspended'];
+        // Handle success (redirect)
+        $_SESSION['user_id'] = $result['user']['id'];
+        $_SESSION['username'] = $result['user']['username'];
+        $_SESSION['profile'] = $result['user']['profile'];
+        $_SESSION['is_suspended'] = $result['user']['issuspended'];
 
-        if ($user['isuseradmin'] === 'Yes') {
-            header("Location: admin_dashboard.php");
+        // Redirect based on profile
+        if ($result['user']['profile'] === 'User Admin') {
+            header("Location: boundary/adminDashboard.php");
         } else {
-            header("Location: user_dashboard.php");
+            header("Location: userDashboard.php");
         }
         exit;
     } else {
+        // Show error if login failed
         $login_error = $result['error'];
     }
 }
+
+//-------------------------------End of Login Boundary--------------------------------
+
+//-------------------------------Start of Login Controller--------------------------------
+
+class LoginController {
+    public function authenticate($username, $password, $profile) {
+        // Instantiate the LoginEntity to handle the actual authentication logic
+        $loginEntity = new LoginEntity();  // Correct class name
+        return $loginEntity->validateUser($username, $password, $profile);  // Correct method call
+    }
+}
+
+//-------------------------------End of Login Controller--------------------------------
+
+//-------------------------------Start of Login Entity-------------------------------------
+
+
+
+class loginEntity {
+    public function validateUser($username, $password, $profile) {
+        $conn = Database::getPgConnect(); // Use pg_connect if that's your choice
+
+        if (empty($username) || empty($profile)) {
+            return ['error' => 'Username and profile are required.'];
+        }
+
+        // Query database to find user with username and profile
+        $result = pg_query_params($conn, "SELECT * FROM useraccount WHERE username = $1 AND profile = $2", [$username, $profile]);
+        $user = pg_fetch_assoc($result);
+
+        if ($user) {
+            if ($password === $user['password']) { // 🔐 Or use password_verify() if hashed
+                // Return user details on success
+                return [
+                    'success' => true,
+                    'user' => $user
+                ];
+            } else {
+                return ['error' => '❌ Incorrect password.'];
+            }
+        } else {
+            return ['error' => '❌ No user found with that username/profile.'];
+        }
+    }
+}
+
+//-------------------------------End of Login Entity-------------------------------------
+
+
 ?>
 
-<!--
-<!DOCTYPE html>
-<html lang="en">
-            <body>
-                <form class="login-box" method="post" action="login.php">
-                    <h2>Welcome</h2>
-                    <?php if ($login_error): ?>
-                        <div class="error"><?= htmlspecialchars($login_error) ?></div>
-                    <?php endif; ?>
-                    <input type="text" name="username" placeholder="Username" required><br>
-                    <input type="password" name="password" placeholder="Password" required><br>
-
-                    <label for="profile">User Profile:</label>
-                    <select name="profile" required>
-                        <option value="">-- Select Profile --</option>
-                        <option value="User Admin">User Admin</option>
-                        <option value="Home Owner">Home Owner</option>
-                        <option value="Cleaner">Cleaner</option>
-                        <option value="Platform Management">Platform Management</option>
-                    </select><br>
-
-                    <input type="submit" value="Login">
-            </form>
-
-
-
-        </body>
-
-    -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -174,5 +196,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 </body>
 </html>
-
-            

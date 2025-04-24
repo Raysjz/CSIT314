@@ -1,19 +1,19 @@
 <?php
-require_once(__DIR__ . '/entities/CreateUserAccount.php');
-
+require_once('entities/UserAccount.php');
+require_once('db.php');
 
 class UserAccountController {
     public function create($data) {
-        // Include isSuspended as part of the input data
         $user = new UserAccount(
             null,
+            $data['fullname'],
             $data['username'],
+            $data['email'],
+            $data['address'],
             $data['password'],
-            $data['profile'],
-            isset($data['isSuspended']) ? $data['isSuspended'] : false  // Default to false if not set
+            $data['role']
         );
 
-        // Validate user data
         $validation = $user->validateUA();
         if ($validation === "Validation passed.") {
             return $user->saveUser();

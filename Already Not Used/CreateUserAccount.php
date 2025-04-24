@@ -1,42 +1,4 @@
 <?php
-// Database Connection
-class Database {
-    private static $host = 'localhost';
-    private static $port = '5432';
-    private static $dbname = 'csit314-database';
-    private static $user = 'postgres';
-    private static $password = '1234';
-
-    // 1)PDO connection (OOP-friendly)
-    public static function getPDO() {
-        $dsn = "pgsql:host=" . self::$host . ";port=" . self::$port . ";dbname=" . self::$dbname;
-
-        try {
-            $conn = new PDO($dsn, self::$user, self::$password);
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            return $conn;
-        } catch (PDOException $e) {
-            die("❌ PDO Connection failed: " . $e->getMessage());
-        }
-    }
-
-    // 2)pg_connect connection (procedural)
-    public static function getPgConnect() {
-        $connStr = "host=" . self::$host .
-                   " port=" . self::$port .
-                   " dbname=" . self::$dbname .
-                   " user=" . self::$user .
-                   " password=" . self::$password;
-
-        $conn = pg_connect($connStr);
-        if (!$conn) {
-            die("❌ pg_connect failed.");
-        }
-        return $conn;
-    }
-}
-
-
 require_once('db.php'); // Ensure this is here to include the Database class
 
 class UserAccount {
@@ -81,17 +43,13 @@ class UserAccount {
         if ($stmt->rowCount() > 0) {
             return "Username already taken.";
         }
-        $stmt->execute();
-        if ($stmt->rowCount() > 0) {
-            return "Username already taken.";
-        }
 
         return "Validation passed.";
     }
 
     // Save user to the database
     public function saveUser() {
-        $db = Database::getPDO(); 
+        $db = Database::getPDO(); // 
 
         $hashedPassword = password_hash($this->password, PASSWORD_DEFAULT);  // Hash the password
 
@@ -105,32 +63,6 @@ class UserAccount {
         $stmt->bindParam(':role', $this->role);
 
         return $stmt->execute() ? "✅ User account have been successfully created." : "❌ Error creating user account.";
-    }
-	
-	// Method to view all user accounts
-    public function viewUA() {
-        $db = Database::getPDO();   // Reuse the existing database connection from db.php
-        $stmt = $db->prepare("SELECT * FROM users");
-        $stmt->execute();
-        
-        // Fetch all user accounts as an array of UserAccount objects
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        // Map the results to UserAccount objects
-        $userAccounts = [];
-        foreach ($result as $row) {
-            $userAccounts[] = new UserAccount(
-                $row['id'],
-                $row['fullname'],
-                $row['username'],
-                $row['email'],
-                $row['address'],
-                $row['password'],
-                $row['role']
-            );
-        }
-        
-        return $userAccounts;
     }
 }
 ?>
