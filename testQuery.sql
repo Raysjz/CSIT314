@@ -13,6 +13,8 @@ VALUES
 ('homeowner', '1234', 'Home Owner', FALSE),
 ('cleaner', '1234', 'Cleaner', FALSE),
 ('platformmgmt', '1234', 'Platform Management', FALSE);
+('admin', '1111', 'User Admin', TRUE);
+('cleaner2', '5654', 'Cleaner', TRUE);
 
 drop table user_accounts;
 
