@@ -1,51 +1,45 @@
 <?php
 require_once(__DIR__ . '/../boundary/adminNavbar.php');
 require_once(__DIR__ . '/../entities/UserAccount.php');
-
-//------------------------------------------------- ATM ALL BC IN THIS FILE -----------------------------------
+//require_once(__DIR__ . '/../controllers/CreateUAController.php');
 
 class CreateUAC {
     private $userAccount;
 
-    public function __construct(userAccount $userAccount) {
+    public function __construct(UserAccount $userAccount) {
         $this->userAccount = $userAccount;
     }
 
-    // Process the user creation
-    public function processUserCreation() {
-        // Validate the user data
-        $validationResult = $this->userAccount->validateUserAccount();
-        
-        if ($validationResult === "Validation passed.") {
-            return $this->userAccount->saveUser();  // Save user to the database
-        } else {
-            return $validationResult;  // Return validation error message
-        }
-    }
-
-    // Return the validation message (success or failure)
-    public function validateMessage($message) {
-        return $message;  // Return the validation message
-    }
-	
-	public function handleFormSubmission($data) {
-        // Create and assign the new user account to this controller
+    // Handles form submission and delegates to controller
+    public function handleFormSubmission($data) {
+        // Create the user entity from the form data
         $this->userAccount = new UserAccount(
-            null,  // ID is auto-generated
+            null, // ID is auto-generated
             $data['username'],
             $data['password'],
             $data['profile'],
             isset($data['is_suspended']) ? $data['is_suspended'] : false // Default to false if not set
         );
-        
-        // Process user creation
+
+        // Delegate user creation to the controller
         return $this->processUserCreation();
     }
-    
-    
+
+    // Processes the user creation
+    private function processUserCreation() {
+        $validationResult = $this->userAccount->validateUserAccount(); // Validate the user
+
+        if ($validationResult === "Validation passed.") {
+            // If validation is successful, save the user to the database
+            return $this->userAccount->saveUser();  
+        } else {
+            return $validationResult;  // Return validation error message
+        }
+    }
 }
 
-// Main processing logic for user account creation (acting as Controller)
+
+// Main processing logic for user account creation
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Collect form data with proper validation for 'profile'
     $data = [
@@ -61,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
-    // Instantiate the CreateUAC controller with validated data
+    // Instantiate the CreateUserAccountController controller with validated data
     $createUAC = new CreateUAC(new UserAccount(null, $data['username'], $data['password'], $data['profile'], $data['is_suspended']));
 
     // Call handleFormSubmission method to process and create the user account
@@ -69,30 +63,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Check the result and display an appropriate message
     if ($result === true) {
-        echo "<script>alert('Account successfully created!');</script>"; // You can replace this with a more sophisticated message if needed.
+        //echo "<script>alert('Account successfully created!');</script>"; // You can replace this with a more sophisticated message if needed.
     } else {
-        echo "<script>alert('Error creating account: $result');</script>";
-    }
-}
-
-class userAccountController {
-    public function create($data) {
-        // Include is_suspended as part of the input data
-        $user = new userAccount(
-            null,
-            $data['username'],
-            $data['password'],
-            $data['profile'],
-            isset($data['is_suspended']) ? $data['is_suspended'] : false  // Default to false if not set
-        );
-
-        // Validate user data
-        $validation = $user->validateUserAccount();
-        if ($validation === "Validation passed.") {
-            return $user->saveUser();
-        } else {
-            return $validation;
-        }
+       //echo "<script>alert('Error creating account: $result');</script>";
     }
 }
 
@@ -207,4 +180,22 @@ class userAccountController {
                 <button type="submit">Create Account</button>
             </div>
         </form>
+        <p id="successMessage" style="display:none; color: green; font-weight: bold; margin-top: 20px;">
+        ✅ Account successfully created!
+        </p>
     </div>
+    <script>
+    function handleFormSubmit(event) {
+        event.preventDefault(); // stop normal form submission
+
+        // Show the message
+        document.getElementById('successMessage').style.display = 'block';
+
+        // Optional: submit the form after a short delay (e.g. 1s)
+        setTimeout(() => {
+            document.getElementById('createForm').submit();
+        }, 1000);
+
+        return false;
+    }
+    </script>
