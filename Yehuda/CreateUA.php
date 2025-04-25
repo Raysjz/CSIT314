@@ -1,7 +1,7 @@
 <?php
 // Include necessary files
 require_once 'db.php';         //Ensure this is here to include the Database class
-require_once('entities/UserAccount.php');
+require_once('entities/CreateUserAccount.php');
 
 class CreateUAC {
     private $userAccount;

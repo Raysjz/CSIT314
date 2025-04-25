@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,7 +15,7 @@
 </head>
 <body>
 
-<?php require 'navbar.php'; ?>
+<?php require_once(__DIR__ . '/../boundary/adminNavbar.php'); ?>
 
 <style>
     .form-actions {
