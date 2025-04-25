@@ -15,7 +15,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['user_id'] = $result['user']['id'];
         $_SESSION['username'] = $result['user']['username'];
         $_SESSION['profile'] = $result['user']['profile'];
-        $_SESSION['is_suspended'] = $result['user']['issuspended'];
+        $_SESSION['is_suspended'] = $result['user']['is_suspended']; // Save the suspension status in session
+
+        
+        /*
+        //Debug Echo the session values (for debugging or display purposes)  
+        echo "User ID: " . $_SESSION['user_id'] . "<br>";
+        echo "Username: " . $_SESSION['username'] . "<br>";
+        echo "Profile: " . $_SESSION['profile'] . "<br>";
+        echo "Suspended status from session: " . $_SESSION['is_suspended'] . "<br>";
+        */
 
         // Redirect based on profile
         if ($result['user']['profile'] === 'User Admin') {
@@ -24,10 +33,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: /CSIT314/boundary/userDashboard.php");
         }
         exit;
-    } else {
-        // Show error if login failed
-        $login_error = $result['error'];
-    }
+        } else {
+            // Show error if login failed
+            $login_error = $result['error'];
+        }
+        
 }
 
 
@@ -37,22 +47,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 //-------------------------------Start of Login Controller--------------------------------
 
 class UserAccountController {
-    // Correct instantiation of UserAccount with necessary parameters
     public function authenticate($username, $password, $profile) {
-    // Instantiate the UserAccount Entity to handle the actual authentication logic
-    // Pass the correct parameters to the constructor (id, username, password, profile, isSuspended)
-    $userAccount = new UserAccount(
-        null,  // ID is auto-generated (can be null)
-        $username,
-        $password,
-        $profile,
-        false  // Default to false for isSuspended if not provided
-    );
+        // Correctly instantiate the UserAccount with all required parameters
+        $userAccount = new UserAccount(null, $username, $password, $profile, false);  // ID is null (auto-generated), isSuspended is false by default
 
-    return $userAccount->validateUser($username, $password, $profile);  // Correct method call
+        // Validate the user credentials
+        $result = $userAccount->validateUser($username, $password, $profile);
+
+        if (isset($result['success']) && $result['success']) {
+            // If user authentication is successful, return the user data
+            return $result;
+        } else {
+            // If authentication fails (including suspended users), return the error
+            return $result;
+        }
+    }
 }
 
-}
+
 
 
 //-------------------------------End of Login Controller--------------------------------
@@ -105,11 +117,17 @@ class UserAccount {
         }
     
         // Query database to find user with username and profile
-        $result = pg_query_params($conn, "SELECT * FROM useraccount WHERE username = $1 AND profile = $2", [$username, $profile]);
+        $result = pg_query_params($conn, "SELECT * FROM user_accounts WHERE username = $1 AND profile = $2", [$username, $profile]);
         $user = pg_fetch_assoc($result);
     
         if ($user) {
+            // Check if the password matches
             if ($password === $user['password']) { // 🔐 Or use password_verify() if hashed
+                // Check if the user is suspended (1 means suspended)
+                if ($user['is_suspended'] === 't') {
+                    return ['error' => '❌ Your account is suspended. Please contact support.'];
+                }
+                // User is valid and not suspended, return success
                 return [
                     'success' => true,
                     'user' => $user
@@ -121,6 +139,7 @@ class UserAccount {
             return ['error' => '❌ No user found with that username/profile.'];
         }
     }
+    
 }
 
 //-------------------------------End of useraccount Entity-------------------------------------
@@ -223,6 +242,7 @@ class UserAccount {
                 <?php if ($login_error): ?>
                     <div class="error"><?= htmlspecialchars($login_error) ?></div>
                 <?php endif; ?>
+
                 <input type="text" name="username" placeholder="Username" required><br>
                 <input type="password" name="password" placeholder="Password" required><br>
 

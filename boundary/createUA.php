@@ -14,7 +14,7 @@ class CreateUAC {
     // Process the user creation
     public function processUserCreation() {
         // Validate the user data
-        $validationResult = $this->userAccount->validateUA();
+        $validationResult = $this->userAccount->validateUserAccount();
         
         if ($validationResult === "Validation passed.") {
             return $this->userAccount->saveUser();  // Save user to the database
@@ -35,7 +35,7 @@ class CreateUAC {
             $data['username'],
             $data['password'],
             $data['profile'],
-            isset($data['isSuspended']) ? $data['isSuspended'] : false // Default to false if not set
+            isset($data['is_suspended']) ? $data['is_suspended'] : false // Default to false if not set
         );
         
         // Process user creation
@@ -52,7 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         'username' => $_POST['username'],
         'password' => $_POST['password'],
         'profile' => isset($_POST['profile']) ? $_POST['profile'] : null, // Don't use a default, just set null if not set
-        'isSuspended' => isset($_POST['isSuspended']) ? $_POST['isSuspended'] : false // Default to false if not set
+        'is_suspended' => isset($_POST['is_suspended']) ? $_POST['is_suspended'] : false // Default to false if not set
     ];
 
     // Check if the 'profile' field is set and not empty
@@ -62,28 +62,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Instantiate the CreateUAC controller with validated data
-    $createUAC = new CreateUAC(new UserAccount(null, $data['username'], $data['password'], $data['profile'], $data['isSuspended']));
+    $createUAC = new CreateUAC(new UserAccount(null, $data['username'], $data['password'], $data['profile'], $data['is_suspended']));
 
     // Call handleFormSubmission method to process and create the user account
     $result = $createUAC->handleFormSubmission($data);
 
-    // Display the result (success or failure message)
-    echo $result;
+    // Check the result and display an appropriate message
+    if ($result === true) {
+        echo "<script>alert('Account successfully created!');</script>"; // You can replace this with a more sophisticated message if needed.
+    } else {
+        echo "<script>alert('Error creating account: $result');</script>";
+    }
 }
 
 class userAccountController {
     public function create($data) {
-        // Include isSuspended as part of the input data
+        // Include is_suspended as part of the input data
         $user = new userAccount(
             null,
             $data['username'],
             $data['password'],
             $data['profile'],
-            isset($data['isSuspended']) ? $data['isSuspended'] : false  // Default to false if not set
+            isset($data['is_suspended']) ? $data['is_suspended'] : false  // Default to false if not set
         );
 
         // Validate user data
-        $validation = $user->validateUA();
+        $validation = $user->validateUserAccount();
         if ($validation === "Validation passed.") {
             return $user->saveUser();
         } else {
@@ -203,22 +207,4 @@ class userAccountController {
                 <button type="submit">Create Account</button>
             </div>
         </form>
-        <p id="successMessage" style="display:none; color: green; font-weight: bold; margin-top: 20px;">
-        ✅ Account successfully created!
-        </p>
     </div>
-    <script>
-    function handleFormSubmit(event) {
-        event.preventDefault(); // stop normal form submission
-
-        // Show the message
-        document.getElementById('successMessage').style.display = 'block';
-
-        // Optional: submit the form after a short delay (e.g. 1s)
-        setTimeout(() => {
-            document.getElementById('createForm').submit();
-        }, 1000);
-
-        return false;
-    }
-    </script>

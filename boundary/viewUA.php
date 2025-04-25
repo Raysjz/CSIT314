@@ -2,10 +2,6 @@
 require_once(__DIR__ . '/../boundary/adminNavbar.php');
 require_once(__DIR__ . '/../entities/UserAccount.php');
 
-
-//------------------------------------------------- ATM ALL BC IN THIS FILE -----------------------------------
-
-
 // Controller for Viewing User Accounts
 class ViewUAC {
     private $userAccount;
@@ -15,9 +11,13 @@ class ViewUAC {
         $this->userAccount = $userAccount;
     }
 
-    // Method to retrieve all user accounts
-    public function viewUA() {
-        return $this->userAccount->viewUA(); // Calls the UserAccount model's method to get user data
+    // Method to retrieve user accounts based on search
+    public function viewUserAccounts($searchQuery = null) {
+        if ($searchQuery) {
+            return $this->userAccount->searchUserAccounts($searchQuery);  // Calls the search method
+        } else {
+            return $this->userAccount->viewUserAccounts();  // No search query, return all users
+        }
     }
 }
 
@@ -82,6 +82,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <div class="container">
 
+        <!-- Search Form -->
         <div class="search-container">
             <h2>Search by Username or Id</h2>
             <form action="" method="GET">
@@ -91,46 +92,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
 
         <h2>User List</h2>
-            <table>
-                
-                <tbody>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>Username</th>
+                    <th>Password</th>
+                    <th>Profile</th>
+                    <th>Is Suspended</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
                 <?php
-                    // Fetch and display user accounts
+                    // Check if there is a search query
+                    $searchQuery = isset($_GET['search']) ? $_GET['search'] : null;
+
+                    // Instantiate the UserAccount model and controller
                     $userAccount = new UserAccount(null, '', '', '', 0); // Empty fields since we just want to fetch users
                     $viewUAC = new ViewUAC($userAccount);
-                    $userAccounts = $viewUAC->viewUA();
+
+                    // Fetch user accounts based on the search query
+                    $userAccounts = $viewUAC->viewUserAccounts($searchQuery);
 
                     if (empty($userAccounts)) {
-                        echo "<p>No user accounts have been created.</p>";
+                        echo "<tr><td colspan='6' class='no-results'>No results found.</td></tr>";
                     } else {
-                        echo "<table border='1'>";
-                        echo "
-                        <tr>
-                            <th>User ID</th>
-                            <th>Username</th>
-                            <th>Profile</th>
-                            <th>Is Suspended</th>
-                            <th>Actions</th>
-                        </tr>";
-
                         foreach ($userAccounts as $account) {
                             echo "<tr>";
-                            echo "<td>" . htmlspecialchars($account->getId()) . "</td>"; // Use the getter for ID
-                            echo "<td>" . htmlspecialchars($account->getUsername()) . "</td>"; // Use the getter for username
-                            echo "<td>" . htmlspecialchars($account->getProfile()) . "</td>"; // Use the getter for profile
-                            echo "<td>" . htmlspecialchars($account->getIsSuspended() ? 'Yes' : 'No') . "</td>"; // Use the getter for isSuspended
-                            echo "<td>";
-                            echo "<button onclick='window.location.href=\"update_user.php?id=" . $account->getId() . "\"'>Update</button>"; // Use the getter for ID
-                            echo "<button onclick='window.location.href=\"suspend_user.php?id=" . $account->getId() . "\"'>Suspend</button>"; // Use the getter for ID
-                            echo "</td>";
+                            echo "<td>" . htmlspecialchars($account->getId()) . "</td>"; 
+                            echo "<td>" . htmlspecialchars($account->getUsername()) . "</td>"; 
+                            echo "<td>" . htmlspecialchars($account->getPassword()) . "</td>";
+                            echo "<td>" . htmlspecialchars($account->getProfile()) . "</td>";
+                            echo "<td>" . htmlspecialchars($account->getIsSuspended() ? 'Yes' : 'No') . "</td>";
+                            echo "<td class='actions-buttons'>
+                                    <button onclick=\"window.location.href='updateUA.php?userid=" . $account->getId() . "';\" class='update-button'>Update</button>
+                                    <button onclick=\"return confirm('Are you sure you want to suspend this user?') ? window.location.href='suspendUA.php?userid=" . $account->getId() . "' : false;\" class='suspend-button'>Suspend</button>
+                                  </td>";
                             echo "</tr>";
                         }
-                        
-
-                        echo "</table>";
                     }
-                    ?>
-                </tbody>
-            </table>
+                ?>
+            </tbody>
+        </table>
     </div>
 </body>
+</html>
