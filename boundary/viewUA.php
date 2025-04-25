@@ -1,54 +1,14 @@
 <?php
-require_once(__DIR__ . '/../boundary/adminNavbar.php');
-require_once(__DIR__ . '/../entities/UserAccount.php');
+// Include necessary files
+require_once(__DIR__ . '/../adminNavbar.php');
+require_once(__DIR__ . '/../controllers/ViewUAController.php');
 
-// Controller for Viewing User Accounts
-class ViewUAC {
-    private $userAccount;
+// Get the search query from GET request
+$searchQuery = isset($_GET['search']) ? $_GET['search'] : null;
 
-    // Constructor to accept the UserAccount model
-    public function __construct(UserAccount $userAccount) {
-        $this->userAccount = $userAccount;
-    }
-
-    // Method to retrieve user accounts based on search
-    public function viewUserAccounts($searchQuery = null) {
-        if ($searchQuery) {
-            return $this->userAccount->searchUserAccounts($searchQuery);  // Calls the search method
-        } else {
-            return $this->userAccount->viewUserAccounts();  // No search query, return all users
-        }
-    }
-}
-
-// Process form submission (for testing user creation)
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Collect form data
-    $data = [
-        'username' => $_POST['username'],
-        'password' => $_POST['password'],
-        'profile' => $_POST['profile'],
-        'isSuspended' => isset($_POST['isSuspended']) ? true : false // Default to false if not checked
-    ];
-
-    // Instantiate the UserAccount model and controller
-    $userAccount = new UserAccount(null, $data['username'], $data['password'], $data['profile'], $data['isSuspended']);
-    $viewUAC = new ViewUAC($userAccount);
-
-    // Validate user data
-    $validationResult = $userAccount->validateUA();
-    if ($validationResult === "Validation passed.") {
-        // Save user to the database
-        $result = $userAccount->saveUser();
-        if ($result) {
-            echo "✅ User account has been successfully created.";
-        } else {
-            echo "❌ Error creating user account.";
-        }
-    } else {
-        echo $validationResult; // Show validation errors
-    }
-}
+// Instantiate the controller and fetch user data
+$controller = new ViewUserAccountController();
+$userAccounts = $controller->viewUserAccounts($searchQuery);
 ?>
 
 <!DOCTYPE html>
@@ -111,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     // Instantiate the UserAccount model and controller
                     $userAccount = new UserAccount(null, '', '', '', 0); // Empty fields since we just want to fetch users
-                    $viewUAC = new ViewUAC($userAccount);
+                    $viewUAC = new ViewUserAccountController($userAccount);
 
                     // Fetch user accounts based on the search query
                     $userAccounts = $viewUAC->viewUserAccounts($searchQuery);
@@ -139,3 +99,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 </body>
 </html>
+

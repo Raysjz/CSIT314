@@ -7,7 +7,7 @@
         <a href="../boundary/createUP.php">Create Profile</a> 
     </div>
     <div class="navbar-right">
-        <a href="/CSIT314/logout.php">Logout</a>
+        <a href="../logout.php">Logout</a>
     </div>
 </div>
 

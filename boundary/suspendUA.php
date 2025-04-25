@@ -1,7 +1,7 @@
 <?php
 // Include necessary files
-require_once(__DIR__ . '/../boundary/adminNavbar.php');
-require_once(__DIR__ . '/../entities/UserAccount.php');
+require_once(__DIR__ . '/../adminNavbar.php');
+require_once(__DIR__ . '/../controllers/SuspendUAController.php');
 
 // Initialize message variable
 $message = "";
@@ -9,24 +9,24 @@ $message = "";
 // Get the user ID from the URL query parameter
 $userIdToSuspend = isset($_GET['userid']) ? $_GET['userid'] : null;
 
+// Instantiate the controller
+$controller = new SuspendUserAccountController();
+
 // If the user ID is provided, suspend the user
 if ($userIdToSuspend !== null) {
-    // Fetch the user by ID
-    $userToSuspend = UserAccount::getUserById($userIdToSuspend);
+    // Call the controller to suspend the user
+    $result = $controller->suspendUserAccount($userIdToSuspend);
 
-    // If the user is found, suspend them
-    if ($userToSuspend) {
-        // Suspend the user by setting 'is_suspended' to true
-        $userToSuspend->suspendUserAccount();  // Update the database
-
-        // Redirect back to the user list (viewUA.php)
-        header("Location: viewUA.php");
+    if ($result) {
+        // Success message
+        $message = "✅ User has been successfully suspended!";
+        header("Location: viewUA.php"); // Redirect to the user list page
         exit;
     } else {
-        echo "❌ User not found.";
+        $message = "❌ User not found.";
     }
 } else {
-    echo "❌ No user ID provided.";
+    $message = "❌ No user ID provided.";
 }
 ?>
 

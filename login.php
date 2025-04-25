@@ -28,9 +28,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Redirect based on profile
         if ($result['user']['profile'] === 'User Admin') {
-            header("Location: /CSIT314/boundary/adminDashboard.php");
+            header("Location: /CSIT314/adminDashboard.php");
         } else {
-            header("Location: /CSIT314/boundary/userDashboard.php");
+            header("Location: /CSIT314/userDashboard.php");
         }
         exit;
         } else {
@@ -63,8 +63,6 @@ class UserAccountController {
         }
     }
 }
-
-
 
 
 //-------------------------------End of Login Controller--------------------------------

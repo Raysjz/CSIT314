@@ -1,16 +1,14 @@
 <?php
 // Include necessary files
-require_once(__DIR__ . '/../boundary/adminNavbar.php');
-require_once(__DIR__ . '/../entities/UserAccount.php');
+require_once(__DIR__ . '/../adminNavbar.php');
+require_once(__DIR__ . '/../controllers/UpdateUAController.php');
 
-/// Retrieve the user ID from the query parameter
+// Get the user ID from the query parameter
 $userIdToUpdate = isset($_GET['userid']) ? $_GET['userid'] : null;
 
-// If a user ID is provided
-if ($userIdToUpdate !== null) {
-    // Fetch the user based on the ID
-    $userToUpdate = UserAccount::getUserById($userIdToUpdate);  // Pass the ID as an argument
-}
+// Instantiate the Controller for fetching and updating user account data
+$controller = new UpdateUserAccountController();
+$userToUpdate = $controller->getUserById($userIdToUpdate);
 
 // If no user is found, show an error message
 if (!$userToUpdate) {
@@ -18,35 +16,35 @@ if (!$userToUpdate) {
     exit;
 }
 
-// Handle form submission (update user)
+// Handle form submission for updating user data
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Get updated user data from form
-    $updatedUser = new UserAccount(
-        $_POST['userid'],  // user ID
-        $_POST['username'],  // updated username
-        $_POST['password'],  // updated password
-        $_POST['profile'],   // updated profile
-        $userToUpdate->getIsSuspended()  // retain the current suspended status (or update if needed)
-    );
+    // Collect form data
+    $data = [
+        'userid' => $_POST['userid'],
+        'username' => $_POST['username'],
+        'password' => $_POST['password'],
+        'profile' => $_POST['profile'],
+        'is_suspended' => isset($_POST['is_suspended']) ? $_POST['is_suspended'] : false
+    ];
 
-    // Save updated user to the database
-    $result = $updatedUser->updateUserAccount();  // Assuming updateUserAccount() updates the user in the database
+    // Call controller to update user account
+    $result = $controller->updateUserAccount($data);
 
-    // Check the result and display an appropriate message
     if ($result === true) {
+        // Success - redirect to the user list page after a delay
         echo "<script>
         alert('✅ User account has been successfully updated!');
-        // Delay redirection by 1 second (1000 milliseconds)
         setTimeout(function() {
             window.location.href = 'viewUA.php'; // Redirect to the user list page
         }, 500);
-      </script>";
-exit; // Ensure no further code is executed
+        </script>";
+        exit;
     } else {
-        echo "<script>alert('❌Error updating user account: $result');</script>";
+        echo "<script>alert('❌ Error updating user account: $result');</script>";
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
