@@ -45,3 +45,67 @@ select * from user_profiles;
 SELECT column_name
 FROM information_schema.columns
 WHERE table_name = 'user_accounts';
+
+
+-- Cleaner
+
+CREATE TABLE IF NOT EXISTS services (
+    service_id SERIAL PRIMARY KEY,
+    cleaner_id INT NOT NULL,  -- Foreign key to the user_accounts table
+    service_name VARCHAR(255) NOT NULL,
+    description TEXT,
+    price DECIMAL(10, 2),
+    availability BOOLEAN DEFAULT TRUE,
+    views_count INT DEFAULT 0,
+    shortlisted_count INT DEFAULT 0,
+    status VARCHAR(20) DEFAULT 'active',  -- 'active' or 'suspended'
+    FOREIGN KEY (cleaner_id) REFERENCES user_accounts(account_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS shortlist (
+    shortlist_id SERIAL PRIMARY KEY,
+    home_owner_id INT NOT NULL,  -- References home owners
+    service_id INT NOT NULL,     -- References services
+    FOREIGN KEY (home_owner_id) REFERENCES user_accounts(account_id),
+    FOREIGN KEY (service_id) REFERENCES services(service_id)
+);
+
+CREATE TABLE IF NOT EXISTS bookings (
+    booking_id SERIAL PRIMARY KEY,
+    home_owner_id INT NOT NULL,   -- References home owners
+    service_id INT NOT NULL,      -- References services
+    booking_date DATE NOT NULL,   -- Date of service booking
+    status VARCHAR(20) DEFAULT 'confirmed',  -- Status (confirmed, completed, etc.)
+    FOREIGN KEY (home_owner_id) REFERENCES user_accounts(account_id),
+    FOREIGN KEY (service_id) REFERENCES services(service_id)
+);
+
+CREATE TABLE IF NOT EXISTS service_categories (
+    category_id SERIAL PRIMARY KEY,
+    category_name VARCHAR(255) NOT NULL,  -- Category name (e.g., "Home Cleaning")
+    is_suspended BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+CREATE TABLE IF NOT EXISTS match (
+    match_id SERIAL PRIMARY KEY,
+    home_owner_id INT NOT NULL,
+    cleaner_id INT NOT NULL,
+    service_id INT NOT NULL,  -- Foreign key to services
+    price DECIMAL(10, 2),
+    status VARCHAR(20) DEFAULT 'pending',  -- Match status
+    FOREIGN KEY (home_owner_id) REFERENCES user_accounts(account_id),
+    FOREIGN KEY (cleaner_id) REFERENCES user_accounts(account_id),
+    FOREIGN KEY (service_id) REFERENCES services(service_id)
+);
+
+
+CREATE TABLE IF NOT EXISTS match_request (
+    match_request_id SERIAL PRIMARY KEY,
+    home_owner_id INT NOT NULL,   -- References home owner
+    service_id INT NOT NULL,      -- References the service being requested
+    cleaner_id INT NOT NULL,      -- Cleaner being requested
+    status VARCHAR(20) DEFAULT 'pending',  -- Request status
+    FOREIGN KEY (home_owner_id) REFERENCES user_accounts(account_id),
+    FOREIGN KEY (service_id) REFERENCES services(service_id),
+    FOREIGN KEY (cleaner_id) REFERENCES user_accounts(account_id)
+);

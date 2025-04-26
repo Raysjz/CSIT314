@@ -1,13 +1,7 @@
 <?php
-session_start();
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit();
-}
-
+require_once(__DIR__ . '/cleanerNavbar.php');
 
 ?>
-
 
 <!DOCTYPE html>
 <html>
@@ -30,3 +24,4 @@ if (!isset($_SESSION['user_id'])) {
         <a href="/CSIT314/logout.php">Logout</a>
     </body>
 </html>
+

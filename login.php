@@ -27,9 +27,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         */
 
         // Redirect based on profile
-        if ($result['user']['profile_name'] === 'User Admin') {
-            header("Location: /CSIT314/adminDashboard.php");
-        } else {
+        if($result['user']['profile_name'] === 'User Admin') {
+            header("Location: /CSIT314/boundary/viewUA.php");
+        }elseif($result['user']['profile_name'] === 'Homeowner'){
+            header("Location: /CSIT314/homeownerDashboard.php");
+        }elseif($result['user']['profile_name'] === 'Cleaner'){
+            header("Location: /CSIT314/cleanerDashboard.php");
+        }elseif($result['user']['profile_name'] === 'Platform Management'){
+            header("Location: /CSIT314/platformDashboard.php");
+        }else {
             header("Location: /CSIT314/userDashboard.php");
         }
         exit;
