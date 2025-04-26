@@ -3,8 +3,8 @@ require_once(__DIR__ . '/../entities/UserAccount.php');
 
 class UpdateUserAccountController {
     // Method to retrieve user by ID
-    public function getUserById($userId) {
-        return UserAccount::getUserById($userId);
+    public function getAccountUserById($userId) {
+        return UserAccount::getAccountUserById($userId);
     }
 
     // Method to handle updating the user account
@@ -20,5 +20,7 @@ class UpdateUserAccountController {
         // Call updateUserAccount method in Entity to update the user in the database
         return $user->updateUserAccount();
     }
+    
 }
+    
 ?>

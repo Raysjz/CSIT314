@@ -1,16 +1,16 @@
 -- User Profile
 CREATE TABLE IF NOT EXISTS user_profiles (
     profile_id SERIAL PRIMARY KEY,    -- Primary Key for user_profiles
-    name VARCHAR(50) NOT NULL,         -- Profile name (e.g., Homeowner, Cleaner)
+    profile_name VARCHAR(50) NOT NULL,         -- Profile name (e.g., Homeowner, Cleaner)
     is_suspended BOOLEAN NOT NULL      -- Profile suspension status
 );
 
 -- User Account
 CREATE TABLE IF NOT EXISTS user_accounts (
     account_id SERIAL PRIMARY KEY,        -- Primary Key for user_accounts
-    username VARCHAR(50) UNIQUE NOT NULL, -- Username (unique)
-    password VARCHAR(255) NOT NULL,       -- Password
-    profile VARCHAR(20) NOT NULL,         -- Profile name (Admin, Homeowner, Cleaner, etc.)
+    ua_username VARCHAR(50) UNIQUE NOT NULL, -- Username (unique)
+    ua_password VARCHAR(255) NOT NULL,       -- Password
+    profile_name VARCHAR(20) NOT NULL,         -- Profile name (Admin, Homeowner, Cleaner, etc.)
     profile_id INT NOT NULL,              -- Foreign key to user_profiles table
     is_suspended BOOLEAN NOT NULL DEFAULT FALSE,  -- Account suspension status
     FOREIGN KEY (profile_id) REFERENCES user_profiles(profile_id) ON DELETE CASCADE -- Link to user_profiles
@@ -24,7 +24,7 @@ VALUES
 ('Cleaner', FALSE),
 ('Platform Management', FALSE);
 
--- Insert users into user_accounts with profile_id
+-- Insert users into user_accounts with profile_ids
 INSERT INTO user_accounts (username, password, profile, profile_id, is_suspended)
 VALUES
 ('admin', '1234', 'User Admin', 1, FALSE),
@@ -32,6 +32,11 @@ VALUES
 ('cleaner', '1234', 'Cleaner', 3, FALSE),	
 ('platformmgmt', '1234', 'Platform Management', 4, FALSE);
 
+/*
+ALTER TABLE user_profiles
+RENAME COLUMN name TO profile_name;
+
+*/
 
 select * from user_accounts;
 -- drop table user_accounts;

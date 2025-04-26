@@ -18,12 +18,10 @@ if ($userIdToSuspend !== null) {
     $result = $controller->suspendUserProfile($userIdToSuspend);
 
     if ($result) {
-        // Success message
-        $message = "✅ User has been successfully suspended!";
-        header("Location: viewUP.php"); // Redirect to the user list page
-        exit;
+        // Success message with user ID
+        $message = "✅ User with ID: " . htmlspecialchars($userIdToSuspend) . " has been successfully suspended!";
     } else {
-        $message = "❌ User not found.";
+        $message = "❌ User not found or could not be suspended.";
     }
 } else {
     $message = "❌ No user ID provided.";

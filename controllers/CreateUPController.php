@@ -13,17 +13,22 @@ class CreateUserProfileController {
         $validationResult = $this->userProfile->validateUP();
         
         if ($validationResult === "Validation passed.") {
-            return $this->userProfile->saveUserProfile();  // Save user to the database
+            if ($this->userProfile->saveUserProfile()) {
+                return true; // Success
+            } else {
+                return "Error saving profile.";
+            }
         } else {
             return $validationResult;  // Return validation error message
         }
     }
+    
 
     public function handleFormSubmission($data) {
         $this->userProfile = new userProfile(
             null,  // ID is auto-generated
             $data['name'],
-            isset($data['is_suspended']) ? $data['is_suspended'] : false
+            isset($data['isSuspended']) ? $data['isSuspended'] : false
         );
 
         return $this->processUserProfileCreation();

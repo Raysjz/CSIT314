@@ -4,13 +4,6 @@ require_once(__DIR__ . '/../adminNavbar.php');
 require_once(__DIR__ . '/../controllers/ViewUPController.php');
 require_once(__DIR__ . '/../controllers/SearchUPController.php');
 
-// Check if there is a success message in the session
-if (isset($_SESSION['message'])) {
-    echo "<div class='message'>" . $_SESSION['message'] . "</div>";
-    // Clear the message after displaying it
-    unset($_SESSION['message']);
-}
-
 // Get the search query from GET request
 $searchQuery = isset($_GET['search']) ? $_GET['search'] : null;
 
@@ -95,8 +88,8 @@ if ($searchQuery) {
                             echo "<td>" . htmlspecialchars($profile->getName()) . "</td>";
                             echo "<td>" . htmlspecialchars($profile->getIsSuspended() ? 'Yes' : 'No') . "</td>";
                             echo "<td class='actions-buttons'>
-                                    <button onclick=\"window.location.href='updateUA.php?userid=" . $profile->getProfileId() . "';\" class='update-button'>Update</button>
-                                    <button onclick=\"return confirm('Are you sure you want to suspend this user?') ? window.location.href='suspendUA.php?userid=" . $profile->getProfileId() . "' : false;\" class='suspend-button'>Suspend</button>
+                                    <button onclick=\"window.location.href='updateUP.php?userid=" . $profile->getProfileId() . "';\" class='update-button'>Update</button>
+                                    <button onclick=\"return confirm('Are you sure you want to suspend this user?') ? window.location.href='suspendUP.php?userid=" . $profile->getProfileId() . "' : false;\" class='suspend-button'>Suspend</button>
                                   </td>";
                             echo "</tr>";
                         }

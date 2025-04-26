@@ -12,10 +12,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (isset($result['success']) && $result['success']) {
         // Handle success (redirect)
-        $_SESSION['user_id'] = $result['user']['id'];
-        $_SESSION['username'] = $result['user']['username'];
-        $_SESSION['profile'] = $result['user']['profile'];
-        $_SESSION['is_suspended'] = $result['user']['is_suspended']; // Save the suspension status in session
+        $_SESSION['user_id'] = $result['user']['account_id'];
+        $_SESSION['username'] = $result['user']['ua_username'];
+        $_SESSION['profile'] = $result['user']['profile_name'];
+        $_SESSION['isSuspended'] = $result['user']['is_suspended']; // Save the suspension status in session
 
         
         /*
@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         */
 
         // Redirect based on profile
-        if ($result['user']['profile'] === 'User Admin') {
+        if ($result['user']['profile_name'] === 'User Admin') {
             header("Location: /CSIT314/adminDashboard.php");
         } else {
             header("Location: /CSIT314/userDashboard.php");

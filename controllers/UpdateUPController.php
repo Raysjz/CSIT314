@@ -1,24 +1,25 @@
 <?php
-require_once(__DIR__ . '/../entities/UserAccount.php');
+require_once(__DIR__ . '/../entities/UserProfile.php'); 
 
-class UpdateUserAccountController {
-    // Method to retrieve user by ID
-    public function getUserById($userId) {
-        return UserAccount::getUserById($userId);
+class UpdateUserProfileController {
+    // Fetch user profile by ID
+    public function getUserProfileById($userId) {
+        return UserProfile::getUserProfileById($userId);  // Ensure this returns a valid user profile object
     }
 
-    // Method to handle updating the user account
-    public function updateUserAccount($data) {
-        $user = new UserAccount(
-            $data['userid'],   // User ID
-            $data['username'], // Username
-            $data['password'], // Password
-            $data['profile'],  // Profile
-            isset($data['is_suspended']) ? $data['is_suspended'] : false  // Suspended status
+    // Update the user profile with the new data
+    public function updateUserProfile($data) {
+        $user = new UserProfile(
+            $data['id'],          // Profile ID
+            $data['name'],        // Profile Name
+            isset($data['isSuspended']) ? $data['isSuspended'] : false  // Suspended status
         );
 
-        // Call updateUserAccount method in Entity to update the user in the database
-        return $user->updateUserAccount();
+        return $user->updateUserProfile();  // Return true if update is successful
     }
 }
+
+
+
+
 ?>
