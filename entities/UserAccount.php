@@ -180,7 +180,7 @@ class UserAccount {
         $db = Database::getPDO();
 
         $stmt = $db->prepare("SELECT * FROM user_accounts WHERE account_id = :id");
-        $stmt->bindParam(':account_id', $id);
+        $stmt->bindParam(':id', $id);
         $stmt->execute();
 
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -201,18 +201,19 @@ class UserAccount {
      // Updates user account by id
      public function updateUserAccount() {
         $db = Database::getPDO();
-
+    
+        // Make sure to use the correct column names in the SQL query
         $stmt = $db->prepare("UPDATE user_accounts 
-            SET username = :username, ua_password = :password, ua_profile = :profile, is_suspended = :isSuspended 
-            WHERE id = :id");
-
-        $stmt->bindParam(':id', $this->id);
-        $stmt->bindParam(':username', $this->username);
-        $stmt->bindParam(':password', $this->password);
-        $stmt->bindParam(':name', $this->profile);
-        $stmt->bindParam(':isSuspended', $this->isSuspended, PDO::PARAM_BOOL);
-
-        return $stmt->execute();
+                              SET ua_username = :username, ua_password = :password, profile_name = :profile, is_suspended = :is_suspended 
+                              WHERE account_id = :id");
+    
+        $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);  
+        $stmt->bindParam(':username', $this->username);  
+        $stmt->bindParam(':password', $this->password);  
+        $stmt->bindParam(':profile', $this->profile);    
+        $stmt->bindParam(':is_suspended', $this->isSuspended, PDO::PARAM_BOOL);  
+    
+        return $stmt->execute();  // Execute the update query
     }
     
 

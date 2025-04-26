@@ -8,7 +8,7 @@ $userIdToUpdate = isset($_GET['userid']) ? $_GET['userid'] : null;
 
 // Instantiate the Controller for fetching and updating user account data
 $controller = new UpdateUserAccountController();
-$userToUpdate = $controller->getUserById($userIdToUpdate);
+$userToUpdate = $controller->getAccountUserById($userIdToUpdate);
 
 // If no user is found, show an error message
 if (!$userToUpdate) {
@@ -45,12 +45,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Update User</title>
     <style>
         body { font-family: Arial; background: #f4f4f4; margin: 0; padding: 40px; }
@@ -85,6 +83,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <option value="Home Owner" <?php if ($userToUpdate->getProfile() === 'Home Owner') echo 'selected'; ?>>Home Owner</option>
                 <option value="Cleaner" <?php if ($userToUpdate->getProfile() === 'Cleaner') echo 'selected'; ?>>Cleaner</option>
                 <option value="Platform Management" <?php if ($userToUpdate->getProfile() === 'Platform Management') echo 'selected'; ?>>Platform Management</option>
+            </select>
+
+            <label for="is_suspended">Is Suspended</label>
+            <select id="is_suspended" name="is_suspended">
+                <option value="1" <?php echo $userToUpdate->getIsSuspended() ? 'selected' : ''; ?>>Yes</option>
+                <option value="0" <?php echo !$userToUpdate->getIsSuspended() ? 'selected' : ''; ?>>No</option>
             </select>
 
             <div class="button-container">

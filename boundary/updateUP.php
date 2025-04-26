@@ -10,10 +10,10 @@ $userIdToUpdate = isset($_GET['userid']) ? $_GET['userid'] : null;
 
 // Instantiate the Controller for fetching and updating user profile data
 $controller = new UpdateUserProfileController(); 
-$userProfile = $controller->getUserProfileById($userIdToUpdate);
+$userToUpdate = $controller->getUserProfileById($userIdToUpdate);
 
 // If no user is found, show an error message
-if (!$userProfile) {
+if (!$userToUpdate) {
     echo "❌ No user found with ID: " . htmlspecialchars($userIdToUpdate);
     exit;  // Stop the script if no user is found
 }
@@ -88,16 +88,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php endif; ?>
 
     <!-- Update form -->
-    <form action="updateUP.php?userid=<?php echo htmlspecialchars($userProfile->getProfileId()); ?>" method="post">
-        <input type="hidden" name="profile_id" value="<?php echo htmlspecialchars($userProfile->getProfileId()); ?>">
+    <form action="updateUP.php?userid=<?php echo htmlspecialchars($userToUpdate->getProfileId()); ?>" method="post">
+        <input type="hidden" name="profile_id" value="<?php echo htmlspecialchars($userToUpdate->getProfileId()); ?>">
 
         <label for="name">Profile Name</label>
-        <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($userProfile->getName()); ?>" required>
+        <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($userToUpdate->getName()); ?>" required>
 
         <label for="is_suspended">Is Suspended</label>
         <select id="is_suspended" name="is_suspended">
-            <option value="1" <?php echo $userProfile->getIsSuspended() ? 'selected' : ''; ?>>Yes</option>
-            <option value="0" <?php echo !$userProfile->getIsSuspended() ? 'selected' : ''; ?>>No</option>
+            <option value="1" <?php echo $userToUpdate->getIsSuspended() ? 'selected' : ''; ?>>Yes</option>
+            <option value="0" <?php echo !$userToUpdate->getIsSuspended() ? 'selected' : ''; ?>>No</option>
         </select>
 
         <div class="button-container">
