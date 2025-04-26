@@ -1,6 +1,5 @@
 <?php
 require_once(__DIR__ . '/adminNavbar.php');
-session_start();
 
 /* Debug
 echo '<pre>';

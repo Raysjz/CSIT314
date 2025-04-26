@@ -67,7 +67,7 @@ class UserAccount {
     public function getProfile() {
         return $this->profile;
     }
-
+    
     public function getIsSuspended() {
         return $this->isSuspended;
     }
@@ -123,26 +123,43 @@ class UserAccount {
         return "Validation passed.";
     }
 
-    // Saves the user account to the database
-    public function saveUser() {
+    public function saveUserAccount() {
         $db = Database::getPDO();
-
-        $stmt = $db->prepare("INSERT INTO user_accounts (username, password, profile, is_suspended) 
-                              VALUES (:username, :password, :profile, :is_suspended)");
-
+    
+        // Assuming you need to look up the profile_id based on the profile name
+        // Query to get profile_id based on the profile name
+        $profileQuery = $db->prepare("SELECT profile_id FROM user_profiles WHERE name = :profile");
+        $profileQuery->bindParam(':profile', $this->profile);
+        $profileQuery->execute();
+    
+        // Fetch the profile_id
+        $profileResult = $profileQuery->fetch(PDO::FETCH_ASSOC);
+        
+        if ($profileResult) {
+            $profileId = $profileResult['profile_id'];  // Get the profile_id from the result
+        } else {
+            // Handle the case where the profile doesn't exist
+            throw new Exception("Profile not found in user_profiles table");
+        }
+    
+        // Now, we can insert into user_accounts with the profile_id
+        $stmt = $db->prepare("INSERT INTO user_accounts (username, password, profile_id, is_suspended) 
+                              VALUES (:username, :password, :profile_id, :is_suspended)");
+    
         $stmt->bindParam(':username', $this->username);
         $stmt->bindParam(':password', $this->password);
-        $stmt->bindParam(':profile', $this->profile);
+        $stmt->bindParam(':profile_id', $profileId);  // Bind profile_id instead of profile
         $stmt->bindParam(':is_suspended', $this->isSuspended, PDO::PARAM_BOOL);
-
+    
         return $stmt->execute();
     }
+    
 
-    // Views all user accounts (ordered by ID ascending)
+    // Views all user accounts
     public static function viewUserAccounts() {
         $db = Database::getPDO();
 
-        $stmt = $db->prepare("SELECT * FROM user_accounts ORDER BY id ASC");
+        $stmt = $db->prepare("SELECT * FROM user_accounts");
         $stmt->execute();
 
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -150,7 +167,7 @@ class UserAccount {
         $userAccounts = [];
         foreach ($result as $row) {
             $userAccounts[] = new UserAccount(
-                $row['id'],
+                $row['account_id'],
                 $row['username'],
                 $row['password'],
                 $row['profile'],
@@ -180,7 +197,7 @@ class UserAccount {
         $userAccounts = [];
         foreach ($result as $row) {
             $userAccounts[] = new UserAccount(
-                $row['id'],
+                $row['account_id'],
                 $row['username'],
                 $row['password'],
                 $row['profile'],
@@ -220,7 +237,7 @@ class UserAccount {
 
         if ($user) {
             return new UserAccount(
-                $user['id'],
+                $user['account_id'],
                 $user['username'],
                 $user['password'],
                 $user['profile'],

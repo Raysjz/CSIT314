@@ -71,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </select>
 
         <div class="form-actions">
-            <button type="button" class="back-btn" onclick="location.href='/CSIT314/boundary/adminDashboard.php'">Back</button>
+            <button type="button" class="back-btn" onclick="location.href='/CSIT314/adminDashboard.php'">Back</button>
             <button type="submit">Create Account</button>
         </div>
     </form>

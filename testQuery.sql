@@ -1,36 +1,42 @@
-/*
-User Accounts 
-*/
-CREATE TABLE user_accounts (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    password VARCHAR(50) NOT NULL,
-    profile VARCHAR(20) NOT NULL,
-    is_suspended BOOLEAN NOT NULL DEFAULT FALSE
+-- User Profile
+CREATE TABLE IF NOT EXISTS user_profiles (
+    profile_id SERIAL PRIMARY KEY,    -- Primary Key for user_profiles
+    name VARCHAR(50) NOT NULL,         -- Profile name (e.g., Homeowner, Cleaner)
+    is_suspended BOOLEAN NOT NULL      -- Profile suspension status
 );
 
+-- User Account
+CREATE TABLE IF NOT EXISTS user_accounts (
+    account_id SERIAL PRIMARY KEY,        -- Primary Key for user_accounts
+    username VARCHAR(50) UNIQUE NOT NULL, -- Username (unique)
+    password VARCHAR(255) NOT NULL,       -- Password
+    profile VARCHAR(20) NOT NULL,         -- Profile name (Admin, Homeowner, Cleaner, etc.)
+    profile_id INT NOT NULL,              -- Foreign key to user_profiles table
+    is_suspended BOOLEAN NOT NULL DEFAULT FALSE,  -- Account suspension status
+    FOREIGN KEY (profile_id) REFERENCES user_profiles(profile_id) ON DELETE CASCADE -- Link to user_profiles
+);
     
-INSERT INTO user_accounts (username, password, profile, is_suspended)
+-- Insert profiles into user_profiles
+INSERT INTO user_profiles (name, is_suspended)
 VALUES
-('admin', '1234', 'User Admin', FALSE),
-('homeowner', '1234', 'Home Owner', FALSE),
-('cleaner', '1234', 'Cleaner', FALSE),
-('platformmgmt', '1234', 'Platform Management', FALSE);
-('admin', '1111', 'User Admin', TRUE);
-('cleaner2', '5654', 'Cleaner', TRUE);
+('User Admin', FALSE),
+('Homeowner', FALSE),
+('Cleaner', FALSE),
+('Platform Management', FALSE);
 
-drop table user_accounts;
+-- Insert users into user_accounts with profile_id
+INSERT INTO user_accounts (username, password, profile, profile_id, is_suspended)
+VALUES
+('admin', '1234', 'User Admin', 1, FALSE),
+('homeowner', '1234', 'Homeowner', 2, FALSE),
+('cleaner', '1234', 'Cleaner', 3, FALSE),	
+('platformmgmt', '1234', 'Platform Management', 4, FALSE);
 
-select * from public.user_accounts;
 
-/*
-User Profile
-*/
-
-CREATE TABLE user_profiles (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    password VARCHAR(50) NOT NULL,
-    profile VARCHAR(20) NOT NULL,
-    is_suspended BOOLEAN NOT NULL DEFAULT FALSE
-);
+select * from user_accounts;
+-- drop table user_accounts;
+select * from user_profiles;
+-- drop table user_profiles;
+SELECT column_name
+FROM information_schema.columns
+WHERE table_name = 'user_accounts';

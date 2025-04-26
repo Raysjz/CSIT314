@@ -7,20 +7,12 @@ require_once(__DIR__ . '/../controllers/CreateUPController.php');
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Collect form data with proper validation for 'profile'
     $data = [
-        'username' => $_POST['username'],
-        'password' => $_POST['password'],
-        'profile' => isset($_POST['profile']) ? $_POST['profile'] : null, // Don't use a default, just set null if not set
+        'name' => $_POST['name'],
         'is_suspended' => isset($_POST['is_suspended']) ? $_POST['is_suspended'] : false // Default to false if not set
     ];
 
-    // Check if the 'profile' field is set and not empty
-    if (empty($data['profile'])) {
-        echo "❌ Profile is required."; // Provide feedback if the profile is missing
-        exit;
-    }
-
-    // Instantiate the CreateUserAccountController with validated data
-    $controller = new CreateUserAccountController(new UserAccount(null, $data['username'], $data['password'], $data['profile'], $data['is_suspended']));
+    // Instantiate the CreateUserProfileController with validated data
+    $controller = new CreateUserProfileController(new userProfile(null, $data['name'], $data['is_suspended']));
 
     // Call handleFormSubmission method to process and create the user account
     $result = $controller->handleFormSubmission($data);
@@ -55,24 +47,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <h1>Create Profile</h1>
     <form id="createForm" action="createUP.php" method="post" onsubmit="return handleFormSubmit(event)">
         
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" required>
-
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" required>
-
-        <label for="profile">Profile</label>
-        <select id="profile" name="profile" required>
-            <option value="">-- Select Profile --</option>
-            <option value="User Admin">User Admin</option>
-            <option value="Cleaner">Cleaner</option>
-            <option value="Home Owner">Home Owner</option>
-            <option value="Platform Management">Platform Management</option>
-        </select>
+        <label for="name">Profile Name</label>
+        <input type="text" id="name" name="name" required>
 
         <div class="form-actions">
-            <button type="button" class="back-btn" onclick="location.href='/CSIT314/boundary/adminDashboard.php'">Back</button>
-            <button type="submit">Create Account</button>
+            <button type="button" class="back-btn" onclick="location.href='/CSIT314/adminDashboard.php'">Back</button>
+            <button type="submit">Create Profile</button>
         </div>
     </form>
 </div>
