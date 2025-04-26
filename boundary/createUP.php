@@ -1,7 +1,7 @@
 <?php
 // Include necessary files
 require_once(__DIR__ . '/../adminNavbar.php');
-require_once(__DIR__ . '/../controllers/CreateUAController.php');
+require_once(__DIR__ . '/../controllers/CreateUPController.php');
 
 // Main processing logic for user account creation (acting as Controller)
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -27,9 +27,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Check the result and display an appropriate message
     if ($result === true) {
-        echo "<script>alert('Account successfully created!');</script>";
+        echo "<script>alert('Profile successfully created!');</script>";
     } else {
-        echo "<script>alert('Error creating account: $result');</script>";
+        echo "<script>alert('Error creating Profile: $result');</script>";
     }
 }
 ?>
@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Create New Account</title>
+    <title>Create New Profile</title>
     <style>
         body { font-family: Arial; background: #f4f4f4; margin: 0; padding: 40px; }
         .container { background: white; padding: 30px; max-width: 500px; margin: auto; margin-top: 80px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
@@ -52,8 +52,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
 
 <div class="container">
-    <h1>Create Account</h1>
-    <form id="createForm" action="createUA.php" method="post" onsubmit="return handleFormSubmit(event)">
+    <h1>Create Profile</h1>
+    <form id="createForm" action="createUP.php" method="post" onsubmit="return handleFormSubmit(event)">
         
         <label for="username">Username</label>
         <input type="text" id="username" name="username" required>

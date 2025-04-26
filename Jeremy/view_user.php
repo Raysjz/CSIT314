@@ -55,7 +55,7 @@ $user = !empty($filteredUsers) ? $filteredUsers[0] : ['username' => '', 'email' 
 </head>
 <body>
 
-<?php require_once(__DIR__ . '/../boundary/adminNavbar.php'); ?>
+<?php require_once(__DIR__ . '/adminNavbar.php'); ?>
 
     <div class="container">
 

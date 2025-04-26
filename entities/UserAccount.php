@@ -72,6 +72,38 @@ class UserAccount {
         return $this->isSuspended;
     }
 
+    // Validate user login data
+    public function validateUser($username, $password, $profile) {
+        $conn = Database::getPgConnect(); // Ensure database connection is correct
+    
+        if (empty($username) || empty($profile)) {
+            return ['error' => 'Username and profile are required.'];
+        }
+    
+        // Query database to find user with username and profile
+        $result = pg_query_params($conn, "SELECT * FROM user_accounts WHERE username = $1 AND profile = $2", [$username, $profile]);
+        $user = pg_fetch_assoc($result);
+    
+        if ($user) {
+            // Check if the password matches
+            if ($password === $user['password']) {
+                // Check if the user is suspended (1 means suspended)
+                if ($user['is_suspended'] === 't') {
+                    return ['error' => '❌ Your account is suspended. Please contact support.'];
+                }
+                // User is valid and not suspended, return success
+                return [
+                    'success' => true,
+                    'user' => $user
+                ];
+            } else {
+                return ['error' => '❌ Incorrect password.'];
+            }
+        } else {
+            return ['error' => '❌ No user found with that username/profile.'];
+        }
+    }
+    
     // Validate user input data
     public function validateUserAccount() {
         if (empty($this->username) || empty($this->password) || empty($this->profile)) {
@@ -91,7 +123,7 @@ class UserAccount {
         return "Validation passed.";
     }
 
-    // Save user to the database
+    // Saves the user account to the database
     public function saveUser() {
         $db = Database::getPDO();
 
@@ -106,7 +138,7 @@ class UserAccount {
         return $stmt->execute();
     }
 
-    // View all user accounts (ordered by ID ascending)
+    // Views all user accounts (ordered by ID ascending)
     public static function viewUserAccounts() {
         $db = Database::getPDO();
 
@@ -159,7 +191,7 @@ class UserAccount {
         return $userAccounts;
     }
 
-    // Update user account by id
+    // Updates user account by id
     public function updateUserAccount() {
         $db = Database::getPDO();
 
@@ -176,7 +208,7 @@ class UserAccount {
         return $stmt->execute();
     }
 
-    // Static: Fetch user by ID
+    // Fetches user by ID
     public static function getUserById($id) {
         $db = Database::getPDO();
 

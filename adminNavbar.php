@@ -1,13 +1,13 @@
 <!-- adminNavbar.php -->
 <div class="Navbar">
     <div class="navbar-left">
-        <a href="../boundary/viewUA.php">View Account</a>
-        <a href="../boundary/viewUP.php">View Profile</a>
-        <a href="../boundary/createUA.php">Create Account</a> 
-        <a href="../boundary/createUP.php">Create Profile</a> 
+        <a href="/CSIT314/boundary/viewUA.php">View Account</a>
+        <a href="/CSIT314/boundary/viewUP.php">View Profile</a>
+        <a href="/CSIT314/boundary/createUA.php">Create Account</a> 
+        <a href="/CSIT314/boundary/createUP.php">Create Profile</a> 
     </div>
     <div class="navbar-right">
-        <a href="../logout.php">Logout</a>
+        <a href="/CSIT314/logout.php">Logout</a>
     </div>
 </div>
 

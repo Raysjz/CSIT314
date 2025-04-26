@@ -1,3 +1,6 @@
+/*
+User Accounts 
+*/
 CREATE TABLE user_accounts (
     id SERIAL PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
@@ -19,3 +22,15 @@ VALUES
 drop table user_accounts;
 
 select * from public.user_accounts;
+
+/*
+User Profile
+*/
+
+CREATE TABLE user_profiles (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(50) NOT NULL,
+    profile VARCHAR(20) NOT NULL,
+    is_suspended BOOLEAN NOT NULL DEFAULT FALSE
+);
