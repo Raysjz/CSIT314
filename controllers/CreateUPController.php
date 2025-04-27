@@ -1,33 +1,36 @@
 <?php
-require_once(__DIR__ . '/../entities/UserAccount.php');
+require_once(__DIR__ . '/../entities/userProfile.php');
 
-class CreateUserAccountController {
-    private $userAccount;
+class CreateUserProfileController {
+    private $userProfile;
 
-    public function __construct(UserAccount $userAccount) {
-        $this->userAccount = $userAccount;
+    public function __construct(userProfile $userProfile) {
+        $this->userProfile = $userProfile;
     }
 
     // Process the user creation
-    public function processUserCreation() {
-        $validationResult = $this->userAccount->validateUserAccount();
+    public function processUserProfileCreation() {
+        $validationResult = $this->userProfile->validateUP();
         
         if ($validationResult === "Validation passed.") {
-            return $this->userAccount->saveUser();  // Save user to the database
+            if ($this->userProfile->saveUserProfile()) {
+                return true; // Success
+            } else {
+                return "Error saving profile.";
+            }
         } else {
             return $validationResult;  // Return validation error message
         }
     }
+    
 
     public function handleFormSubmission($data) {
-        $this->userAccount = new UserAccount(
+        $this->userProfile = new userProfile(
             null,  // ID is auto-generated
-            $data['username'],
-            $data['password'],
-            $data['profile'],
-            isset($data['is_suspended']) ? $data['is_suspended'] : false
+            $data['name'],
+            isset($data['isSuspended']) ? $data['isSuspended'] : false
         );
 
-        return $this->processUserCreation();
+        return $this->processUserProfileCreation();
     }
 }

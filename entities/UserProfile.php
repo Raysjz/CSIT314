@@ -1,71 +1,25 @@
 <?php
+require_once(__DIR__ . '/../db.php');
 
-class Database {
-    private static $host = 'localhost';
-    private static $port = '5432';
-    private static $dbname = 'csit314-database';
-    private static $user = 'postgres';
-    private static $password = '1234';
-
-    // 1)PDO connection (OOP-friendly)
-    public static function getPDO() {
-        $dsn = "pgsql:host=" . self::$host . ";port=" . self::$port . ";dbname=" . self::$dbname;
-
-        try {
-            $conn = new PDO($dsn, self::$user, self::$password);
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            return $conn;
-        } catch (PDOException $e) {
-            die("❌ PDO Connection failed: " . $e->getMessage());
-        }
-    }
-
-    // 2)pg_connect connection (procedural)
-    public static function getPgConnect() {
-        $connStr = "host=" . self::$host .
-                   " port=" . self::$port .
-                   " dbname=" . self::$dbname .
-                   " user=" . self::$user .
-                   " password=" . self::$password;
-
-        $conn = pg_connect($connStr);
-        if (!$conn) {
-            die("❌ pg_connect failed.");
-        }
-        return $conn;
-    }
-}
-
-class UserAccount {
+class UserProfile {
     protected $id;
-    protected $username;
-    protected $password;
-    protected $profile;
+    protected $name;
     protected $isSuspended;
 
-    public function __construct($id, $username, $password, $profile, $isSuspended) {
+    // Constructor
+    public function __construct($id, $name, $isSuspended) {
         $this->id = $id;
-        $this->username = $username;
-        $this->password = $password;
-        $this->profile = $profile;
+        $this->name = $name;
         $this->isSuspended = $isSuspended;
     }
 
     // Getter methods
-    public function getId() {
+    public function getProfileId() {
         return $this->id;
     }
 
-    public function getUsername() {
-        return $this->username;
-    }
-
-    public function getPassword() {
-        return $this->password;
-    }
-
-    public function getProfile() {
-        return $this->profile;
+    public function getName() {
+        return $this->name;
     }
 
     public function getIsSuspended() {
@@ -73,139 +27,161 @@ class UserAccount {
     }
 
     // Validate user input data
-    public function validateUserAccount() {
-        if (empty($this->username) || empty($this->password) || empty($this->profile)) {
+    public function validateUP() {
+        if (empty($this->name)) {
             return "All fields are required.";
         }
 
-        $db = Database::getPDO();
+        $db = Database::getPDO(); 
 
-        // Check if username already exists
-        $stmt = $db->prepare("SELECT * FROM user_accounts WHERE username = :username");
-        $stmt->bindParam(':username', $this->username);
+        // Check if Profile Name already exists
+        $stmt = $db->prepare("SELECT * FROM user_profiles WHERE profile_name = :name");
+        $stmt->bindParam(':name', $this->name);
         $stmt->execute();
         if ($stmt->rowCount() > 0) {
-            return "Username already taken.";
-        }
+             return "Profile Name already exists.";
+         }
+
 
         return "Validation passed.";
     }
 
-    // Save user to the database
-    public function saveUser() {
+    // In UserProfile.php
+    public static function getProfiles() {
         $db = Database::getPDO();
 
-        $stmt = $db->prepare("INSERT INTO user_accounts (username, password, profile, is_suspended) 
-                              VALUES (:username, :password, :profile, :is_suspended)");
-
-        $stmt->bindParam(':username', $this->username);
-        $stmt->bindParam(':password', $this->password);
-        $stmt->bindParam(':profile', $this->profile);
-        $stmt->bindParam(':is_suspended', $this->isSuspended, PDO::PARAM_BOOL);
-
-        return $stmt->execute();
-    }
-
-    // View all user accounts (ordered by ID ascending)
-    public static function viewUserAccounts() {
-        $db = Database::getPDO();
-
-        $stmt = $db->prepare("SELECT * FROM user_accounts ORDER BY id ASC");
+        // Prepare the SQL statement to fetch all profiles
+        $stmt = $db->prepare("SELECT profile_id, profile_name FROM user_profiles");
         $stmt->execute();
 
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Fetch all profiles as an associative array
+        $profiles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $userAccounts = [];
+        return $profiles;
+    }
+
+
+    public function saveUserProfile() {
+        $db = Database::getPDO();
+        
+        $stmt = $db->prepare("INSERT INTO user_profiles (profile_name, is_suspended) 
+                              VALUES (:name, :isSuspended)");
+    
+        $stmt->bindParam(':name', $this->name);
+        $stmt->bindParam(':isSuspended', $this->isSuspended, PDO::PARAM_BOOL);
+    
+        return $stmt->execute();
+    }   
+
+    // Views all user Profiles
+    public static function viewUserProfiles() {
+        $db = Database::getPDO();
+    
+        // Prepare the SQL statement to fetch user profiles
+        $stmt = $db->prepare("SELECT * FROM user_profiles");  // Ensure the table name is correct
+        $stmt->execute();
+    
+        // Fetch all the profiles as an associative array
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+        // Initialize an empty array to hold the UserProfile objects
+        $userProfiles = [];
+    
+        // Iterate through the results and create a UserProfile object for each row
         foreach ($result as $row) {
-            $userAccounts[] = new UserAccount(
-                $row['id'],
-                $row['username'],
-                $row['password'],
-                $row['profile'],
+            $userProfiles[] = new UserProfile(
+                $row['profile_id'],
+                $row['profile_name'],
                 isset($row['is_suspended']) ? (bool)$row['is_suspended'] : false
             );
         }
-
-        return $userAccounts;
+    
+        // Return the array of UserProfile objects
+        return $userProfiles;
     }
+    
 
-    // Search user accounts by username or id
-    public static function searchUserAccounts($searchQuery) {
+    // Search user profile by name or id
+    public function searchUserProfiles($searchQuery) {
         $db = Database::getPDO();
-
-        if (is_numeric($searchQuery)) {
-            $stmt = $db->prepare("SELECT * FROM user_accounts WHERE id = :search");
-        } else {
-            $stmt = $db->prepare("SELECT * FROM user_accounts WHERE username LIKE :search");
-            $searchQuery = "%" . $searchQuery . "%";
-        }
-
-        $stmt->bindParam(':search', $searchQuery);
+        
+        // Ensure the search query is wrapped with wildcards for partial matching
+        $searchQuery = "%" . $searchQuery . "%";
+    
+        // Use ILIKE for case-insensitive search for 'name' and CAST for profile_id comparison
+        $stmt = $db->prepare("SELECT * FROM user_profiles 
+                              WHERE profile_name ILIKE :searchQuery 
+                              OR profile_id::text ILIKE :searchQuery");  // Cast profile_id to text for comparison
+    
+        // Bind the parameter to the query
+        $stmt->bindParam(':searchQuery', $searchQuery, PDO::PARAM_STR);
+    
+        // Execute the query
         $stmt->execute();
-
+    
+        // Fetch results and map them to UserProfile objects
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $userAccounts = [];
+        $userProfiles = [];
+    
         foreach ($result as $row) {
-            $userAccounts[] = new UserAccount(
-                $row['id'],
-                $row['username'],
-                $row['password'],
-                $row['profile'],
+            $userProfiles[] = new UserProfile(
+                $row['profile_id'],
+                $row['profile_name'],
                 isset($row['is_suspended']) ? (bool)$row['is_suspended'] : false
             );
         }
-
-        return $userAccounts;
+    
+        return $userProfiles;
     }
+    
 
-    // Update user account by id
-    public function updateUserAccount() {
+    // Fetch user by ID
+    public static function getUserProfileById($id) {
         $db = Database::getPDO();
-
-        $stmt = $db->prepare("UPDATE user_accounts 
-            SET username = :username, password = :password, profile = :profile, is_suspended = :is_suspended 
-            WHERE id = :id");
-
-        $stmt->bindParam(':id', $this->id);
-        $stmt->bindParam(':username', $this->username);
-        $stmt->bindParam(':password', $this->password);
-        $stmt->bindParam(':profile', $this->profile);
-        $stmt->bindParam(':is_suspended', $this->isSuspended, PDO::PARAM_BOOL);
-
-        return $stmt->execute();
-    }
-
-    // Static: Fetch user by ID
-    public static function getUserById($id) {
-        $db = Database::getPDO();
-
-        $stmt = $db->prepare("SELECT * FROM user_accounts WHERE id = :id");
-        $stmt->bindParam(':id', $id);
+        
+        $stmt = $db->prepare("SELECT * FROM user_profiles WHERE profile_id = :id");
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
-
+    
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
+    
         if ($user) {
-            return new UserAccount(
-                $user['id'],
-                $user['username'],
-                $user['password'],
-                $user['profile'],
+            return new UserProfile(
+                $user['profile_id'],
+                $user['profile_name'],
                 isset($user['is_suspended']) ? (bool)$user['is_suspended'] : false
             );
         } else {
-            return null;
+            // Debugging: If no user is found
+            echo "No user found with profile_id: " . htmlspecialchars($id) . "<br>";
+            return null; // Return null if user not found
         }
+    }
+    
+
+    // Update user profile (method to handle update in the database)
+    public function updateUserProfile() {
+        $db = Database::getPDO();
+
+        $stmt = $db->prepare("UPDATE user_profiles SET profile_name = :name, is_suspended = :isSuspended WHERE profile_id = :id");
+        $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $stmt->bindParam(':name', $this->name);
+        $stmt->bindParam(':isSuspended', $this->isSuspended, PDO::PARAM_BOOL);
+
+        return $stmt->execute(); // Return whether the update was successful
     }
 
     // Suspend a user (set is_suspended to true)
-    public function suspendUserAccount() {
+    public function suspendUserProfile() {
         $db = Database::getPDO();
-
-        $stmt = $db->prepare("UPDATE user_accounts SET is_suspended = true WHERE id = :id");
-        $stmt->bindParam(':id', $this->id);
-
-        return $stmt->execute();
+    
+        // Ensure the SQL query uses the correct placeholder :id
+        $stmt = $db->prepare("UPDATE user_profiles SET is_suspended = true WHERE profile_id = :id");
+    
+        // Use :id in bindParam instead of :profile_id
+        $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);  // Correctly binding the profile ID
+    
+        return $stmt->execute();  // Execute the query
     }
+    
 }

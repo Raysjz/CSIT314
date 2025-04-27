@@ -1,7 +1,7 @@
 <?php
+require_once(__DIR__ . '/controllers/loginController.php');
 session_start();
 
-//-------------------------------Start of Login Boundary--------------------------------
 
 $login_error = '';
 
@@ -12,10 +12,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (isset($result['success']) && $result['success']) {
         // Handle success (redirect)
-        $_SESSION['user_id'] = $result['user']['id'];
-        $_SESSION['username'] = $result['user']['username'];
-        $_SESSION['profile'] = $result['user']['profile'];
-        $_SESSION['is_suspended'] = $result['user']['is_suspended']; // Save the suspension status in session
+        $_SESSION['user_id'] = $result['user']['account_id'];
+        $_SESSION['username'] = $result['user']['ua_username'];
+        $_SESSION['profile'] = $result['user']['profile_name'];
+        $_SESSION['isSuspended'] = $result['user']['is_suspended']; // Save the suspension status in session
 
         
         /*
@@ -27,9 +27,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         */
 
         // Redirect based on profile
-        if ($result['user']['profile'] === 'User Admin') {
-            header("Location: /CSIT314/adminDashboard.php");
-        } else {
+        if($result['user']['profile_name'] === 'User Admin') {
+            header("Location: /CSIT314/boundary/viewUA.php");
+        }elseif($result['user']['profile_name'] === 'Homeowner'){
+            header("Location: /CSIT314/homeownerDashboard.php");
+        }elseif($result['user']['profile_name'] === 'Cleaner'){
+            header("Location: /CSIT314/cleanerDashboard.php");
+        }elseif($result['user']['profile_name'] === 'Platform Management'){
+            header("Location: /CSIT314/platformDashboard.php");
+        }else {
             header("Location: /CSIT314/userDashboard.php");
         }
         exit;
@@ -39,108 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
 }
-
-
-//-------------------------------End of Login Boundary--------------------------------
-
-
-//-------------------------------Start of Login Controller--------------------------------
-
-class UserAccountController {
-    public function authenticate($username, $password, $profile) {
-        // Correctly instantiate the UserAccount with all required parameters
-        $userAccount = new UserAccount(null, $username, $password, $profile, false);  // ID is null (auto-generated), isSuspended is false by default
-
-        // Validate the user credentials
-        $result = $userAccount->validateUser($username, $password, $profile);
-
-        if (isset($result['success']) && $result['success']) {
-            // If user authentication is successful, return the user data
-            return $result;
-        } else {
-            // If authentication fails (including suspended users), return the error
-            return $result;
-        }
-    }
-}
-
-
-//-------------------------------End of Login Controller--------------------------------
-
-//-------------------------------Start of useraccount Entity-------------------------------------
-
-// Database connection
-class Database {
-    private static $host = 'localhost';
-    private static $port = '5432';
-    private static $dbname = 'csit314-database';
-    private static $user = 'postgres';
-    private static $password = '1234';
-
-    // 1)PDO connection (OOP-friendly)
-    public static function getPDO() {
-        $dsn = "pgsql:host=" . self::$host . ";port=" . self::$port . ";dbname=" . self::$dbname;
-
-        try {
-            $conn = new PDO($dsn, self::$user, self::$password);
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            return $conn;
-        } catch (PDOException $e) {
-            die("❌ PDO Connection failed: " . $e->getMessage());
-        }
-    }
-
-    // 2)pg_connect connection (procedural)
-    public static function getPgConnect() {
-        $connStr = "host=" . self::$host .
-                   " port=" . self::$port .
-                   " dbname=" . self::$dbname .
-                   " user=" . self::$user .
-                   " password=" . self::$password;
-
-        $conn = pg_connect($connStr);
-        if (!$conn) {
-            die("❌ pg_connect failed.");
-        }
-        return $conn;
-    }
-}
-
-class UserAccount {
-    public function validateUser($username, $password, $profile) {
-        $conn = Database::getPgConnect(); // Ensure database connection is correct
-    
-        if (empty($username) || empty($profile)) {
-            return ['error' => 'Username and profile are required.'];
-        }
-    
-        // Query database to find user with username and profile
-        $result = pg_query_params($conn, "SELECT * FROM user_accounts WHERE username = $1 AND profile = $2", [$username, $profile]);
-        $user = pg_fetch_assoc($result);
-    
-        if ($user) {
-            // Check if the password matches
-            if ($password === $user['password']) { // 🔐 Or use password_verify() if hashed
-                // Check if the user is suspended (1 means suspended)
-                if ($user['is_suspended'] === 't') {
-                    return ['error' => '❌ Your account is suspended. Please contact support.'];
-                }
-                // User is valid and not suspended, return success
-                return [
-                    'success' => true,
-                    'user' => $user
-                ];
-            } else {
-                return ['error' => '❌ Incorrect password.'];
-            }
-        } else {
-            return ['error' => '❌ No user found with that username/profile.'];
-        }
-    }
-    
-}
-
-//-------------------------------End of useraccount Entity-------------------------------------
 
 
 ?>

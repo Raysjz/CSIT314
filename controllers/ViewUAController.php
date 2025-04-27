@@ -5,7 +5,7 @@ class ViewUserAccountController {
     // Method to retrieve user accounts based on search query
     public function viewUserAccounts($searchQuery = null) {
         // Instantiate UserAccount Entity
-        $userAccount = new UserAccount(null, '', '', '', 0); // Just to call methods, no need for real user data
+        $userAccount = new UserAccount(null, '', '', '',0); // Just to call methods, no need for real user data
 
         // If a search query exists, search for matching accounts
         if ($searchQuery) {

@@ -1,5 +1,20 @@
 <?php
 // Database connection
+$conn = pg_connect("
+    host=localhost
+    port=5432
+    dbname=csit314-database
+    user=postgres
+    password=1234
+");
+
+// Check connection status
+if (!$conn) {
+    die("❌ Database connection failed.");
+} else {
+    //echo "✅ Connected to PostgreSQL successfully.<br><br>";
+}
+
 class Database {
     private static $host = 'localhost';
     private static $port = '5432';
@@ -35,5 +50,4 @@ class Database {
         return $conn;
     }
 }
-
 ?>

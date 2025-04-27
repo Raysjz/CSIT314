@@ -1,26 +1,12 @@
 <?php
-require_once(__DIR__ . '/adminNavbar.php');
-
-/* Debug
-echo '<pre>';
-print_r($_SESSION);
-echo '</pre>';
-*/
-
-// Check if the profile is set and if the user is an admin
-if (!isset($_SESSION['profile']) || $_SESSION['profile'] !== 'User Admin') {
-    echo "Access denied.";
-    exit;
-}
-
-
+require_once(__DIR__ . '/cleanerNavbar.php');
 
 ?>
 
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Admin Dashboard</title>
+        <title>Dashboard</title>
             <style>
             body { font-family: Arial; background: #f4f4f4; margin: 0; padding: 40px; }
             .container { background: white; padding: 30px; max-width: 500px; margin: auto; margin-top: 80px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
@@ -33,9 +19,9 @@ if (!isset($_SESSION['profile']) || $_SESSION['profile'] !== 'User Admin') {
     </head>
     <body>
         <br><br>
-        <h2>Welcome, <?php echo $_SESSION['username']; ?> to the Admin Dashboard !</h2>
+        <h2>Welcome, <?php echo $_SESSION['username']; ?> to the Dashboard !</h2>
         <p>You are logged in as: <strong><?php echo $_SESSION['profile']; ?></strong></p>
+        <a href="/CSIT314/logout.php">Logout</a>
     </body>
 </html>
-
 

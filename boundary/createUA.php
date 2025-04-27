@@ -2,6 +2,16 @@
 // Include necessary files
 require_once(__DIR__ . '/../adminNavbar.php');
 require_once(__DIR__ . '/../controllers/CreateUAController.php');
+require_once(__DIR__ . '/../controllers/UserProfileController.php');  // Include the UserProfileController
+
+// Instantiate the UserProfileController
+$userProfileController = new UserProfileController();
+
+// Fetch profiles for the dropdown
+$profiles = $userProfileController->getProfiles();  // Get all profiles from the database
+
+// Initialize message variable
+$message = "";
 
 // Main processing logic for user account creation (acting as Controller)
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -27,9 +37,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Check the result and display an appropriate message
     if ($result === true) {
-        echo "<script>alert('Account successfully created!');</script>";
+        $message = "✅ Profile successfully created!";
     } else {
-        echo "<script>alert('Error creating account: $result');</script>";
+        $message = "❌ Error creating profile: $result";
     }
 }
 ?>
@@ -45,14 +55,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         h1 { margin-bottom: 20px; }
         label { display: block; margin-top: 15px; }
         input, select { width: 100%; padding: 10px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; }
-        button { margin-top: 20px; padding: 10px 20px; background: #007bff; border: none; color: white; border-radius: 4px; cursor: pointer; }
-        button:hover { background: #0056b3; }
+        .message { padding: 10px; margin: 20px 0; border-radius: 5px; text-align: center; }
+        .success { background-color: #28a745; color: white; }
+        .error { background-color: #dc3545; color: white; }
+        .button-container { display: flex; justify-content: space-between; margin-top: 20px; }
+        .back-button, .update-button { padding: 10px 20px; border: none; color: white; border-radius: 4px; cursor: pointer; text-decoration: none; }
+        .back-button { background: #6c757d; }
+        .back-button:hover { background: #5a6268; }
+        .update-button { background: #28a745; }
+        .update-button:hover { background: #218838; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>Create Account</h1>
+
+    <!-- Display success or error message -->
+    <?php if ($message): ?>
+        <div class="message <?php echo (strpos($message, '❌') !== false) ? 'error' : 'success'; ?>">
+            <?php echo $message; ?>
+        </div>
+    <?php endif; ?>
+
     <form id="createForm" action="createUA.php" method="post" onsubmit="return handleFormSubmit(event)">
         
         <label for="username">Username</label>
@@ -64,15 +89,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <label for="profile">Profile</label>
         <select id="profile" name="profile" required>
             <option value="">-- Select Profile --</option>
-            <option value="User Admin">User Admin</option>
-            <option value="Cleaner">Cleaner</option>
-            <option value="Home Owner">Home Owner</option>
-            <option value="Platform Management">Platform Management</option>
+            <?php
+            // Dynamically populate profile options from the database
+            foreach ($profiles as $profile) {
+                echo "<option value='" . htmlspecialchars($profile['profile_id']) . "'>" . htmlspecialchars($profile['profile_name']) . "</option>";
+            }
+            ?>
         </select>
 
-        <div class="form-actions">
-            <button type="button" class="back-btn" onclick="location.href='/CSIT314/boundary/adminDashboard.php'">Back</button>
-            <button type="submit">Create Account</button>
+        <div class="button-container">
+            <a href="/CSIT314/adminDashboard.php" class="back-button">Back</a>
+            <button type="submit" class="update-button">Create Profile</button>
         </div>
     </form>
 </div>

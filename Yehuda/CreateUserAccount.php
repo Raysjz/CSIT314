@@ -2,13 +2,13 @@
 require_once('db.php'); // Ensure this is here to include the Database class
 
 class UserAccount {
-    protected $id;
-    protected $fullname;
-    protected $username;
-    protected $email;
-    protected $address;
-    protected $password;
-    protected $role;
+        protected $id;
+        protected $fullname;
+        protected $username;
+        protected $email;
+        protected $address;
+        protected $password;
+        protected $role;
 
     public function __construct($id, $fullname, $username, $email, $address, $password, $role) {
         $this->id = $id;

@@ -1,29 +1,43 @@
 <?php
 // Include necessary files
 require_once(__DIR__ . '/../adminNavbar.php');
-require_once(__DIR__ . '/../controllers/CreateUPController.php');
+require_once(__DIR__ . '/../controllers/UpdateUPController.php');
+
+// Get the user ID from the query parameter
+$userIdToUpdate = isset($_GET['userid']) ? $_GET['userid'] : null;
+//echo "User ID to update: " . htmlspecialchars($userIdToUpdate) . "<br>";
+
+
+// Instantiate the Controller for fetching and updating user profile data
+$controller = new UpdateUserProfileController(); 
+$userToUpdate = $controller->getUserProfileById($userIdToUpdate);
+
+// If no user is found, show an error message
+if (!$userToUpdate) {
+    echo "❌ No user found with ID: " . htmlspecialchars($userIdToUpdate);
+    exit;  // Stop the script if no user is found
+}
 
 // Initialize message variable
 $message = "";
 
-// Main processing logic for user profile creation
+// Handle form submission for updating user data
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Collect form data and sanitize it
     $data = [
+        'id' => $_POST['profile_id'],  // Use profile_id from form
         'name' => $_POST['name'],
-        'isSuspended' => isset($_POST['isSuspended']) ? $_POST['isSuspended'] : false // Default to false if not set
+        'isSuspended' => isset($_POST['is_suspended']) ? $_POST['is_suspended'] : false
     ];
 
-    // Instantiate the controller with validated data
-    $controller = new CreateUserProfileController(new userProfile(null, $data['name'], $data['isSuspended']));
+    // Call controller to update user profile
+    $result = $controller->updateUserProfile($data);
 
-    // Call handleFormSubmission method to process and create the user profile
-    $result = $controller->handleFormSubmission($data);
-
-    // Check the result and display an appropriate message
-    if ($result === true) {
-        $message = "✅ Profile successfully created!";
+    // Show appropriate message based on the result
+    if ($result) {
+        $message = "✅ Profile successfully updated!";
     } else {
-        $message = "❌ Error creating profile: $result";
+        $message = "❌ Error updating profile.";
     }
 }
 ?>
@@ -32,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Create New Profile</title>
+    <title>Update Profile</title>
     <style>
         body { font-family: Arial; background: #f4f4f4; margin: 0; padding: 40px; }
         .container { background: white; padding: 30px; max-width: 500px; margin: auto; margin-top: 80px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
@@ -64,23 +78,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
 
 <div class="container">
-    <h1>Create Profile</h1>
+    <h1>Update Profile</h1>
 
-    <!-- Display message if available -->
+    <!-- Display success or error message -->
     <?php if ($message): ?>
         <div class="message <?php echo (strpos($message, '❌') !== false) ? 'error' : 'success'; ?>">
             <?php echo $message; ?>
         </div>
     <?php endif; ?>
 
-    <form id="createForm" action="createUP.php" method="post">
-        
+    <!-- Update form -->
+    <form action="updateUP.php?userid=<?php echo htmlspecialchars($userToUpdate->getProfileId()); ?>" method="post">
+        <input type="hidden" name="profile_id" value="<?php echo htmlspecialchars($userToUpdate->getProfileId()); ?>">
+
         <label for="name">Profile Name</label>
-        <input type="text" id="name" name="name" required>
+        <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($userToUpdate->getName()); ?>" required>
+
+        <label for="is_suspended">Is Suspended</label>
+        <select id="is_suspended" name="is_suspended">
+            <option value="1" <?php echo $userToUpdate->getIsSuspended() ? 'selected' : ''; ?>>Yes</option>
+            <option value="0" <?php echo !$userToUpdate->getIsSuspended() ? 'selected' : ''; ?>>No</option>
+        </select>
 
         <div class="button-container">
             <a href="viewUP.php" class="back-button">Back</a>
-            <button type="submit" class="update-button">Create Profile</button>
+            <button type="submit" class="update-button">Update Profile</button>
         </div>
     </form>
 </div>

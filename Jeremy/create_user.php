@@ -15,7 +15,7 @@
 </head>
 <body>
 
-<?php require_once(__DIR__ . '/../boundary/adminNavbar.php'); ?>
+<?php require_once(__DIR__ . '/adminNavbar.php'); ?>
 
 <style>
     .form-actions {

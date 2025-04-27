@@ -4,10 +4,8 @@ session_start();  // Start the session to access session variables
 
 <div class="Navbar">
     <div class="navbar-left">
-        <a href="/CSIT314/boundary/viewUA.php">View Accounts</a>
-        <a href="/CSIT314/boundary/createUA.php">Create Account</a> 
-        <a href="/CSIT314/boundary/viewUP.php">View Profiles</a>
-        <a href="/CSIT314/boundary/createUP.php">Create Profile</a> 
+        <a href="">View Service</a>
+        <a href="">Create Service</a> 
     </div>
     <div class="navbar-right">
         <text color ="white" >Welcome, <?php echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'; ?> </text>

@@ -1,5 +1,6 @@
 <?php
 require_once(__DIR__ . '/../entities/UserAccount.php');
+require_once(__DIR__ . '/../entities/UserProfile.php'); // Include UserProfile to fetch profiles
 
 class CreateUserAccountController {
     private $userAccount;
@@ -9,11 +10,11 @@ class CreateUserAccountController {
     }
 
     // Process the user creation
-    public function processUserCreation() {
+    public function processUserAccountCreation() {
         $validationResult = $this->userAccount->validateUserAccount();
         
         if ($validationResult === "Validation passed.") {
-            return $this->userAccount->saveUser();  // Save user to the database
+            return $this->userAccount->saveUserAccount();  // Save user to the database
         } else {
             return $validationResult;  // Return validation error message
         }
@@ -28,6 +29,6 @@ class CreateUserAccountController {
             isset($data['is_suspended']) ? $data['is_suspended'] : false
         );
 
-        return $this->processUserCreation();
+        return $this->processUserAccountCreation();
     }
 }
