@@ -9,11 +9,16 @@
  - Use access token as password and own username as username
 3. Install PHP
 - https://www.youtube.com/watch?v=n04w2SzGr_U
-4. Install PostgreSQL
+4. Serverless PHP (Using supabase)
+~~5. Install PostgreSQL
+Important : During installation , put password as 1234 when installing 
+Remember to save password when creating server with password 1234 too
 - https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
-- https://www.youtube.com/watch?v=WFT5MaZN6g4
-5. Connecting PostgreSQL to PHP with XAMPP
-- https://www.youtube.com/watch?v=wD2E8IdBQIE&t=217s
+- https://www.youtube.com/watch?v=WFT5MaZN6g4~~
+
+5~~. Connecting PostgreSQL to PHP with XAMPP
+- https://www.youtube.com/watch?v=wD2E8IdBQIE&t=217s~~
+
 
 ## Getting started
 
