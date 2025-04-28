@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS user_accounts (
 );
     
 -- Insert profiles into user_profiles
-INSERT INTO user_profiles (name, is_suspended)
+INSERT INTO user_profiles (profile_name, is_suspended)
 VALUES
 ('User Admin', FALSE),
 ('Homeowner', FALSE),
@@ -25,7 +25,7 @@ VALUES
 ('Platform Management', FALSE);
 
 -- Insert users into user_accounts with profile_ids
-INSERT INTO user_accounts (username, password, profile, profile_id, is_suspended)
+INSERT INTO user_accounts (ua_username, ua_password, profile_name, profile_id, is_suspended)
 VALUES
 ('admin', '1234', 'User Admin', 1, FALSE),
 ('homeowner', '1234', 'Homeowner', 2, FALSE),
