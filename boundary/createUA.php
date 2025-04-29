@@ -39,6 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         'isSuspended' => isset($_POST['isSuspended']) ? $_POST['isSuspended'] : false // Default to false if not set
     ];
 
+    /*
     // Debug: Show the individual values
         echo "<h3>Form Data:</h3>";
         echo "<p>Username: " . htmlspecialchars($username) . "</p>";
@@ -46,7 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "<p>Profile ID: " . htmlspecialchars($profileId) . "</p>";  // Ensure profile_id is captured correctly
         echo "<p>Profile Name: " . htmlspecialchars($profileName) . "</p>";
         echo "<p>Is Suspended: " . ($isSuspended ? 'Yes' : 'No') . "</p>";
-
+    */
     // Check if the 'profile' field is set and not empty
     if (empty($data['profileId'])) {
         echo "❌ Profile is required."; // Provide feedback if the profile is missing
@@ -112,18 +113,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <input type="password" id="password" name="password" required>
 
         <label for="profile">Profile</label>
-        <select id="profile_id" name="profile_id" required onchange="updateProfileName()">
-    <option value="">-- Select Profile --</option>
-    <?php
-    // Dynamically populate profile options from the database
-    foreach ($profiles as $profile) {
-        echo "<option value='" . htmlspecialchars($profile['profile_id']) . "'>" . htmlspecialchars($profile['profile_name']) . "</option>";
-    }
-    ?>
-</select>
-<input type="hidden" id="profile_name" name="profile_name">
-
-
+            <select id="profile_id" name="profile_id" required onchange="updateProfileName()">
+            <option value="">-- Select Profile --</option>
+            <?php
+            // Dynamically populate profile options from the database
+            foreach ($profiles as $profile) {
+                echo "<option value='" . htmlspecialchars($profile['profile_id']) . "'>" . htmlspecialchars($profile['profile_name']) . "</option>";}?>
+            </select>
+            <input type="hidden" id="profile_name" name="profile_name">
+            
         <div class="button-container">
             <a href="viewUA.php" class="back-button">Back</a>
             <button type="submit" class="update-button">Create Profile</button>

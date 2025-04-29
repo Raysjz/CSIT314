@@ -13,8 +13,9 @@ class UpdateUserAccountController {
             $data['userid'],   // User ID
             $data['username'], // Username
             $data['password'], // Password
-            $data['profile'],  // Profile
-            isset($data['is_suspended']) ? $data['is_suspended'] : false  // Suspended status
+            $data['profileName'],
+            $data['profileId'],
+            isset($data['isSuspended']) ? $data['isSuspended'] : false
         );
 
         // Call updateUserAccount method in Entity to update the user in the database

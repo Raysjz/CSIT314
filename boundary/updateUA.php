@@ -2,6 +2,28 @@
 // Include necessary files
 require_once(__DIR__ . '/../adminNavbar.php');
 require_once(__DIR__ . '/../controllers/UpdateUAController.php');
+require_once(__DIR__ . '/../controllers/UserProfileController.php');
+
+/*
+//Debug: Display all POST data
+
+echo "<pre>";
+print_r($_POST);  // This will show all data submitted via POST
+echo "</pre>";
+
+// Retrieve form data
+$username = $_POST['username'] ?? '';
+$password = $_POST['password'] ?? '';
+$profileName = $_POST['profile_name'] ?? ''; 
+$profileId = $_POST['profile_id'] ?? '';  // Access profile_id from form
+$isSuspended = isset($_POST['is_suspended']) ? $_POST['is_suspended'] : false;
+*/
+
+// Instantiate the UserProfileController
+$userProfileController = new UserProfileController();
+
+// Fetch profiles for the dropdown
+$profiles = $userProfileController->getProfiles();  // Get all profiles from the database
 
 // Get the user ID from the query parameter
 $userIdToUpdate = isset($_GET['userid']) ? $_GET['userid'] : null;
@@ -23,9 +45,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         'userid' => $_POST['userid'],
         'username' => $_POST['username'],
         'password' => $_POST['password'],
-        'profile' => $_POST['profile'],
-        'is_suspended' => isset($_POST['is_suspended']) ? $_POST['is_suspended'] : false
+        'profileName' => $_POST['profile_name'],
+        'profileId' => $_POST['profile_id'],
+        'isSuspended' => isset($_POST['isSuspended']) ? $_POST['isSuspended'] : false // Default to false if not set
     ];
+
+     // Debug: Show the individual values
+     echo "<h3>Form Data:</h3>";
+     echo "<p>Username: " . htmlspecialchars($username) . "</p>";
+     echo "<p>Password: " . htmlspecialchars($password) . "</p>";
+     echo "<p>Profile ID: " . htmlspecialchars($profileId) . "</p>";  // Ensure profile_id is captured correctly
+     echo "<p>Profile Name: " . htmlspecialchars($profileName) . "</p>";
+     echo "<p>Is Suspended: " . ($isSuspended ? 'Yes' : 'No') . "</p>";
 
     // Call controller to update user account
     $result = $controller->updateUserAccount($data);
@@ -65,11 +96,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </style>
 </head>
 <body>
-    
     <div class="container">
         <h1>Update User</h1>
         <form action="updateUA.php?userid=<?php echo htmlspecialchars($userToUpdate->getId()); ?>" method="post" onsubmit="return handleFormSubmit(event)">
-            <input type="hidden" id="userid" name="userid" value="<?php echo htmlspecialchars($userToUpdate->getId()); ?>">
+            <label for="userid">User ID</label>
+            <input type="text" id="userid" name="userid" value="<?php echo htmlspecialchars($userToUpdate->getId()); ?>" readonly>
 
             <label for="username">Username</label>
             <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($userToUpdate->getUsername()); ?>" required>
@@ -78,12 +109,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <input type="text" id="password" name="password" value="<?php echo htmlspecialchars($userToUpdate->getPassword()); ?>" required>
 
             <label for="profile">Profile</label>
-            <select id="profile" name="profile" required>
-                <option value="User Admin" <?php if ($userToUpdate->getProfile() === 'User Admin') echo 'selected'; ?>>User Admin</option>
-                <option value="Home Owner" <?php if ($userToUpdate->getProfile() === 'Home Owner') echo 'selected'; ?>>Home Owner</option>
-                <option value="Cleaner" <?php if ($userToUpdate->getProfile() === 'Cleaner') echo 'selected'; ?>>Cleaner</option>
-                <option value="Platform Management" <?php if ($userToUpdate->getProfile() === 'Platform Management') echo 'selected'; ?>>Platform Management</option>
+            <select id="profile_id" name="profile_id" required onchange="updateProfileName()">
+            <?php
+            // Dynamically populate profile options from the database
+            foreach ($profiles as $profile) {
+                echo "<option value='" . htmlspecialchars($profile['profile_id']) . "'>" . htmlspecialchars($profile['profile_name']) . "</option>";}?>
             </select>
+            <input type="hidden" id="profile_name" name="profile_name">
 
             <label for="is_suspended">Is Suspended</label>
             <select id="is_suspended" name="is_suspended">
@@ -96,6 +128,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <button type="submit" class="update-button">Update Account</button>
             </div>
         </form>
+            <script>
+                // JavaScript to update the hidden field with the profile name when a profile is selected
+                function updateProfileName() {
+                var profileSelect = document.getElementById('profile_id');
+                var profileName = profileSelect.options[profileSelect.selectedIndex].text;
+                console.log('Selected Profile Name:', profileName);  // Debugging
+                document.getElementById('profile_name').value = profileName;
+                }
+
+            </script>
     </div>
 </body>
 </html>

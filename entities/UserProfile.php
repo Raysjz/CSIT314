@@ -46,7 +46,6 @@ class UserProfile {
         return "Validation passed.";
     }
 
-    // In UserProfile.php
     public static function getProfiles() {
         $db = Database::getPDO();
 
@@ -59,6 +58,19 @@ class UserProfile {
 
         return $profiles;
     }
+
+    
+    public static function getProfileIdByName($profileName) {
+        $db = Database::getPDO();
+        $stmt = $db->prepare("SELECT profile_id FROM user_profiles WHERE name = :name");
+        $stmt->bindParam(':name', $profileName);
+        $stmt->execute();
+    
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+        return $result ? $result['profile_id'] : null;
+    }
+    
 
 
     public function saveUserProfile() {

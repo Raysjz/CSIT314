@@ -1,6 +1,5 @@
 <?php
 require_once(__DIR__ . '/../entities/UserAccount.php');
-require_once(__DIR__ . '/../entities/UserProfile.php'); // Include UserProfile to fetch profiles
 
 class CreateUserAccountController {
     private $userAccount;
