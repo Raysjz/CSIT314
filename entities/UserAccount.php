@@ -111,30 +111,40 @@ class UserAccount {
     }
     
     
-
     // Views all user accounts
     public static function viewUserAccounts() {
         $db = Database::getPDO();
-
-        $stmt = $db->prepare("SELECT * FROM user_accounts");
+    
+        $stmt = $db->prepare("
+            SELECT 
+                ua.account_id,
+                ua.ua_username,
+                ua.ua_password,
+                up.profile_name AS profile_name,
+                ua.profile_id,
+                ua.is_suspended
+            FROM user_accounts ua
+            JOIN user_profiles up ON ua.profile_id = up.profile_id
+        ");
         $stmt->execute();
-
+    
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+    
         $userAccounts = [];
         foreach ($result as $row) {
             $userAccounts[] = new UserAccount(
                 $row['account_id'],
                 $row['ua_username'],
                 $row['ua_password'],
-                $row['profile_name'],
+                $row['profile_name'],    // ← Latest name fetched from user_profiles
                 $row['profile_id'],
                 isset($row['is_suspended']) ? (bool)$row['is_suspended'] : false
             );
         }
-
+    
         return $userAccounts;
     }
+    
 
     // Search user accounts by username or id
     public static function searchUserAccounts($searchQuery) {
