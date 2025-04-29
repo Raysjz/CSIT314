@@ -4,12 +4,24 @@ require_once(__DIR__ . '/../adminNavbar.php');
 require_once(__DIR__ . '/../controllers/CreateUAController.php');
 require_once(__DIR__ . '/../controllers/UserProfileController.php');  // Include the UserProfileController
 
+
+/* Debug: Display all POST data
+echo "<pre>";
+print_r($_POST);  // This will show all data submitted via POST
+echo "</pre>";
+// Retrieve form data
+$username = $_POST['username'] ?? '';
+$password = $_POST['password'] ?? '';
+$profileName = $_POST['profile_name'] ?? ''; 
+$profileId = $_POST['profile_id'] ?? '';  // Access profile_id from form
+$isSuspended = isset($_POST['is_suspended']) ? $_POST['is_suspended'] : false;
+*/
+
+
 // Instantiate the UserProfileController
 $userProfileController = new UserProfileController();
-
 // Fetch profiles for the dropdown
 $profiles = $userProfileController->getProfiles();  // Get all profiles from the database
-
 // Initialize message variable
 $message = "";
 
@@ -19,18 +31,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $data = [
         'username' => $_POST['username'],
         'password' => $_POST['password'],
-        'profile' => isset($_POST['profile']) ? $_POST['profile'] : null, // Don't use a default, just set null if not set
-        'is_suspended' => isset($_POST['is_suspended']) ? $_POST['is_suspended'] : false // Default to false if not set
+        'profileName' => $_POST['profile_name'],
+        'profileId' => $_POST['profile_id'],
+        'isSuspended' => isset($_POST['isSuspended']) ? $_POST['isSuspended'] : false // Default to false if not set
     ];
 
+    // Debug: Show the individual values
+        echo "<h3>Form Data:</h3>";
+        echo "<p>Username: " . htmlspecialchars($username) . "</p>";
+        echo "<p>Password: " . htmlspecialchars($password) . "</p>";
+        echo "<p>Profile ID: " . htmlspecialchars($profileId) . "</p>";  // Ensure profile_id is captured correctly
+        echo "<p>Profile Name: " . htmlspecialchars($profileName) . "</p>";
+        echo "<p>Is Suspended: " . ($isSuspended ? 'Yes' : 'No') . "</p>";
+
     // Check if the 'profile' field is set and not empty
-    if (empty($data['profile'])) {
+    if (empty($data['profileId'])) {
         echo "❌ Profile is required."; // Provide feedback if the profile is missing
         exit;
     }
 
+    
     // Instantiate the CreateUserAccountController with validated data
-    $controller = new CreateUserAccountController(new UserAccount(null, $data['username'], $data['password'], $data['profile'], $data['is_suspended']));
+    $controller = new CreateUserAccountController(new UserAccount(null, $data['username'], $data['password'], $data['profileName'],$data['profileId'], $data['isSuspended']));
 
     // Call handleFormSubmission method to process and create the user account
     $result = $controller->handleFormSubmission($data);
@@ -87,15 +109,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <input type="password" id="password" name="password" required>
 
         <label for="profile">Profile</label>
-        <select id="profile" name="profile" required>
-            <option value="">-- Select Profile --</option>
-            <?php
-            // Dynamically populate profile options from the database
-            foreach ($profiles as $profile) {
-                echo "<option value='" . htmlspecialchars($profile['profile_id']) . "'>" . htmlspecialchars($profile['profile_name']) . "</option>";
-            }
-            ?>
-        </select>
+        <select id="profile_id" name="profile_id" required onchange="updateProfileName()">
+    <option value="">-- Select Profile --</option>
+    <?php
+    // Dynamically populate profile options from the database
+    foreach ($profiles as $profile) {
+        echo "<option value='" . htmlspecialchars($profile['profile_id']) . "'>" . htmlspecialchars($profile['profile_name']) . "</option>";
+    }
+    ?>
+</select>
+<input type="hidden" id="profile_name" name="profile_name">
+
 
         <div class="button-container">
             <a href="/CSIT314/adminDashboard.php" class="back-button">Back</a>
@@ -105,10 +129,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </div>
 
 <script>
+    // JavaScript to update the hidden field with the profile name when a profile is selected
+    function updateProfileName() {
+    var profileSelect = document.getElementById('profile_id');
+    var profileName = profileSelect.options[profileSelect.selectedIndex].text;
+    console.log('Selected Profile Name:', profileName);  // Debugging
+    document.getElementById('profile_name').value = profileName;
+    }
+
+
     function handleFormSubmit(event) {
         event.preventDefault(); // stop normal form submission
         document.getElementById('createForm').submit();
     }
+
 </script>
 
 </body>

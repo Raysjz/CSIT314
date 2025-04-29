@@ -25,8 +25,9 @@ class CreateUserAccountController {
             null,  // ID is auto-generated
             $data['username'],
             $data['password'],
-            $data['profile'],
-            isset($data['is_suspended']) ? $data['is_suspended'] : false
+            $data['profileName'],
+            $data['profileId'],
+            isset($data['isSuspended']) ? $data['isSuspended'] : false
         );
 
         return $this->processUserAccountCreation();

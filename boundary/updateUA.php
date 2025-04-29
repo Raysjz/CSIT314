@@ -65,11 +65,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </style>
 </head>
 <body>
+    
     <div class="container">
         <h1>Update User</h1>
         <form action="updateUA.php?userid=<?php echo htmlspecialchars($userToUpdate->getId()); ?>" method="post" onsubmit="return handleFormSubmit(event)">
-            <label for="userid">User ID</label>
-            <input type="text" id="userid" name="userid" value="<?php echo htmlspecialchars($userToUpdate->getId()); ?>" readonly>
+            <input type="hidden" id="userid" name="userid" value="<?php echo htmlspecialchars($userToUpdate->getId()); ?>">
 
             <label for="username">Username</label>
             <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($userToUpdate->getUsername()); ?>" required>

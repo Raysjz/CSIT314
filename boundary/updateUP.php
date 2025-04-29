@@ -25,7 +25,7 @@ $message = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Collect form data and sanitize it
     $data = [
-        'id' => $_POST['profile_id'],  // Use profile_id from form
+        'id' => $_POST['id'],
         'name' => $_POST['name'],
         'isSuspended' => isset($_POST['is_suspended']) ? $_POST['is_suspended'] : false
     ];
@@ -89,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <!-- Update form -->
     <form action="updateUP.php?userid=<?php echo htmlspecialchars($userToUpdate->getProfileId()); ?>" method="post">
-        <input type="hidden" name="profile_id" value="<?php echo htmlspecialchars($userToUpdate->getProfileId()); ?>">
+        <input type="hidden" name="id" value="<?php echo htmlspecialchars($userToUpdate->getProfileId()); ?>">
 
         <label for="name">Profile Name</label>
         <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($userToUpdate->getName()); ?>" required>

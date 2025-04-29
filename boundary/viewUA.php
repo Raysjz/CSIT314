@@ -75,8 +75,8 @@ $userAccounts = $controller->viewUserAccounts($searchQuery);
                     $searchQuery = isset($_GET['search']) ? $_GET['search'] : null;
 
                     // Instantiate the UserAccount model and controller
-                    $userAccount = new UserAccount(null, '', '', '', 0); // Empty fields since we just want to fetch users
-                    $viewUAC = new ViewUserAccountController($userAccount);
+                    $userAccount = new UserAccount(null, '', '', '', null, 0); // Empty fields since we just want to fetch users
+                    $viewUAC = new ViewUserAccountController();
 
                     // Fetch user accounts based on the search query
                     $userAccounts = $viewUAC->viewUserAccounts($searchQuery);
