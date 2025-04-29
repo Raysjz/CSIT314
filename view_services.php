@@ -1,5 +1,5 @@
 <?php
-
+require_once(__DIR__ . '/cleanerNavbar.php');
 // Handle service suspension
 if (isset($_GET['suspend_id']) && is_numeric($_GET['suspend_id'])) {
     $suspendId = intval($_GET['suspend_id']);
@@ -36,9 +36,10 @@ if (isset($_SESSION['success_message'])) {
     unset($_SESSION['success_message']);
 }
 
-include('includes/header.php');
+
 ?>
 <div class="container">
+<link rel="stylesheet" href="styles.css">
     <h2>My Cleaning Services</h2>
     <div class="top-bar">
         <div class="search-container">
@@ -132,4 +133,3 @@ function confirmSuspend(serviceId, serviceName) {
     }
 }
 </script>
-<?php include('includes/footer.php'); ?>

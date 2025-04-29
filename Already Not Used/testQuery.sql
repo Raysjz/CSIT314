@@ -86,6 +86,21 @@ CREATE TABLE IF NOT EXISTS service_categories (
     is_suspended BOOLEAN NOT NULL DEFAULT FALSE
 );
 
+-- Insert service categories into service_categories table
+INSERT INTO service_categories (category_name, is_suspended)
+VALUES
+('Home Cleaning', FALSE),
+('Deep Cleaning', FALSE),
+('Carpet Cleaning', FALSE),
+('Window Cleaning', FALSE),
+('Office Cleaning', FALSE),
+('Move-in/Move-out Cleaning', FALSE),
+('Post-Construction Cleaning', FALSE),
+('Laundry Services', FALSE),
+('Upholstery Cleaning', FALSE),
+('Pressure Washing', FALSE);
+
+
 CREATE TABLE IF NOT EXISTS match (
     match_id SERIAL PRIMARY KEY,
     home_owner_id INT NOT NULL,

@@ -4,20 +4,6 @@ require_once(__DIR__ . '/../adminNavbar.php');
 require_once(__DIR__ . '/../controllers/UpdateUAController.php');
 require_once(__DIR__ . '/../controllers/UserProfileController.php');
 
-/*
-//Debug: Display all POST data
-
-echo "<pre>";
-print_r($_POST);  // This will show all data submitted via POST
-echo "</pre>";
-
-// Retrieve form data
-$username = $_POST['username'] ?? '';
-$password = $_POST['password'] ?? '';
-$profileName = $_POST['profile_name'] ?? ''; 
-$profileId = $_POST['profile_id'] ?? '';  // Access profile_id from form
-$isSuspended = isset($_POST['is_suspended']) ? $_POST['is_suspended'] : false;
-*/
 
 // Instantiate the UserProfileController
 $userProfileController = new UserProfileController();
@@ -49,16 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         'profileId' => $_POST['profile_id'],
         'isSuspended' => isset($_POST['isSuspended']) ? $_POST['isSuspended'] : false // Default to false if not set
     ];
-
-    /*
-     // Debug: Show the individual values
-     echo "<h3>Form Data:</h3>";
-     echo "<p>Username: " . htmlspecialchars($username) . "</p>";
-     echo "<p>Password: " . htmlspecialchars($password) . "</p>";
-     echo "<p>Profile ID: " . htmlspecialchars($profileId) . "</p>";  // Ensure profile_id is captured correctly
-     echo "<p>Profile Name: " . htmlspecialchars($profileName) . "</p>";
-     echo "<p>Is Suspended: " . ($isSuspended ? 'Yes' : 'No') . "</p>";
-    */
+    
     
     // Call controller to update user account
     $result = $controller->updateUserAccount($data);

@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . '/../db.php');
+require_once(__DIR__ . '/ConnectiontoDB.php');
 
 class UserAccount {
     protected $id;
@@ -111,7 +111,7 @@ class UserAccount {
     }
     
     
-    // Views all user accounts , updates when profile role is updated
+    // Views all user accounts order by Asc Ord account_id
     public static function viewUserAccounts() {
         $db = Database::getPDO();
     
@@ -125,6 +125,7 @@ class UserAccount {
                 ua.is_suspended
             FROM user_accounts ua
             JOIN user_profiles up ON ua.profile_id = up.profile_id
+            ORDER BY account_id ASC
         ");
         $stmt->execute();
     
@@ -169,6 +170,7 @@ class UserAccount {
                 $row['ua_username'],
                 $row['ua_password'],
                 $row['profile_name'],
+                $row['profile_id'],
                 isset($row['is_suspended']) ? (bool)$row['is_suspended'] : false
             );
         }
