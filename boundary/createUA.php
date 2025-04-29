@@ -4,11 +4,12 @@ require_once(__DIR__ . '/../adminNavbar.php');
 require_once(__DIR__ . '/../controllers/CreateUAController.php');
 require_once(__DIR__ . '/../controllers/UserProfileController.php');  // Include the UserProfileController
 
-
 /* Debug: Display all POST data
+
 echo "<pre>";
 print_r($_POST);  // This will show all data submitted via POST
 echo "</pre>";
+
 // Retrieve form data
 $username = $_POST['username'] ?? '';
 $password = $_POST['password'] ?? '';
@@ -20,8 +21,10 @@ $isSuspended = isset($_POST['is_suspended']) ? $_POST['is_suspended'] : false;
 
 // Instantiate the UserProfileController
 $userProfileController = new UserProfileController();
+
 // Fetch profiles for the dropdown
 $profiles = $userProfileController->getProfiles();  // Get all profiles from the database
+
 // Initialize message variable
 $message = "";
 
@@ -122,7 +125,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
         <div class="button-container">
-            <a href="/CSIT314/adminDashboard.php" class="back-button">Back</a>
+            <a href="viewUA.php" class="back-button">Back</a>
             <button type="submit" class="update-button">Create Profile</button>
         </div>
     </form>
