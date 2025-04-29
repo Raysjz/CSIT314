@@ -50,6 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         'isSuspended' => isset($_POST['isSuspended']) ? $_POST['isSuspended'] : false // Default to false if not set
     ];
 
+    /*
      // Debug: Show the individual values
      echo "<h3>Form Data:</h3>";
      echo "<p>Username: " . htmlspecialchars($username) . "</p>";
@@ -57,7 +58,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
      echo "<p>Profile ID: " . htmlspecialchars($profileId) . "</p>";  // Ensure profile_id is captured correctly
      echo "<p>Profile Name: " . htmlspecialchars($profileName) . "</p>";
      echo "<p>Is Suspended: " . ($isSuspended ? 'Yes' : 'No') . "</p>";
-
+    */
+    
     // Call controller to update user account
     $result = $controller->updateUserAccount($data);
 

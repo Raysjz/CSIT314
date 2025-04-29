@@ -111,7 +111,7 @@ class UserAccount {
     }
     
     
-    // Views all user accounts
+    // Views all user accounts , updates when profile role is updated
     public static function viewUserAccounts() {
         $db = Database::getPDO();
     
