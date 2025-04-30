@@ -62,13 +62,15 @@ CREATE TABLE IF NOT EXISTS services (
     FOREIGN KEY (cleaner_id) REFERENCES user_accounts(account_id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS shortlist (
-    shortlist_id SERIAL PRIMARY KEY,
-    home_owner_id INT NOT NULL,  -- References home owners
-    service_id INT NOT NULL,     -- References services
-    FOREIGN KEY (home_owner_id) REFERENCES user_accounts(account_id),
-    FOREIGN KEY (service_id) REFERENCES services(service_id)
+CREATE TABLE IF NOT EXISTS homeowner_shortlist (
+    shortlist_id SERIAL PRIMARY KEY,      -- Unique shortlist ID
+    homeowner_id INT NOT NULL,            -- Foreign key to user_accounts (Homeowners)
+    service_id INT NOT NULL,              -- Foreign key to service_listing (Cleaner services)
+    date_added TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Date when the service was added to the shortlist
+    FOREIGN KEY (homeowner_id) REFERENCES user_accounts(account_id) ON DELETE CASCADE,
+    FOREIGN KEY (service_id) REFERENCES service_listing(service_id) ON DELETE CASCADE
 );
+
 
 CREATE TABLE IF NOT EXISTS bookings (
     booking_id SERIAL PRIMARY KEY,

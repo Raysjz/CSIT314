@@ -137,7 +137,7 @@ class UserAccount {
                 $row['account_id'],
                 $row['ua_username'],
                 $row['ua_password'],
-                $row['profile_name'],    // ← Latest name fetched from user_profiles
+                $row['profile_name'], 
                 $row['profile_id'],
                 isset($row['is_suspended']) ? (bool)$row['is_suspended'] : false
             );

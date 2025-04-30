@@ -90,7 +90,7 @@ class UserProfile {
         $db = Database::getPDO();
     
         // Prepare the SQL statement to fetch user profiles
-        $stmt = $db->prepare("SELECT * FROM user_profiles");  // Ensure the table name is correct
+        $stmt = $db->prepare("SELECT * FROM user_profiles");
         $stmt->execute();
     
         // Fetch all the profiles as an associative array
