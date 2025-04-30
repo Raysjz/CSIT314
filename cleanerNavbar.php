@@ -1,11 +1,7 @@
-<?php
-session_start();  // Start the session to access session variables
-?>
-
 <div class="Navbar">
     <div class="navbar-left">
-        <a href="view_services.php">My Services</a>
-        <a href="match_history.php">Bookings</a>
+        <a href="/CSIT314/boundary/viewCS.php">My Services</a>
+        <a href="shortlistHistory.php">Bookings</a>
     </div>
     <div class="navbar-right">
         <text color ="white" >Welcome, <?php echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'; ?> </text>

@@ -118,4 +118,17 @@ CREATE TABLE IF NOT EXISTS service_bookings (
 );
 
 
+-- Insert some example cleaner user accounts into the user_accounts table
+INSERT INTO user_accounts (ua_username, ua_password, profile_name, profile_id, is_suspended)
+VALUES
+('cleaner_01', 'password123', 'Cleaner', 3, FALSE),
+('cleaner_02', 'password123', 'Cleaner', 3, FALSE),
+('cleaner_03', 'password123', 'Cleaner', 3, FALSE),
+('cleaner_04', 'password123', 'Cleaner', 3, FALSE),
+('cleaner_05', 'password123', 'Cleaner', 3, FALSE),
+('cleaner_06', 'password123', 'Cleaner', 3, FALSE),
+('cleaner_07', 'password123', 'Cleaner', 3, FALSE),
+('cleaner_08', 'password123', 'Cleaner', 3, FALSE),
+('cleaner_09', 'password123', 'Cleaner', 3, FALSE),
+('cleaner_10', 'password123', 'Cleaner', 3, FALSE);
 

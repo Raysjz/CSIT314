@@ -1,7 +1,3 @@
-<?php
-session_start();  // Start the session to access session variables
-?>
-
 <div class="Navbar">
     <div class="navbar-left">
         <a href="/CSIT314/boundary/viewUA.php">View Accounts</a>

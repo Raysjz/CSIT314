@@ -1,29 +1,38 @@
 <?php
 require_once(__DIR__ . '/controllers/loginController.php');
+require_once(__DIR__ . '/controllers/UserProfileController.php');  // Include the UserProfileController
 session_start();
 
+// Instantiate the UserProfileController
+$userProfileController = new UserProfileController();
+
+// Fetch profiles for the dropdown
+$profiles = $userProfileController->getProfiles();  // Get all profiles from the database
 
 $login_error = '';
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // The controller will handle the login logic
     $controller = new UserAccountController();  // Correctly instantiate the controller
-    $result = $controller->authenticate($_POST['username'], $_POST['password'], $_POST['profile']);
+    $result = $controller->authenticate($_POST['username'], $_POST['password'], $_POST['profile_name']);
 
     if (isset($result['success']) && $result['success']) {
         // Handle success (redirect)
         $_SESSION['user_id'] = $result['user']['account_id'];
         $_SESSION['username'] = $result['user']['ua_username'];
-        $_SESSION['profile'] = $result['user']['profile_name'];
+        $_SESSION['profileId'] = $result['user']['profile_id'];
+        $_SESSION['profileName'] = $result['user']['profile_name'];
         $_SESSION['isSuspended'] = $result['user']['is_suspended']; // Save the suspension status in session
 
         
-        /*
-        //Debug Echo the session values (for debugging or display purposes)  
+        
+        /*//Debug Echo the session values (for debugging or display purposes)  
         echo "User ID: " . $_SESSION['user_id'] . "<br>";
         echo "Username: " . $_SESSION['username'] . "<br>";
-        echo "Profile: " . $_SESSION['profile'] . "<br>";
-        echo "Suspended status from session: " . $_SESSION['is_suspended'] . "<br>";
+        echo "Profile ID: " . $_SESSION['profileId'] . "<br>";
+        echo "Profile Name: " . $_SESSION['profileName'] . "<br>";
+        echo "Suspended status from session: " . $_SESSION['isSuspended'] . "<br>";
         */
 
         // Redirect based on profile
@@ -148,18 +157,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="text" name="username" placeholder="Username" required><br>
                 <input type="password" name="password" placeholder="Password" required><br>
 
-                <label for="profile">User Profile:</label>
-                <select name="profile" required>
-                    <option value="">-- Select Profile --</option>
-                    <option value="User Admin">User Admin</option>
-                    <option value="Home Owner">Home Owner</option>
-                    <option value="Cleaner">Cleaner</option>
-                    <option value="Platform Management">Platform Management</option>
-                </select><br>
+                <label for="profile">Profile</label>
+                <select id="profile_id" name="profile_id" required onchange="updateProfileName()">
+                <option value="">-- Select Profile --</option>
+                <?php
+                // Dynamically populate profile options from the database
+                foreach ($profiles as $profile) {
+                    echo "<option value='" . htmlspecialchars($profile['profile_id']) . "'>" . htmlspecialchars($profile['profile_name']) . "</option>";}?>
+                </select>
+                <input type="hidden" id="profile_name" name="profile_name">
 
                 <input type="submit" value="Login">
             </form>
         </div>
+        <script>
+        function updateProfileName() {
+            var profileSelect = document.getElementById('profile_id');
+            var profileName = profileSelect.options[profileSelect.selectedIndex].text;
+            document.getElementById('profile_name').value = profileName;
+        }
+        window.onload = updateProfileName;
+        </script>
+
     </div>
 </body>
 </html>
