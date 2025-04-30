@@ -15,6 +15,16 @@ CREATE TABLE IF NOT EXISTS user_accounts (
     is_suspended BOOLEAN NOT NULL DEFAULT FALSE,  -- Account suspension status
     FOREIGN KEY (profile_id) REFERENCES user_profiles(profile_id) ON DELETE CASCADE -- Link to user_profiles
 );
+
+/* Add For platform management
+
+ALTER TABLE user_accounts
+ADD COLUMN created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
+
+ALTER TABLE user_accounts
+ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+*/
     
 -- Insert profiles into user_profiles
 INSERT INTO user_profiles (profile_name, is_suspended)
@@ -86,8 +96,6 @@ CREATE TABLE IF NOT EXISTS service_views (
     FOREIGN KEY (viewer_account_id) REFERENCES user_accounts(account_id) ON DELETE SET NULL
 );
 
-
-
 CREATE TABLE IF NOT EXISTS service_shortlists (
     shortlist_id SERIAL PRIMARY KEY,
     homeowner_account_id INT NOT NULL,  -- FK to user_accounts(account_id)
@@ -99,13 +107,13 @@ CREATE TABLE IF NOT EXISTS service_shortlists (
 );
 
 
-
 CREATE TABLE IF NOT EXISTS service_bookings (
     booking_id SERIAL PRIMARY KEY,
     shortlist_id INT NOT NULL,           -- FK to service_shortlists(shortlist_id)
     booking_date DATE NOT NULL,
     status VARCHAR(20) NOT NULL DEFAULT 'confirmed',  -- e.g., confirmed, completed, cancelled
     completed_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (shortlist_id) REFERENCES service_shortlists(shortlist_id) ON DELETE CASCADE
 );
 
