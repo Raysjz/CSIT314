@@ -46,7 +46,7 @@ $pastBookings = [
 
 <div class="container">
     
-<a href="view_home_owner.php" class="back-button">← Back to Services</a>
+<a href="view_homeowner.php" class="back-button">← Back to Services</a>
     <h2>Past Bookings</h2>
     
     <div class="service-list">

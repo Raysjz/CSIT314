@@ -9,6 +9,7 @@ include('includes/header.php');
             <form method="get" action="" style="display: inline-block;">
                 <input type="text" name="query" placeholder="Search services...">
                 <input type="submit" value="Search">
+                <button type="button" onclick="window.location.href='view_services.php'" style="margin-left: 10px;">Reset</button>
             </form>
         </div>
     </div>

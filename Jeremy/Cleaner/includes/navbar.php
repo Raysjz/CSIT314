@@ -18,13 +18,12 @@
         align-items: center;
         background-color: #343a40;
         padding: 10px 20px;
-        position: relative;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 999;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 999;
     }
-
     .navbar a {
         color: white;
         text-decoration: none;

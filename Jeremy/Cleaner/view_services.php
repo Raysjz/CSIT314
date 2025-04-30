@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 // Handle service suspension
 if (isset($_GET['suspend_id']) && is_numeric($_GET['suspend_id'])) {
@@ -38,16 +39,20 @@ if (isset($_SESSION['success_message'])) {
 
 include('includes/header.php');
 ?>
-<div class="container">
+<div class="container my-services-container">
     <h2>My Cleaning Services</h2>
     <div class="top-bar">
         <div class="search-container">
             <form method="get" action="" style="display: inline-block;">
                 <input type="text" name="query" placeholder="Search my services...">
                 <input type="submit" value="Search">
+                <button type="button" onclick="window.location.href='view_services.php'" style="margin-left: 10px;">Reset</button>
             </form>
         </div>
-        <button class="create-button" onclick="window.location.href='create_service.php'">Create New Service</button>
+
+    </div>
+    <div style="margin-bottom: 20px;">
+         <button class="create-button" onclick="window.location.href='create_service.php'">Create New Service</button>
     </div>
     <div class="service-list">
         <?php
