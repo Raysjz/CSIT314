@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         'password' => $_POST['password'],
         'profileName' => $_POST['profile_name'],
         'profileId' => $_POST['profile_id'],
-        'isSuspended' => isset($_POST['isSuspended']) ? $_POST['isSuspended'] : false // Default to false if not set
+        'isSuspended' => isset($_POST['isSuspended']) ? true : false // Default to false if not set
     ];
     
     
@@ -89,12 +89,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <label for="profile">Profile</label>
             <select id="profile_id" name="profile_id" required onchange="updateProfileName()">
-            <?php
-            // Dynamically populate profile options from the database
-            foreach ($profiles as $profile) {
-                echo "<option value='" . htmlspecialchars($profile['profile_id']) . "'>" . htmlspecialchars($profile['profile_name']) . "</option>";}?>
+                <?php
+                // Assuming $userToUpdate contains the current user profile data
+                $currentProfile = $userToUpdate->getProfile();  // The user's current profile
+
+                // Dynamically populate profile options from the database
+                foreach ($profiles as $profile) {
+                    // Check if the current user's profile matches the profile from the database
+                    $selected = ($profile['profile_name'] == $currentProfile) ? 'selected' : ''; // Set 'selected' if it matches the profile retrieved from database
+                    echo "<option value='" . htmlspecialchars($profile['profile_id']) . "' $selected>" . htmlspecialchars($profile['profile_name']) . "</option>";
+                }
+                ?>
             </select>
-            <input type="hidden" id="profile_name" name="profile_name">
+            <input type="hidden" id="profile_name" name="profile_name" value="<?php echo htmlspecialchars($currentProfile); ?>">
 
             <label for="is_suspended">Is Suspended</label>
             <select id="is_suspended" name="is_suspended">
@@ -107,16 +114,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <button type="submit" class="update-button">Update Account</button>
             </div>
         </form>
-            <script>
+        <script>
                 // JavaScript to update the hidden field with the profile name when a profile is selected
                 function updateProfileName() {
-                var profileSelect = document.getElementById('profile_id');
-                var profileName = profileSelect.options[profileSelect.selectedIndex].text;
-                console.log('Selected Profile Name:', profileName);  // Debugging
-                document.getElementById('profile_name').value = profileName;
+                    var profileSelect = document.getElementById('profile_id');
+                    var profileName = profileSelect.options[profileSelect.selectedIndex].text;
+                    console.log('Selected Profile Name:', profileName);  // Debugging
+                    document.getElementById('profile_name').value = profileName;
                 }
 
-            </script>
+                // Call the function once on page load to ensure that the correct profile name is set
+                window.onload = function() {
+                    updateProfileName();  // Sets the profile name when the page is loaded
+                };
+        </script>
+
     </div>
 </body>
 </html>

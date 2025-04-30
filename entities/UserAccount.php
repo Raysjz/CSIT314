@@ -110,27 +110,15 @@ class UserAccount {
         return $stmt->execute();
     }
     
-    
-    // Views all user accounts order by Asc Ord account_id
+    // View all user accounts (ordered by ID ascending)
     public static function viewUserAccounts() {
         $db = Database::getPDO();
-    
-        $stmt = $db->prepare("
-            SELECT 
-                ua.account_id,
-                ua.ua_username,
-                ua.ua_password,
-                up.profile_name AS profile_name,
-                ua.profile_id,
-                ua.is_suspended
-            FROM user_accounts ua
-            JOIN user_profiles up ON ua.profile_id = up.profile_id
-            ORDER BY account_id ASC
-        ");
+
+        $stmt = $db->prepare("SELECT * FROM user_accounts ORDER BY account_id ASC");
         $stmt->execute();
-    
+
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+
         $userAccounts = [];
         foreach ($result as $row) {
             $userAccounts[] = new UserAccount(
@@ -142,7 +130,7 @@ class UserAccount {
                 isset($row['is_suspended']) ? (bool)$row['is_suspended'] : false
             );
         }
-    
+
         return $userAccounts;
     }
     

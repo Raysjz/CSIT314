@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }elseif($result['user']['profile_name'] === 'Cleaner'){
             header("Location: /CSIT314/cleanerDashboard.php");
         }elseif($result['user']['profile_name'] === 'Platform Management'){
-            header("Location: /CSIT314/platformDashboard.php");
+            header("Location: /CSIT314/boundary/viewSC.php");
         }else {
             header("Location: /CSIT314/userDashboard.php");
         }

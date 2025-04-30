@@ -32,55 +32,6 @@ VALUES
 ('cleaner', '1234', 'Cleaner', 3, FALSE),	
 ('platformmgmt', '1234', 'Platform Management', 4, FALSE);
 
-/*
-ALTER TABLE user_profiles
-RENAME COLUMN name TO profile_name;
-
-*/
-
-select * from user_accounts;
--- drop table user_accounts;
-select * from user_profiles;
--- drop table user_profiles;
-SELECT column_name
-FROM information_schema.columns
-WHERE table_name = 'user_accounts';
-
-
--- Cleaner
-
-CREATE TABLE IF NOT EXISTS services (
-    service_id SERIAL PRIMARY KEY,
-    cleaner_id INT NOT NULL,  -- Foreign key to the user_accounts table
-    service_name VARCHAR(255) NOT NULL,
-    description TEXT,
-    price DECIMAL(10, 2),
-    availability BOOLEAN DEFAULT TRUE,
-    views_count INT DEFAULT 0,
-    shortlisted_count INT DEFAULT 0,
-    status VARCHAR(20) DEFAULT 'active',  -- 'active' or 'suspended'
-    FOREIGN KEY (cleaner_id) REFERENCES user_accounts(account_id) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS homeowner_shortlist (
-    shortlist_id SERIAL PRIMARY KEY,      -- Unique shortlist ID
-    homeowner_id INT NOT NULL,            -- Foreign key to user_accounts (Homeowners)
-    service_id INT NOT NULL,              -- Foreign key to service_listing (Cleaner services)
-    date_added TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Date when the service was added to the shortlist
-    FOREIGN KEY (homeowner_id) REFERENCES user_accounts(account_id) ON DELETE CASCADE,
-    FOREIGN KEY (service_id) REFERENCES service_listing(service_id) ON DELETE CASCADE
-);
-
-
-CREATE TABLE IF NOT EXISTS bookings (
-    booking_id SERIAL PRIMARY KEY,
-    home_owner_id INT NOT NULL,   -- References home owners
-    service_id INT NOT NULL,      -- References services
-    booking_date DATE NOT NULL,   -- Date of service booking
-    status VARCHAR(20) DEFAULT 'confirmed',  -- Status (confirmed, completed, etc.)
-    FOREIGN KEY (home_owner_id) REFERENCES user_accounts(account_id),
-    FOREIGN KEY (service_id) REFERENCES services(service_id)
-);
 
 CREATE TABLE IF NOT EXISTS service_categories (
     category_id SERIAL PRIMARY KEY,
@@ -102,27 +53,61 @@ VALUES
 ('Upholstery Cleaning', FALSE),
 ('Pressure Washing', FALSE);
 
+/*
+Table Name	Purpose
+cleaner_services	Cleaners create/manage their services
+service_views	Track service views
+service_shortlists	Homeowners shortlist services
+service_bookings	Confirmed bookings (matches)
+*/
 
-CREATE TABLE IF NOT EXISTS match (
-    match_id SERIAL PRIMARY KEY,
-    home_owner_id INT NOT NULL,
-    cleaner_id INT NOT NULL,
-    service_id INT NOT NULL,  -- Foreign key to services
-    price DECIMAL(10, 2),
-    status VARCHAR(20) DEFAULT 'pending',  -- Match status
-    FOREIGN KEY (home_owner_id) REFERENCES user_accounts(account_id),
-    FOREIGN KEY (cleaner_id) REFERENCES user_accounts(account_id),
-    FOREIGN KEY (service_id) REFERENCES services(service_id)
+CREATE TABLE IF NOT EXISTS cleaner_services (
+    service_id SERIAL PRIMARY KEY,
+    cleaner_account_id INT NOT NULL,  -- FK to user_accounts(account_id)
+    category_id INT NOT NULL,         -- FK to service_categories(category_id)
+    title VARCHAR(100) NOT NULL,
+    description TEXT,
+    price DECIMAL(10,2) NOT NULL,
+    availability VARCHAR(100),        -- e.g., "Weekdays 9am-5pm"
+    is_suspended BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (cleaner_account_id) REFERENCES user_accounts(account_id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES service_categories(category_id) ON DELETE CASCADE
 );
 
 
-CREATE TABLE IF NOT EXISTS match_request (
-    match_request_id SERIAL PRIMARY KEY,
-    home_owner_id INT NOT NULL,   -- References home owner
-    service_id INT NOT NULL,      -- References the service being requested
-    cleaner_id INT NOT NULL,      -- Cleaner being requested
-    status VARCHAR(20) DEFAULT 'pending',  -- Request status
-    FOREIGN KEY (home_owner_id) REFERENCES user_accounts(account_id),
-    FOREIGN KEY (service_id) REFERENCES services(service_id),
-    FOREIGN KEY (cleaner_id) REFERENCES user_accounts(account_id)
+CREATE TABLE IF NOT EXISTS service_views (
+    view_id SERIAL PRIMARY KEY,
+    service_id INT NOT NULL,
+    viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    viewer_account_id INT,  -- Optional: track who viewed
+    FOREIGN KEY (service_id) REFERENCES cleaner_services(service_id) ON DELETE CASCADE,
+    FOREIGN KEY (viewer_account_id) REFERENCES user_accounts(account_id) ON DELETE SET NULL
 );
+
+
+
+CREATE TABLE IF NOT EXISTS service_shortlists (
+    shortlist_id SERIAL PRIMARY KEY,
+    homeowner_account_id INT NOT NULL,  -- FK to user_accounts(account_id)
+    service_id INT NOT NULL,            -- FK to cleaner_services(service_id)
+    shortlisted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_confirmed BOOLEAN NOT NULL DEFAULT FALSE,  -- True if booking is confirmed
+    FOREIGN KEY (homeowner_account_id) REFERENCES user_accounts(account_id) ON DELETE CASCADE,
+    FOREIGN KEY (service_id) REFERENCES cleaner_services(service_id) ON DELETE CASCADE
+);
+
+
+
+CREATE TABLE IF NOT EXISTS service_bookings (
+    booking_id SERIAL PRIMARY KEY,
+    shortlist_id INT NOT NULL,           -- FK to service_shortlists(shortlist_id)
+    booking_date DATE NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'confirmed',  -- e.g., confirmed, completed, cancelled
+    completed_at TIMESTAMP,
+    FOREIGN KEY (shortlist_id) REFERENCES service_shortlists(shortlist_id) ON DELETE CASCADE
+);
+
+
+
