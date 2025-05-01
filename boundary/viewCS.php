@@ -88,6 +88,8 @@ if ($searchQuery) {
                     <th>Price</th>
                     <th>Availability</th>
                     <th>Is Suspended</th>
+                    <th>Views Count</th>
+                    <th>Shortlist Count</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -105,6 +107,10 @@ if ($searchQuery) {
                             echo "<td>$" . htmlspecialchars(number_format($service->getPrice(), 2)) . "</td>";
                             echo "<td>" . htmlspecialchars($service->getAvailability()) . "</td>";
                             echo "<td>" . ($service->isSuspended() ? 'Yes' : 'No') . "</td>";
+                            // Placeholder for Views Count
+                            echo "<td>0</td>";
+                            // Placeholder for Shortlist Count
+                            echo "<td>0</td>";
                             echo "<td class='actions-buttons'>
                                     <button onclick=\"window.location.href='updateCS.php?serviceid=" . $service->getServiceId() . "';\" class='update-button'>Edit</button>
                                     <button onclick=\"return confirm('Are you sure you want to suspend this service?') ? window.location.href='suspendCS.php?serviceid=" . $service->getServiceId() . "' : false;\" class='suspend-button'>Suspend</button>
