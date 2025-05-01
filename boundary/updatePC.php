@@ -1,7 +1,7 @@
 <?php
 // Include necessary files
 require_once(__DIR__ . '/../adminNavbar.php');
-require_once(__DIR__ . '/../controllers/UpdateScController.php');
+require_once(__DIR__ . '/../controllers/UpdatePCController.php');
 
 // Get the user ID from the query parameter
 $userIdToUpdate = isset($_GET['userid']) ? $_GET['userid'] : null;
@@ -9,8 +9,8 @@ $userIdToUpdate = isset($_GET['userid']) ? $_GET['userid'] : null;
 
 
 // Instantiate the Controller for fetching and updating user profile data
-$controller = new UpdateServiceCategoryController(); 
-$userToUpdate = $controller->getServiceCategoryById($userIdToUpdate);
+$controller = new UpdatePlatformCategoryController(); 
+$userToUpdate = $controller->getPlatformCategoryById($userIdToUpdate);
 
 // If no user is found, show an error message
 if (!$userToUpdate) {
@@ -31,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     ];
 
     // Call controller to update user profile
-    $result = $controller->updateServiceCategory($data);
+    $result = $controller->updatePlatformCategory($data);
 
     // Show appropriate message based on the result
     if ($result) {
@@ -88,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php endif; ?>
 
     <!-- Update form -->
-    <form action="updateSC.php?userid=<?php echo htmlspecialchars($userToUpdate->getId()); ?>" method="post">
+    <form action="updatePC.php?userid=<?php echo htmlspecialchars($userToUpdate->getId()); ?>" method="post">
         <input type="hidden" name="id" value="<?php echo htmlspecialchars($userToUpdate->getId()); ?>">
 
         <label for="name">Service Category Name</label>
@@ -101,7 +101,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </select>
 
         <div class="button-container">
-            <a href="viewSC.php" class="back-button">Back</a>
+            <a href="viewPC.php" class="back-button">Back</a>
             <button type="submit" class="update-button">Update Profile</button>
         </div>
     </form>

@@ -1,14 +1,14 @@
 <?php
 // Include necessary files
 require_once(__DIR__ . '/../platNavbar.php');
-require_once(__DIR__ . '/../controllers/ViewScController.php');
+require_once(__DIR__ . '/../controllers/ViewPCController.php');
 
 // Get the search query from GET request
 $searchQuery = isset($_GET['search']) ? $_GET['search'] : null;
 
 // Instantiate the controller and fetch user data
-$controller = new ViewServiceCategoryController();
-$serviceCategories = $controller->viewServiceCategory($searchQuery);
+$controller = new ViewPlatformCategoryController();
+$serviceCategories = $controller->viewPlatformCategory($searchQuery);
 ?>
 
 <!DOCTYPE html>
@@ -73,11 +73,11 @@ $serviceCategories = $controller->viewServiceCategory($searchQuery);
                     $searchQuery = isset($_GET['search']) ? $_GET['search'] : null;
 
                     // Instantiate the UserAccount model and controller
-                    $serviceCategories = new ServiceCategory(null, '', 0); // Empty fields since we just want to fetch users
-                    $viewUScC = new ViewServiceCategoryController();
+                    $serviceCategories = new PlatformCategory(null, '', 0); // Empty fields since we just want to fetch users
+                    $viewPC = new ViewPlatformCategoryController();
 
                     // Fetch user accounts based on the search query
-                    $serviceCategories = $viewUScC->viewServiceCategory($searchQuery);
+                    $serviceCategories = $viewPC->viewPlatformCategory($searchQuery);
 
                     if (empty($serviceCategories)) {
                         echo "<tr><td colspan='6' class='no-results'>No results found.</td></tr>";
@@ -88,8 +88,8 @@ $serviceCategories = $controller->viewServiceCategory($searchQuery);
                             echo "<td>" . htmlspecialchars($services->getName()) . "</td>"; 
                             echo "<td>" . htmlspecialchars($services->getIsSuspended() ? 'Yes' : 'No') . "</td>";
                             echo "<td class='actions-buttons'>
-                                    <button onclick=\"window.location.href='updateSC.php?userid=" . $services->getId() . "';\" class='update-button'>Update</button>
-                                    <button onclick=\"return confirm('Are you sure you want to suspend this user?') ? window.location.href='suspendSC.php?userid=" . $services->getId() . "' : false;\" class='suspend-button'>Suspend</button>
+                                    <button onclick=\"window.location.href='updatePC.php?userid=" . $services->getId() . "';\" class='update-button'>Update</button>
+                                    <button onclick=\"return confirm('Are you sure you want to suspend this user?') ? window.location.href='suspendPC.php?userid=" . $services->getId() . "' : false;\" class='suspend-button'>Suspend</button>
                                   </td>";
                             echo "</tr>";
                         }

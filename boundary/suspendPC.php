@@ -1,7 +1,7 @@
 <?php
 // Include necessary files
 require_once(__DIR__ . '/../platNavbar.php');
-require_once(__DIR__ . '/../controllers/SuspendScController.php');
+require_once(__DIR__ . '/../controllers/SuspendPCController.php');
 
 // Initialize message variable
 $message = "";
@@ -10,12 +10,12 @@ $message = "";
 $userIdToSuspend = isset($_GET['userid']) ? $_GET['userid'] : null;
 
 // Instantiate the controller
-$controller = new suspendServiceCategoryController();
+$controller = new suspendPlatformCategoryController();
 
 // If the user ID is provided, suspend the user
 if ($userIdToSuspend !== null) {
     // Call the controller to suspend the user
-    $result = $controller->suspendServiceCategory($userIdToSuspend);
+    $result = $controller->suspendPlatformCategory($userIdToSuspend);
 
     if ($result) {
         // Success message with user ID
@@ -55,7 +55,7 @@ if ($userIdToSuspend !== null) {
             <div style="margin-bottom: 20px;"><?php echo htmlspecialchars($message); ?></div>
         <?php endif; ?>
         <div class="button-container">
-            <a href="viewSC.php" class="back-button">Back</a>
+            <a href="viewPC.php" class="back-button">Back</a>
         </div>
     </div>
 </body>

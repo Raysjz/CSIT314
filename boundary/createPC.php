@@ -1,7 +1,7 @@
 <?php
 // Include necessary files
 require_once(__DIR__ . '/../platNavbar.php');
-require_once(__DIR__ . '/../controllers/CreateScController.php');
+require_once(__DIR__ . '/../controllers/CreatePCController.php');
 
 // Initialize message variable
 $message = "";
@@ -14,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     ];
 
     // Instantiate the controller with validated data
-    $controller = new CreateserviceCategoryController(new serviceCategory(null, $data['name'], $data['isSuspended']));
+    $controller = new CreatePlatformCategoryController(new PlatformCategory(null, $data['name'], $data['isSuspended']));
 
     // Call handleFormSubmission method to process and create the user Service Category
     $result = $controller->handleFormSubmission($data);

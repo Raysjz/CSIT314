@@ -1,6 +1,6 @@
 <?php
 // ViewUserProfileController.php
-require_once(__DIR__ . '/../entities/CleanerServices.php');
+require_once(__DIR__ . '/../entities/CleaningServices.php');
 
 class ViewCleaningServicesController {
     // Method to retrieve all cleaning services

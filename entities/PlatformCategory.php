@@ -1,7 +1,7 @@
 <?php
 require_once(__DIR__ . '/ConnectiontoDB.php');
 
-class ServiceCategory{
+class PlatformCategory{
     protected $id;
     protected $name;
     protected $isSuspended;
@@ -27,7 +27,7 @@ class ServiceCategory{
     
 
     // Fetch all service categories
-    public function viewServiceCategory() {
+    public function viewPlatformCategory() {
         $db = Database::getPDO();
 
         // Prepare the SQL statement to fetch service categories
@@ -40,7 +40,7 @@ class ServiceCategory{
         $serviceCategories = [];
         // Iterate through the results and create a svcCategoryobject for each row
         foreach ($result as $row) {
-            $serviceCategories[] = new ServiceCategory(
+            $serviceCategories[] = new PlatformCategory(
                 $row['category_id'],
                 $row['category_name'],
                 isset($row['is_suspended']) ? (bool)$row['is_suspended'] : false
@@ -52,7 +52,7 @@ class ServiceCategory{
     }
 
     // Search services by username or id
-    public static function searchServiceCategory($searchQuery) {
+    public static function searchPlatformCategory($searchQuery) {
         $db = Database::getPDO();
 
         if (is_numeric($searchQuery)) {
@@ -69,7 +69,7 @@ class ServiceCategory{
 
         $serviceCategories = [];
         foreach ($result as $row) {
-            $serviceCategories[] = new ServiceCategory(
+            $serviceCategories[] = new PlatformCategory(
                 $row['category_id'],
                 $row['category_name'],
                 isset($row['is_suspended']) ? (bool)$row['is_suspended'] : false
@@ -100,7 +100,7 @@ class ServiceCategory{
     }
 
 
-    public function saveServiceCategory() {
+    public function savePlatformCategory() {
         $db = Database::getPDO();
         
         $stmt = $db->prepare("INSERT INTO service_categories (category_name, is_suspended) 
@@ -113,7 +113,7 @@ class ServiceCategory{
     }   
 
     // Fetch user by ID
-    public static function getServiceCategoryById($id) {
+    public static function getPlatformCategoryById($id) {
         $db = Database::getPDO();
         
         $stmt = $db->prepare("SELECT * FROM service_categories WHERE category_id = :id");
@@ -123,7 +123,7 @@ class ServiceCategory{
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
     
         if ($user) {
-            return new ServiceCategory(
+            return new PlatformCategory(
                 $user['category_id'],
                 $user['category_name'],
                 isset($user['is_suspended']) ? (bool)$user['is_suspended'] : false
@@ -134,10 +134,18 @@ class ServiceCategory{
             return null; // Return null if user not found
         }
     }
+
+    // Fetch All 
+    public static function getAllCategories() {
+        $db = Database::getPDO();
+        $stmt = $db->query("SELECT category_id, category_name FROM service_categories ORDER BY category_name ASC");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
     
 
     // Update user category (method to handle update in the database)
-    public function updateServiceCategory() {
+    public function updatePlatformCategory() {
         $db = Database::getPDO();
 
         $stmt = $db->prepare("UPDATE service_categories SET category_name = :name, is_suspended = :isSuspended WHERE category_id = :id");
@@ -149,7 +157,7 @@ class ServiceCategory{
     }
 
     // Suspend a user (set is_suspended to true)
-    public function suspendServiceCategory() {
+    public function suspendPlatformCategory() {
         $db = Database::getPDO();
     
         // Ensure the SQL query uses the correct placeholder :id

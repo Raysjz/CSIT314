@@ -6,15 +6,22 @@ if ($_SESSION['profileName'] !== 'Cleaner') {
 }
 require_once(__DIR__ . '/../cleanerNavbar.php');
 require_once(__DIR__ . '/../controllers/ViewCSController.php');
+require_once(__DIR__ . '/../controllers/SearchCSController.php');
 
-// Get the search query from GET request
 $searchQuery = isset($_GET['search']) ? $_GET['search'] : null;
-
 // Instantiate the controller and fetch cleaning service data
 $accountId = $_SESSION['user_id'] ?? null; // Only set if user is logged in as cleaner
+$controller = new SearchCleaningServicesController();
 
-$controller = new ViewCleaningServicesController();
-$cleaningServices = $controller->viewCleaningServices($accountId);
+if ($searchQuery) {
+    $cleaningServices = $controller->searchCleaningServices($searchQuery, $accountId);
+} else {
+    // Fallback to viewing all services for this cleaner
+    $controller = new ViewCleaningServicesController();
+    $cleaningServices = $controller->viewCleaningServices($accountId);
+}
+
+
 ?>
 
 
@@ -59,8 +66,16 @@ $cleaningServices = $controller->viewCleaningServices($accountId);
                 <button type="reset" class="reset-button" onclick="window.location.href = window.location.pathname;">Reset</button>
             </form>
         </div>
+        <!-- Create New Service Button (right above the table) -->
+    <div style="text-align: right; margin-bottom: 10px;">
+        <button class="create-button" onclick="window.location.href='createCS.php'">Create New Service</button>
+    </div>
 
         <h2>Cleaning Services List</h2>
+
+    <table>
+        <!-- your thead and tbody here -->
+    </table>
 
         <table>
             <thead>

@@ -1,19 +1,19 @@
 <?php
-require_once(__DIR__ . '/../entities/serviceCategory.php');
+require_once(__DIR__ . '/../entities/PlatformCategory.php');
 
-class CreateserviceCategoryController{
-    private $serviceCategory;
+class CreatePlatformCategoryController{
+    private $PlatformCategory;
 
-    public function __construct(serviceCategory $serviceCategory) {
-        $this->serviceCategory = $serviceCategory;
+    public function __construct(PlatformCategory $PlatformCategory) {
+        $this->PlatformCategory = $PlatformCategory;
     }
 
     // Process the user creation
-    public function processServiceCategoryCreation() {
-        $validationResult = $this->serviceCategory->validateSC();
+    public function processPlatformCategoryCreation() {
+        $validationResult = $this->PlatformCategory->validateSC();
         
         if ($validationResult === "Validation passed.") {
-            if ($this->serviceCategory->saveServiceCategory()) {
+            if ($this->PlatformCategory->savePlatformCategory()) {
                 return true; // Success
             } else {
                 return "Error saving profile.";
@@ -25,12 +25,12 @@ class CreateserviceCategoryController{
     
 
     public function handleFormSubmission($data) {
-        $this->serviceCategory = new serviceCategory(
+        $this->PlatformCategory = new PlatformCategory(
             null,  // ID is auto-generated
             $data['name'],
             isset($data['isSuspended']) ? $data['isSuspended'] : false
         );
 
-        return $this->processServiceCategoryCreation();
+        return $this->processPlatformCategoryCreation();
     }
 }
