@@ -39,7 +39,7 @@ $service = $services[$serviceId];
 ?>
 
 <div class="container">
-    <a href="view_home_owner.php" class="back-button">← Back to Services</a>
+    <a href="view_homeowner.php" class="back-button">← Back to Services</a>
 
     <h2 style="font-weight: bold;"><?php echo htmlspecialchars($service['name']); ?></h2>
     <p style="color: #888; margin-top: -10px;"><?php echo htmlspecialchars($service['type']); ?></p>

@@ -6,10 +6,14 @@ if ($_SESSION['profileName'] !== 'Cleaner') {
 }
 require_once(__DIR__ . '/../cleanerNavbar.php');
 require_once(__DIR__ . '/../controllers/UpdateCSController.php');
+require_once(__DIR__ . '/../controllers/PlatformCategoryController.php');
 
 $serviceIdToUpdate = isset($_GET['serviceid']) ? $_GET['serviceid'] : null;
 $controller = new UpdateCleaningServiceController();
 $serviceToUpdate = $controller->getCleaningServiceById($serviceIdToUpdate);
+$Platformcontroller = new PlatformCategoryController();
+// Fetch profiles for the dropdown
+$categories = $Platformcontroller->getAllCategories();  // Get all profiles from the database
 
 if (!$serviceToUpdate) {
     echo "❌ No service found with ID: " . htmlspecialchars($serviceIdToUpdate);
@@ -76,6 +80,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <label for="title">Title</label>
         <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($serviceToUpdate->getTitle()); ?>" required>
 
+        <label for="category">Category</label>
+        <select id="category_id" name="category_id" required onchange="updateCategoryName()">
+            <option value="">-- Select Category --</option>
+            <?php
+            $currentCategoryId = $serviceToUpdate->getCategoryId();
+            $currentCategoryName = '';
+            foreach ($categories as $category) {
+                $selected = ($category['category_id'] == $currentCategoryId) ? 'selected' : '';
+                if ($selected) $currentCategoryName = $category['category_name'];
+                echo "<option value='" . htmlspecialchars($category['category_id']) . "' $selected>" . htmlspecialchars($category['category_name']) . "</option>";
+            }
+            ?>
+        </select>
+        <input type="hidden" id="category_name" name="category_name" value="<?php echo htmlspecialchars($currentCategoryName); ?>">
+
+
         <label for="description">Description</label>
         <textarea id="description" name="description" required><?php echo htmlspecialchars($serviceToUpdate->getDescription()); ?></textarea>
 
@@ -85,8 +105,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <label for="availability">Availability</label>
         <input type="text" id="availability" name="availability" value="<?php echo htmlspecialchars($serviceToUpdate->getAvailability()); ?>" required>
 
-        <label for="category_id">Category ID</label>
-        <input type="number" id="category_id" name="category_id" value="<?php echo htmlspecialchars($serviceToUpdate->getCategoryId()); ?>" required min="1">
 
         <label for="is_suspended">Is Suspended</label>
         <select id="is_suspended" name="is_suspended">
@@ -99,6 +117,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <button type="submit" class="update-button">Update Service</button>
         </div>
     </form>
+
+    <script>
+    function updateCategoryName() {
+        var categorySelect = document.getElementById('category_id');
+        var categoryName = categorySelect.options[categorySelect.selectedIndex].text;
+        document.getElementById('category_name').value = categoryName;
+    }
+    // Set the category name on page load (for edit forms)
+    window.onload = updateCategoryName;
+</script>
+
 </div>
 </body>
 </html>

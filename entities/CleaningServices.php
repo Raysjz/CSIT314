@@ -12,9 +12,10 @@ class CleaningService {
     protected $isSuspended;
     protected $createdAt;
     protected $updatedAt;
+    protected $categoryName;
 
     // Constructor
-    public function __construct($serviceId, $cleanerAccountId, $categoryId, $title, $description, $price, $availability, $isSuspended, $createdAt = null, $updatedAt = null) {
+    public function __construct($serviceId, $cleanerAccountId, $categoryId, $title, $description, $price, $availability, $isSuspended, $createdAt = null, $updatedAt = null,$categoryName = null) {
         $this->serviceId = $serviceId;
         $this->cleanerAccountId = $cleanerAccountId;
         $this->categoryId = $categoryId;
@@ -25,6 +26,7 @@ class CleaningService {
         $this->isSuspended = $isSuspended;
         $this->createdAt = $createdAt;
         $this->updatedAt = $updatedAt;
+        $this->categoryName = $categoryName;
     }
 
     // Example getter methods
@@ -38,6 +40,7 @@ class CleaningService {
     public function isSuspended() { return $this->isSuspended; }
     public function getCreatedAt() { return $this->createdAt; }
     public function getUpdatedAt() { return $this->updatedAt; }
+    public function getCategoryName() {return $this->categoryName; }
 
 
     
@@ -85,48 +88,53 @@ class CleaningService {
         return $stmt->execute();
     }
     
-    
-
 
     // Views all Cleaning Services   
     public static function viewCleaningServices($accountId = null) {
-            $db = Database::getPDO();
-            
-            // Prepare the SQL statement to fetch all cleaning services based on account_id
-            if ($accountId !== null) {
-                $stmt = $db->prepare("SELECT * FROM cleaner_services WHERE cleaner_account_id = :account_id");
-                $stmt->execute([':account_id' => $accountId]);
-            } else {
-                $stmt = $db->prepare("SELECT * FROM cleaner_services");
-                $stmt->execute();
-            }
-            
-            // Fetch all the services as an associative array
-            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
-            // Initialize an empty array to hold the CleaningService objects
-            $cleaningServices = [];
-            
-            // Iterate through the results and create a CleaningService object for each row
-            foreach ($result as $row) {
-                $cleaningServices[] = new CleaningService(
-                    $row['service_id'],
-                    $row['cleaner_account_id'],
-                    $row['category_id'],
-                    $row['title'],
-                    $row['description'],
-                    $row['price'],
-                    $row['availability'],
-                    isset($row['is_suspended']) ? (bool)$row['is_suspended'] : false,
-                    $row['created_at'],
-                    $row['updated_at']
-                );
-            }
-            
-            // Return the array of CleaningService objects
-            return $cleaningServices;
+        $db = Database::getPDO();
+    
+        $sql = "SELECT cs.*, sc.category_name
+        FROM cleaner_services cs
+        JOIN service_categories sc ON cs.category_id = sc.category_id";
+
+        if ($accountId !== null) {
+            $sql .= " WHERE cs.cleaner_account_id = :account_id";
+        }
+
+        $sql .= " ORDER BY cs.service_id ASC";
+    
+        $stmt = $db->prepare($sql);
+    
+        if ($accountId !== null) {
+            $stmt->execute([':account_id' => $accountId]);
+        } else {
+            $stmt->execute();
         }
     
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $cleaningServices = [];
+    
+        foreach ($result as $row) {
+            $cleaningServices[] = new CleaningService(
+                $row['service_id'],
+                $row['cleaner_account_id'],
+                $row['category_id'],
+                $row['title'],
+                $row['description'],
+                $row['price'],
+                $row['availability'],
+                isset($row['is_suspended']) ? (bool)$row['is_suspended'] : false,
+                $row['created_at'],
+                $row['updated_at'],
+                $row['category_name'] // <-- Add this
+            );
+        }
+
+        // Return the array of CleaningService objects
+        return $cleaningServices;
+    }
+    
+   
     
         public static function searchCleaningServices($searchQuery, $accountId = null) {
             $db = Database::getPDO();

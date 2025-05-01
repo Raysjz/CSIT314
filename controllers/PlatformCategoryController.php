@@ -5,5 +5,9 @@ class PlatformCategoryController {
     public function getAllCategories() {
         return PlatformCategory::getAllCategories();
     }
+    public function getCategoryById($id) {
+        return PlatformCategory::getPlatformCategoryById($id);
+    }
 }
+
 ?>

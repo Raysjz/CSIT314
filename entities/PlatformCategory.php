@@ -115,7 +115,6 @@ class PlatformCategory{
     // Fetch user by ID
     public static function getPlatformCategoryById($id) {
         $db = Database::getPDO();
-        
         $stmt = $db->prepare("SELECT * FROM service_categories WHERE category_id = :id");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
@@ -131,9 +130,10 @@ class PlatformCategory{
         } else {
             // Debugging: If no user is found
             echo "No user found with category_id: " . htmlspecialchars($id) . "<br>";
-            return null; // Return null if user not found
+            return null;
         }
     }
+    
 
     // Fetch All 
     public static function getAllCategories() {
@@ -141,6 +141,7 @@ class PlatformCategory{
         $stmt = $db->query("SELECT category_id, category_name FROM service_categories ORDER BY category_name ASC");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
     
     
 

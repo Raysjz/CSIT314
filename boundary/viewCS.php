@@ -7,6 +7,7 @@ if ($_SESSION['profileName'] !== 'Cleaner') {
 require_once(__DIR__ . '/../cleanerNavbar.php');
 require_once(__DIR__ . '/../controllers/ViewCSController.php');
 require_once(__DIR__ . '/../controllers/SearchCSController.php');
+require_once(__DIR__ . '/../controllers/PlatformCategoryController.php');
 
 $searchQuery = isset($_GET['search']) ? $_GET['search'] : null;
 // Instantiate the controller and fetch cleaning service data
@@ -81,6 +82,7 @@ if ($searchQuery) {
             <thead>
                 <tr>
                     <th>Service ID</th>
+                    <th>Category</th>
                     <th>Title</th>
                     <th>Description</th>
                     <th>Price</th>
@@ -98,6 +100,7 @@ if ($searchQuery) {
                             echo "<tr>";
                             echo "<td>" . htmlspecialchars($service->getServiceId()) . "</td>";
                             echo "<td>" . htmlspecialchars($service->getTitle()) . "</td>";
+                            echo "<td>" . htmlspecialchars($service->getCategoryName()) . "</td>";
                             echo "<td class='desc-cell'>" . htmlspecialchars($service->getDescription()) . "</td>";
                             echo "<td>$" . htmlspecialchars(number_format($service->getPrice(), 2)) . "</td>";
                             echo "<td>" . htmlspecialchars($service->getAvailability()) . "</td>";
