@@ -115,17 +115,17 @@ class PlatformCategory{
     // Fetch user by ID
     public static function getPlatformCategoryById($id) {
         $db = Database::getPDO();
-        $stmt = $db->prepare("SELECT * FROM service_categories WHERE category_id = :id");
+        $stmt = $db->prepare("SELECT * FROM service_categories WHERE category_id = :id WHERE is_suspended = false");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
     
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
     
-        if ($user) {
+        if ($result) {
             return new PlatformCategory(
-                $user['category_id'],
-                $user['category_name'],
-                isset($user['is_suspended']) ? (bool)$user['is_suspended'] : false
+                $result['category_id'],
+                $result['category_name'],
+                isset($result['is_suspended']) ? (bool)$result['is_suspended'] : false
             );
         } else {
             // Debugging: If no user is found
@@ -138,7 +138,7 @@ class PlatformCategory{
     // Fetch All 
     public static function getAllCategories() {
         $db = Database::getPDO();
-        $stmt = $db->query("SELECT category_id, category_name FROM service_categories ORDER BY category_name ASC");
+        $stmt = $db->query("SELECT category_id, category_name FROM service_categories WHERE is_suspended = false ORDER BY category_name ASC");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
