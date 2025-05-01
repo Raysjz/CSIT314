@@ -93,6 +93,25 @@ $isShortlisted = in_array($service->getServiceId(), $shortlistedIds);
         .back-button { background: #6c757d; }
         .back-button:hover { background: #5a6268; }
 
+        .book-button {
+            background: #ff9800;        /* Bright orange */
+            color: white;
+            padding: 10px 24px;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-right: 10px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(255,152,0,0.1);
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        .book-button:hover {
+            background: #fb8c00;        /* Slightly darker on hover */
+            box-shadow: 0 4px 16px rgba(255,152,0,0.2);
+            text-decoration: none;
+        }
 
     </style>
 </head>
@@ -110,7 +129,8 @@ $isShortlisted = in_array($service->getServiceId(), $shortlistedIds);
     <div class="details-row"><span class="label">Description:</span> <?php echo htmlspecialchars($service->getDescription()); ?></div>
     <div class="details-row"><span class="label">Contact:</span> [Contact information available after booking]</div>
     <div style="margin-top:30px;">
-        <a href="viewHO.php" class="back-button">Back to List</a>
+        <a href="viewHOshortlist.php" class="back-button">Back to List</a>
+        <a href="#" class="book-button">Book</a>
         <?php if ($isShortlisted): ?>
             <a href="removeShortlist.php?id=<?php echo $service->getServiceId(); ?>" class="remove-button">Remove from Shortlist</a>
         <?php else: ?>

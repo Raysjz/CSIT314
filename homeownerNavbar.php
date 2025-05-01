@@ -1,7 +1,7 @@
 <div class="Navbar">
     <div class="navbar-left">
         <a href="past_bookings.php">Past Bookings</a>
-        <a href="view_shortlist.php">Shortlist</a>
+        <a href="/CSIT314/boundary/viewHOshortlist.php">Shortlist</a>
     </div>
     <div class="navbar-right">
         <text color ="white" >Welcome, <?php echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'; ?> </text>
