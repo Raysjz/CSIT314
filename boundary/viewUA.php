@@ -8,12 +8,20 @@ if ($_SESSION['profileName'] !== 'User Admin') {
 require_once(__DIR__ . '/../adminNavbar.php');
 require_once(__DIR__ . '/../controllers/ViewUAController.php');
 
+// Pagination Setup
+$perPage = 10;
+$page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+$offset = ($page - 1) * $perPage;
+
+
 // Get the search query from GET request
 $searchQuery = isset($_GET['search']) ? $_GET['search'] : null;
 
 // Instantiate the controller and fetch user data
 $controller = new ViewUserAccountController();
-$userAccounts = $controller->viewUserAccounts($searchQuery);
+$result = $controller->viewUserAccounts($searchQuery, $perPage, $offset);
+$userAccounts = $result['data'];
+$totalPages = ceil($result['total'] / $perPage);
 ?>
 
 <!DOCTYPE html>
@@ -24,14 +32,14 @@ $userAccounts = $controller->viewUserAccounts($searchQuery);
     <title>View User Accounts</title>
     <style>
         body { font-family: Arial; background: #f4f4f4; margin: 0; padding: 40px; }
-        .container { background: white; padding: 30px; max-width: 1000px; margin: auto; margin-top: 80px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .container { background: white; padding: 30px; width: 100%; margin: 80px 0 0 0; margin-top: 80px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); box-sizing: border-box; }
         h1 { margin-bottom: 20px; }
         .detail { margin-bottom: 15px; }
         .label { font-weight: bold; }
         .search-container { margin-bottom: 20px; text-align: center; }
         .search-container h2 { margin-top: 0; }
         .search-input { padding: 10px; border: 1px solid #ddd; border-radius: 4px; width: 60%; margin-bottom: 10px; }
-        .search-button { padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .search-button { padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; }
         .search-button:hover { background-color: #0056b3; }
         .reset-button {padding: 10px 20px;background-color: #808080; color: white; border: none;border-radius: 4px;cursor: pointer;}
         .reset-button:hover {background-color: #565656; /* Darker Gray */}
@@ -39,10 +47,25 @@ $userAccounts = $controller->viewUserAccounts($searchQuery);
         th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
         th { background-color: #f2f2f2; font-weight: bold; }
         .actions-buttons button { padding: 8px 12px; margin-right: 5px; border: none; border-radius: 4px; cursor: pointer; }
-        .actions-buttons .update-button { background-color: #28a745; color: white; text-decoration: none; }
+        .actions-buttons .update-button { background-color: #007bff; color: white; text-decoration: none; }
         .actions-buttons .suspend-button { background-color: #dc3545; color: white; }
         .actions-buttons button:hover { opacity: 0.8; }
         .no-results { text-align: center; font-style: italic; color: #777; }
+        .pagination { margin-top: 20px; text-align: center; }
+        .pagination a, .pagination span { 
+            padding: 8px 16px; 
+            margin: 0 4px; 
+            border: 1px solid #ddd; 
+            text-decoration: none;
+            color: #007bff;
+            border-radius: 4px;
+        }
+        .pagination a:hover { background-color: #f2f2f2; }
+        .pagination .active { 
+            background-color: #007bff; 
+            color: white; 
+            border-color: #007bff;
+        }
     </style>
 </head>
 <body>
@@ -52,12 +75,16 @@ $userAccounts = $controller->viewUserAccounts($searchQuery);
         <!-- Search Form -->
         <div class="search-container">
         <h2>Search by Username or ID</h2>
-            <form action="" method="GET">
-                <input type="text" class="search-input" name="search" placeholder="Enter username or user ID" value="<?php echo htmlspecialchars($searchQuery); ?>">
-                <button type="submit" class="search-button">Search</button>
-                <button type="reset" class="reset-button" onclick="window.location.href = window.location.pathname;">Reset</button>
-            </form>
-        </div>
+        <form action="" method="GET">
+            <input type="hidden" name="page" value="1">
+            <input type="text" class="search-input" name="search" 
+                   placeholder="Enter username or user ID" 
+                   value="<?= htmlspecialchars($searchQuery) ?>">
+            <button type="submit" class="search-button">Search</button>
+            <button type="reset" class="reset-button" 
+                    onclick="window.location.href=window.location.pathname">Reset</button>
+        </form>
+    </div>
 
         
 
@@ -69,6 +96,8 @@ $userAccounts = $controller->viewUserAccounts($searchQuery);
                     <th>User ID</th>
                     <th>Username</th>
                     <th>Password</th>
+                    <th>Email</th>
+                    <th>Full Name</th>
                     <th>Profile</th>
                     <th>Is Suspended</th>
                     <th>Actions</th>
@@ -80,11 +109,6 @@ $userAccounts = $controller->viewUserAccounts($searchQuery);
                     $searchQuery = isset($_GET['search']) ? $_GET['search'] : null;
 
                     // Instantiate the UserAccount model and controller
-                    $userAccount = new UserAccount(null, '', '', '', null, 0); // Empty fields since we just want to fetch users
-                    $viewUAC = new ViewUserAccountController();
-
-                    // Fetch user accounts based on the search query
-                    $userAccounts = $viewUAC->viewUserAccounts($searchQuery);
 
                     if (empty($userAccounts)) {
                         echo "<tr><td colspan='6' class='no-results'>No results found.</td></tr>";
@@ -94,6 +118,8 @@ $userAccounts = $controller->viewUserAccounts($searchQuery);
                             echo "<td>" . htmlspecialchars($account->getId()) . "</td>"; 
                             echo "<td>" . htmlspecialchars($account->getUsername()) . "</td>"; 
                             echo "<td>" . htmlspecialchars($account->getPassword()) . "</td>";
+                            echo " <td> Placeholder_Email </td>";
+                            echo "<td> Full_Name</td>";
                             echo "<td>" . htmlspecialchars($account->getProfile()) . "</td>";
                             echo "<td>" . htmlspecialchars($account->getIsSuspended() ? 'Yes' : 'No') . "</td>";
                             echo "<td class='actions-buttons'>
@@ -106,6 +132,25 @@ $userAccounts = $controller->viewUserAccounts($searchQuery);
                 ?>
             </tbody>
         </table>
+        <!-- Pagination -->
+    <div class="pagination">
+        <?php if($page > 1): ?>
+            <a href="?page=1<?= $searchQuery ? '&search='.urlencode($searchQuery) : '' ?>">First</a>
+            <a href="?page=<?= $page-1 ?><?= $searchQuery ? '&search='.urlencode($searchQuery) : '' ?>">Previous</a>
+        <?php endif; ?>
+
+        <?php for($i = max(1, $page-2); $i <= min($page+2, $totalPages); $i++): ?>
+            <a href="?page=<?= $i ?><?= $searchQuery ? '&search='.urlencode($searchQuery) : '' ?>"
+               <?= $i === $page ? 'class="active"' : '' ?>>
+                <?= $i ?>
+            </a>
+        <?php endfor; ?>
+
+        <?php if($page < $totalPages): ?>
+            <a href="?page=<?= $page+1 ?><?= $searchQuery ? '&search='.urlencode($searchQuery) : '' ?>">Next</a>
+            <a href="?page=<?= $totalPages ?><?= $searchQuery ? '&search='.urlencode($searchQuery) : '' ?>">Last</a>
+        <?php endif; ?>
+    </div>
     </div>
 </body>
 </html>

@@ -1,16 +1,3 @@
-<div class="Navbar">
-    <div class="navbar-left">
-        <a href="/CSIT314/boundary/viewUA.php">View Accounts</a>
-        <a href="/CSIT314/boundary/createUA.php">Create Account</a> 
-        <a href="/CSIT314/boundary/viewUP.php">View Profiles</a>
-        <a href="/CSIT314/boundary/createUP.php">Create Profile</a> 
-    </div>
-    <div class="navbar-right">
-        <text color ="white" >Welcome, <?php echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'; ?> </text>
-        <a href="/CSIT314/logout.php">Logout</a>
-    </div>
-</div>
-
 <style>
     .navbar {
         display: flex;
@@ -25,6 +12,11 @@
         z-index: 999;
     }
 
+    .navbar-left, .navbar-right, .navbar-center {
+        display: flex;
+        align-items: center;
+    }
+
     .navbar a {
         color: white;
         text-decoration: none;
@@ -36,13 +28,29 @@
         text-decoration: underline;
     }
 
-    .navbar-left, .navbar-right {
-        display: flex;
-        align-items: center;
+    .navbar-center text {
+        color: white;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        font-weight: bold;
+        font-style: italic;
     }
-
-    .navbar-right text {
-    color: white;
-    }
-
 </style>
+
+<div class="navbar">
+    <div class="navbar-left">
+        <a href="/CSIT314/boundary/viewUA.php">View Accounts</a>
+        <a href="/CSIT314/boundary/createUA.php">Create Account</a> 
+        <a href="/CSIT314/boundary/viewUP.php">View Profiles</a>
+        <a href="/CSIT314/boundary/createUP.php">Create Profile</a> 
+    </div>
+    
+    <div class="navbar-center">
+        <text>Welcome, <?php echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'; ?></text>
+    </div>
+    
+    <div class="navbar-right">
+        <a href="/CSIT314/logout.php">Logout</a>
+    </div>
+</div>

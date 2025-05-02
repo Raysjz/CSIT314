@@ -135,36 +135,7 @@ class UserAccount {
     }
     
 
-    // Search user accounts by username or id
-    public static function searchUserAccounts($searchQuery) {
-        $db = Database::getPDO();
 
-        if (is_numeric($searchQuery)) {
-            $stmt = $db->prepare("SELECT * FROM user_accounts WHERE account_id = :search");
-        } else {
-            $stmt = $db->prepare("SELECT * FROM user_accounts WHERE ua_username LIKE :search");
-            $searchQuery = "%" . $searchQuery . "%";
-        }
-
-        $stmt->bindParam(':search', $searchQuery);
-        $stmt->execute();
-
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $userAccounts = [];
-        foreach ($result as $row) {
-            $userAccounts[] = new UserAccount(
-                $row['account_id'],
-                $row['ua_username'],
-                $row['ua_password'],
-                $row['profile_name'],
-                $row['profile_id'],
-                isset($row['is_suspended']) ? (bool)$row['is_suspended'] : false
-            );
-        }
-
-        return $userAccounts;
-    }
 
 
     // Fetches user by ID
@@ -223,5 +194,94 @@ class UserAccount {
 
         return $stmt->execute(); // Execute the query
     }
+            // NEW METHODS FOR PAGINATION
+    public static function getPaginatedAccounts($perPage = 10, $offset = 0) {
+        $db = Database::getPDO();
         
+        $stmt = $db->prepare("SELECT * FROM user_accounts 
+                            ORDER BY account_id ASC 
+                            LIMIT :limit OFFSET :offset");
+        
+        $stmt->bindValue(':limit', (int)$perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $userAccounts = [];
+        foreach ($result as $row) {
+            $userAccounts[] = new UserAccount(
+                $row['account_id'],
+                $row['ua_username'],
+                $row['ua_password'],
+                $row['profile_name'],
+                $row['profile_id'],
+                isset($row['is_suspended']) ? (bool)$row['is_suspended'] : false
+            );
+        }
+
+        return $userAccounts;
+    }
+
+    public static function searchUserAccounts($searchQuery, $perPage = 10, $offset = 0) {
+        $db = Database::getPDO();
+
+        if (is_numeric($searchQuery)) {
+            $stmt = $db->prepare("SELECT * FROM user_accounts 
+                                WHERE account_id = :search
+                                LIMIT :limit OFFSET :offset");
+        } else {
+            $stmt = $db->prepare("SELECT * FROM user_accounts 
+                                WHERE ua_username LIKE :search
+                                LIMIT :limit OFFSET :offset");
+            $searchQuery = "%" . $searchQuery . "%";
+        }
+
+        $stmt->bindParam(':search', $searchQuery);
+        $stmt->bindValue(':limit', (int)$perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $userAccounts = [];
+        foreach ($result as $row) {
+            $userAccounts[] = new UserAccount(
+                $row['account_id'],
+                $row['ua_username'],
+                $row['ua_password'],
+                $row['profile_name'],
+                $row['profile_id'],
+                isset($row['is_suspended']) ? (bool)$row['is_suspended'] : false
+            );
+        }
+
+        return $userAccounts;
+    }
+
+    public static function countAllUsers() {
+        $db = Database::getPDO();
+        $stmt = $db->query("SELECT COUNT(*) FROM user_accounts");
+        return (int)$stmt->fetchColumn();
+    }
+
+    public static function countSearchResults($searchQuery) {
+        $db = Database::getPDO();
+
+        if (is_numeric($searchQuery)) {
+            $stmt = $db->prepare("SELECT COUNT(*) FROM user_accounts 
+                                WHERE account_id = :search");
+        } else {
+            $stmt = $db->prepare("SELECT COUNT(*) FROM user_accounts 
+                                WHERE ua_username LIKE :search");
+            $searchQuery = "%" . $searchQuery . "%";
+        }
+
+        $stmt->bindParam(':search', $searchQuery);
+        $stmt->execute();
+
+        return (int)$stmt->fetchColumn();
+    }
+}
+?>
 }
