@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS user_profiles (
     is_suspended BOOLEAN NOT NULL      -- Profile suspension status
 );
 
--- User Account
+-- User Account (old)
 CREATE TABLE IF NOT EXISTS user_accounts (
     account_id SERIAL PRIMARY KEY,        -- Primary Key for user_accounts
     ua_username VARCHAR(50) UNIQUE NOT NULL, -- Username (unique)
@@ -13,6 +13,22 @@ CREATE TABLE IF NOT EXISTS user_accounts (
     profile_name VARCHAR(20) NOT NULL,         -- Profile name (Admin, Homeowner, Cleaner, etc.)
     profile_id INT NOT NULL,              -- Foreign key to user_profiles table
     is_suspended BOOLEAN NOT NULL DEFAULT FALSE,  -- Account suspension status
+    FOREIGN KEY (profile_id) REFERENCES user_profiles(profile_id) ON DELETE CASCADE -- Link to user_profiles
+);
+
+
+-- User Account with Email
+CREATE TABLE IF NOT EXISTS user_accounts (
+    account_id SERIAL PRIMARY KEY,        -- Primary Key for user_accounts
+    ua_username VARCHAR(50) UNIQUE NOT NULL, -- Username (unique)
+    ua_password VARCHAR(255) NOT NULL,       -- Password
+    full_name VARCHAR(100) NOT NULL,         -- Full name
+    email VARCHAR(100) UNIQUE NOT NULL,      -- Email address (unique)
+    profile_name VARCHAR(20) NOT NULL,       -- Profile name (Admin, Homeowner, Cleaner, etc.)
+    profile_id INT NOT NULL,                 -- Foreign key to user_profiles table
+    is_suspended BOOLEAN NOT NULL DEFAULT FALSE,  -- Account suspension status
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (profile_id) REFERENCES user_profiles(profile_id) ON DELETE CASCADE -- Link to user_profiles
 );
 
@@ -98,14 +114,14 @@ CREATE TABLE IF NOT EXISTS service_views (
 
 CREATE TABLE IF NOT EXISTS service_shortlists (
     shortlist_id SERIAL PRIMARY KEY,
-    homeowner_account_id INT NOT NULL,  -- FK to user_accounts(account_id)
-    service_id INT NOT NULL,            -- FK to cleaner_services(service_id)
+    homeowner_account_id INT NOT NULL,
+    service_id INT NOT NULL,
     shortlisted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    is_confirmed BOOLEAN NOT NULL DEFAULT FALSE,  -- True if booking is confirmed
+    is_confirmed BOOLEAN NOT NULL DEFAULT FALSE,
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
     FOREIGN KEY (homeowner_account_id) REFERENCES user_accounts(account_id) ON DELETE CASCADE,
     FOREIGN KEY (service_id) REFERENCES cleaner_services(service_id) ON DELETE CASCADE
 );
-
 
 CREATE TABLE IF NOT EXISTS service_bookings (
     booking_id SERIAL PRIMARY KEY,
@@ -114,21 +130,6 @@ CREATE TABLE IF NOT EXISTS service_bookings (
     status VARCHAR(20) NOT NULL DEFAULT 'confirmed',  -- e.g., confirmed, completed, cancelled
     completed_at TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
     FOREIGN KEY (shortlist_id) REFERENCES service_shortlists(shortlist_id) ON DELETE CASCADE
 );
-
-
--- Insert some example cleaner user accounts into the user_accounts table
-INSERT INTO user_accounts (ua_username, ua_password, profile_name, profile_id, is_suspended)
-VALUES
-('cleaner_01', 'password123', 'Cleaner', 3, FALSE),
-('cleaner_02', 'password123', 'Cleaner', 3, FALSE),
-('cleaner_03', 'password123', 'Cleaner', 3, FALSE),
-('cleaner_04', 'password123', 'Cleaner', 3, FALSE),
-('cleaner_05', 'password123', 'Cleaner', 3, FALSE),
-('cleaner_06', 'password123', 'Cleaner', 3, FALSE),
-('cleaner_07', 'password123', 'Cleaner', 3, FALSE),
-('cleaner_08', 'password123', 'Cleaner', 3, FALSE),
-('cleaner_09', 'password123', 'Cleaner', 3, FALSE),
-('cleaner_10', 'password123', 'Cleaner', 3, FALSE);
-

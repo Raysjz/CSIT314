@@ -1,6 +1,6 @@
 <?php
 // ViewUserProfileController.php
-require_once(__DIR__ . '/../entities/UserProfile.php');
+require_once(__DIR__ . '/../../entities/UserProfile.php');
 
 class ViewUserProfileController {
     // Method to retrieve all user profiles

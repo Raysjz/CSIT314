@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . '/../entities/UserAccount.php');
+require_once(__DIR__ . '/../../entities/UserAccount.php');
 
 class SuspendUserAccountController {
     // Fetch user by ID

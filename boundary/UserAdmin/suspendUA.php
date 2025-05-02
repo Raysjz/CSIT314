@@ -5,8 +5,8 @@ if ($_SESSION['profileName'] !== 'User Admin') {
     exit();
 }
 // Include necessary files
-require_once(__DIR__ . '/../adminNavbar.php');
-require_once(__DIR__ . '/../controllers/SuspendUPController.php');
+require_once(__DIR__ . '/adminNavbar.php');
+require_once(__DIR__ . '/../../controllers/UserAdmin/SuspendUAController.php');
 
 // Initialize message variable
 $message = "";
@@ -15,18 +15,20 @@ $message = "";
 $userIdToSuspend = isset($_GET['userid']) ? $_GET['userid'] : null;
 
 // Instantiate the controller
-$controller = new SuspendUserProfileController();
+$controller = new SuspendUserAccountController();
 
 // If the user ID is provided, suspend the user
 if ($userIdToSuspend !== null) {
     // Call the controller to suspend the user
-    $result = $controller->suspendUserProfile($userIdToSuspend);
+    $result = $controller->suspendUserAccount($userIdToSuspend);
 
     if ($result) {
-        // Success message with user ID
-        $message = "✅ User with ID: " . htmlspecialchars($userIdToSuspend) . " has been successfully suspended!";
+        // Success message
+        $message = "✅ User has been successfully suspended!";
+        header("Location: viewUA.php"); // Redirect to the user list page
+        exit;
     } else {
-        $message = "❌ User not found or could not be suspended.";
+        $message = "❌ User not found.";
     }
 } else {
     $message = "❌ No user ID provided.";
@@ -60,7 +62,7 @@ if ($userIdToSuspend !== null) {
             <div style="margin-bottom: 20px;"><?php echo htmlspecialchars($message); ?></div>
         <?php endif; ?>
         <div class="button-container">
-            <a href="viewUP.php" class="back-button">Back</a>
+            <a href="viewUA.php" class="back-button">Back</a>
         </div>
     </div>
 </body>

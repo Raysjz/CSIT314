@@ -5,9 +5,9 @@ if ($_SESSION['profileName'] !== 'User Admin') {
     exit();
 }
 // Include necessary files
-require_once(__DIR__ . '/../adminNavbar.php');
-require_once(__DIR__ . '/../controllers/CreateUAController.php');
-require_once(__DIR__ . '/../controllers/UserProfileController.php');  // Include the UserProfileController
+require_once(__DIR__ . '/adminNavbar.php');
+require_once(__DIR__ . '/../../controllers/UserAdmin/CreateUAController.php');
+require_once(__DIR__ . '/../../controllers/UserAdmin/UserProfileController.php');  // Include the UserProfileController
 
 /* Debug: Display all POST data
 
@@ -39,6 +39,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $data = [
         'username' => $_POST['username'],
         'password' => $_POST['password'],
+        'fullname' => $_POST['fullname'],
+        'email'    => $_POST['email'],
         'profileName' => $_POST['profile_name'],
         'profileId' => $_POST['profile_id'],
         'isSuspended' => isset($_POST['isSuspended']) ? $_POST['isSuspended'] : false // Default to false if not set
@@ -61,7 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     
     // Instantiate the CreateUserAccountController with validated data
-    $controller = new CreateUserAccountController(new UserAccount(null, $data['username'], $data['password'], $data['profileName'],$data['profileId'], $data['isSuspended']));
+    $controller = new CreateUserAccountController(new UserAccount(null, $data['username'], $data['password'],  $data['fullname'], $data['email'], $data['profileName'],$data['profileId'], $data['isSuspended']));
 
     // Call handleFormSubmission method to process and create the user account
     $result = $controller->handleFormSubmission($data);
@@ -110,9 +112,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php endif; ?>
 
     <form id="createForm" action="createUA.php" method="post" onsubmit="return handleFormSubmit(event)">
-        
+
+        <label for="fullname">Full Name</label>
+        <input type="text" id="fullname" name="fullname" required>
+
         <label for="username">Username</label>
         <input type="text" id="username" name="username" required>
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required>
 
         <label for="password">Password</label>
         <input type="password" id="password" name="password" required>

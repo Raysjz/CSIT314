@@ -5,8 +5,8 @@ if ($_SESSION['profileName'] !== 'User Admin') {
     exit();
 }
 // Include necessary files
-require_once(__DIR__ . '/../adminNavbar.php');
-require_once(__DIR__ . '/../controllers/CreateUPController.php');
+require_once(__DIR__ . '/adminNavbar.php');
+require_once(__DIR__ . '/../../controllers/UserAdmin/CreateUPController.php');
 
 // Initialize message variable
 $message = "";

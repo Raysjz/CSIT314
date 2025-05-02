@@ -1,4 +1,6 @@
 <?php
+namespace Csit314\CleaningPlatform;
+
 require_once(__DIR__ . '/ConnectiontoDB.php');
 
 // entities/Shortlist.php
@@ -67,9 +69,15 @@ class Shortlist {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ? $row['shortlist_id'] : null;
     }
-    
-    
-    
+
+    public static function countShortlists($serviceId) {
+        $db = Database::getPDO();
+        $stmt = $db->prepare("SELECT COUNT(*) FROM service_shortlists WHERE service_id = :service_id");
+        $stmt->bindParam(':service_id', $serviceId, PDO::PARAM_INT);
+        $stmt->execute();
+        return (int)$stmt->fetchColumn();
+    }
+
     
 }
 

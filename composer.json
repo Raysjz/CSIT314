@@ -1,0 +1,10 @@
+{
+    "name": "csit314/cleaning-platform",
+    "version": "1.0.0",
+    "autoload": {
+        "psr-4": {
+            "Csit314\\CleaningPlatform\\": "entities/"
+        }
+    },
+    "require": {}
+}

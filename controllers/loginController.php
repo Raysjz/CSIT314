@@ -7,7 +7,7 @@ class UserAccountController {
         $conn = Database::getPgConnect();
         
         // Create a new UserAccount instance before calling the validateUser method
-        $userAccount = new UserAccount(null, $username, $password, $profile, null, false);  // ID is null initially
+        $userAccount = new UserAccount(null, $username, $password, null, null,  $profile, null, false);  // ID is null initially
 
         // Validate the user data
         $result = $userAccount->validateUser($username, $password, $profile);  // Now it's calling validateUser on the instantiated object
@@ -21,6 +21,8 @@ class UserAccountController {
                 null,  // ID is null because it will be auto-generated
                 $username,  // Passed from POST data
                 $password,  // Passed from POST data
+                null,       // Full Name not required
+                null,       // Email Not required
                 $profile,    // Passed from POST data
                 $profileId,  // Retrieved profile_id from the database
                 false         // Default suspension status (false)

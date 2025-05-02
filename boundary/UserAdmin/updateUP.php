@@ -5,8 +5,8 @@ if ($_SESSION['profileName'] !== 'User Admin') {
     exit();
 }
 // Include necessary files
-require_once(__DIR__ . '/../adminNavbar.php');
-require_once(__DIR__ . '/../controllers/UpdateUPController.php');
+require_once(__DIR__ . '/adminNavbar.php');
+require_once(__DIR__ . '/../../controllers/UserAdmin/UpdateUPController.php');
 
 // Get the user ID from the query parameter
 $userIdToUpdate = isset($_GET['userid']) ? $_GET['userid'] : null;

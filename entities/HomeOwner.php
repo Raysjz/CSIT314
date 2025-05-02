@@ -1,4 +1,6 @@
 <?php
+namespace Csit314\CleaningPlatform;
+
 require_once(__DIR__ . '/ConnectiontoDB.php');
 
 class HomeownerCleaningService {

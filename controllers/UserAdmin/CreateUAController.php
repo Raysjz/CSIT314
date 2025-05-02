@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . '/../entities/UserAccount.php');
+require_once(__DIR__ . '/../../entities/UserAccount.php');
 
 class CreateUserAccountController {
     private $userAccount;
@@ -24,6 +24,8 @@ class CreateUserAccountController {
             null,  // ID is auto-generated
             $data['username'],
             $data['password'],
+            $data['fullname'],
+            $data['email'],
             $data['profileName'],
             $data['profileId'],
             isset($data['isSuspended']) ? $data['isSuspended'] : false

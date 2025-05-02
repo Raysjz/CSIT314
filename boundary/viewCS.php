@@ -1,5 +1,5 @@
 <?php
-session_start();  // Start the session to access session variables
+session_start();
 if ($_SESSION['profileName'] !== 'Cleaner') {
     header('Location: ../login.php');
     exit();
@@ -8,24 +8,24 @@ require_once(__DIR__ . '/../cleanerNavbar.php');
 require_once(__DIR__ . '/../controllers/ViewCSController.php');
 require_once(__DIR__ . '/../controllers/SearchCSController.php');
 require_once(__DIR__ . '/../controllers/PlatformCategoryController.php');
+require_once(__DIR__ . '/../controllers/ShortlistController.php');
+require_once(__DIR__ . '/../controllers/ServiceViewController.php');
 
 $searchQuery = isset($_GET['search']) ? $_GET['search'] : null;
-// Instantiate the controller and fetch cleaning service data
-$accountId = $_SESSION['user_id'] ?? null; // Only set if user is logged in as cleaner
-$controller = new SearchCleaningServicesController();
+$accountId = $_SESSION['user_id'] ?? null;
 
 if ($searchQuery) {
+    $controller = new SearchCleaningServicesController();
     $cleaningServices = $controller->searchCleaningServices($searchQuery, $accountId);
 } else {
-    // Fallback to viewing all services for this cleaner
     $controller = new ViewCleaningServicesController();
     $cleaningServices = $controller->viewCleaningServices($accountId);
 }
 
-
+// Instantiate controllers ONCE, use inside loop
+$shortlistController = new ShortlistController();
+$viewController = new ServiceViewController();
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -68,15 +68,11 @@ if ($searchQuery) {
             </form>
         </div>
         <!-- Create New Service Button (right above the table) -->
-    <div style="text-align: right; margin-bottom: 10px;">
-        <button class="create-button" onclick="window.location.href='createCS.php'">Create New Service</button>
-    </div>
+        <div style="text-align: right; margin-bottom: 10px;">
+            <button class="create-button" onclick="window.location.href='createCS.php'">Create New Service</button>
+        </div>
 
         <h2>Cleaning Services List</h2>
-
-    <table>
-        <!-- your thead and tbody here -->
-    </table>
 
         <table>
             <thead>
@@ -96,24 +92,27 @@ if ($searchQuery) {
             <tbody>
                 <?php
                     if (empty($cleaningServices)) {
-                        echo "<tr><td colspan='9' class='no-results'>No results found.</td></tr>";
+                        echo "<tr><td colspan='10' class='no-results'>No results found.</td></tr>";
                     } else {
                         foreach ($cleaningServices as $service) {
+                            //---- Shortlist and Views-----//
+                            $serviceId = $service->getServiceId();
+                            $viewCount = $viewController->getViewCount($serviceId);
+                            $shortlistCount = $shortlistController->getShortlistCount($serviceId);
+
                             echo "<tr>";
-                            echo "<td>" . htmlspecialchars($service->getServiceId()) . "</td>";
-                            echo "<td>" . htmlspecialchars($service->getTitle()) . "</td>";
+                            echo "<td>" . htmlspecialchars($serviceId) . "</td>";
                             echo "<td>" . htmlspecialchars($service->getCategoryName()) . "</td>";
+                            echo "<td>" . htmlspecialchars($service->getTitle()) . "</td>";
                             echo "<td class='desc-cell'>" . htmlspecialchars($service->getDescription()) . "</td>";
                             echo "<td>$" . htmlspecialchars(number_format($service->getPrice(), 2)) . "</td>";
                             echo "<td>" . htmlspecialchars($service->getAvailability()) . "</td>";
                             echo "<td>" . ($service->isSuspended() ? 'Yes' : 'No') . "</td>";
-                            // Placeholder for Views Count
-                            echo "<td>0</td>";
-                            // Placeholder for Shortlist Count
-                            echo "<td>0</td>";
+                            echo "<td>$viewCount</td>";
+                            echo "<td>$shortlistCount</td>";
                             echo "<td class='actions-buttons'>
-                                    <button onclick=\"window.location.href='updateCS.php?serviceid=" . $service->getServiceId() . "';\" class='update-button'>Edit</button>
-                                    <button onclick=\"return confirm('Are you sure you want to suspend this service?') ? window.location.href='suspendCS.php?serviceid=" . $service->getServiceId() . "' : false;\" class='suspend-button'>Suspend</button>
+                                    <button onclick=\"window.location.href='updateCS.php?serviceid=" . $serviceId . "';\" class='update-button'>Edit</button>
+                                    <button onclick=\"return confirm('Are you sure you want to suspend this service?') ? window.location.href='suspendCS.php?serviceid=" . $serviceId . "' : false;\" class='suspend-button'>Suspend</button>
                                   </td>";
                             echo "</tr>";
                         }
@@ -124,4 +123,3 @@ if ($searchQuery) {
     </div>
 </body>
 </html>
-

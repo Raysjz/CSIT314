@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . '/../entities/UserAccount.php');
+require_once(__DIR__ . '/../../entities/UserAccount.php');
 
 class ViewUserAccountController {
     public function viewUserAccounts($searchQuery = null, $perPage = 10, $offset = 0) {

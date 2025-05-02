@@ -1,6 +1,6 @@
 <?php
 require_once(__DIR__ . '/controllers/loginController.php');
-require_once(__DIR__ . '/controllers/UserProfileController.php');  // Include the UserProfileController
+require_once(__DIR__ . '/controllers/UserAdmin/UserProfileController.php');  // Include the UserProfileController
 session_start();
 
 // Instantiate the UserProfileController
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Redirect based on profile
         if($result['user']['profile_name'] === 'User Admin') {
-            header("Location: /CSIT314/boundary/viewUA.php");
+            header("Location: /CSIT314/boundary/UserAdmin/viewUA.php");
         }elseif($result['user']['profile_name'] === 'Homeowner'){
             header("Location: /CSIT314/boundary/viewHO.php");
         }elseif($result['user']['profile_name'] === 'Cleaner'){

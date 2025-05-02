@@ -1,4 +1,6 @@
 <?php
+namespace Csit314\CleaningPlatform;
+
 require_once(__DIR__ . '/ConnectiontoDB.php');
 
 class UserProfile {
@@ -46,33 +48,7 @@ class UserProfile {
         return "Validation passed.";
     }
 
-    public static function getProfiles() {
-        $db = Database::getPDO();
-
-        // Prepare the SQL statement to fetch all profiles
-        $stmt = $db->prepare("SELECT profile_id, profile_name FROM user_profiles");
-        $stmt->execute();
-
-        // Fetch all profiles as an associative array
-        $profiles = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        return $profiles;
-    }
-
     
-    public static function getProfileIdByName($profileName) {
-        $db = Database::getPDO();
-        $stmt = $db->prepare("SELECT profile_id FROM user_profiles WHERE name = :name");
-        $stmt->bindParam(':name', $profileName);
-        $stmt->execute();
-    
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-        return $result ? $result['profile_id'] : null;
-    }
-    
-
-
     public function saveUserProfile() {
         $db = Database::getPDO();
         
@@ -194,6 +170,32 @@ class UserProfile {
         $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);  // Correctly binding the profile ID
     
         return $stmt->execute();  // Execute the query
+    }
+
+    // UserProfileController 
+    public static function getProfiles() {
+        $db = Database::getPDO();
+
+        // Prepare the SQL statement to fetch all profiles
+        $stmt = $db->prepare("SELECT profile_id, profile_name FROM user_profiles where is_Suspended = false ");
+        $stmt->execute();
+
+        // Fetch all profiles as an associative array
+        $profiles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $profiles;
+    }
+
+    // UserProfileController 
+    public static function getProfileIdByName($profileName) {
+        $db = Database::getPDO();
+        $stmt = $db->prepare("SELECT profile_id FROM user_profiles WHERE name = :name");
+        $stmt->bindParam(':name', $profileName);
+        $stmt->execute();
+    
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+        return $result ? $result['profile_id'] : null;
     }
     
 }

@@ -13,6 +13,11 @@ class ShortlistController {
     public function removeFromShortlist($homeownerAccountId, $serviceId) {
         return Shortlist::removeFromShortlist($homeownerAccountId, $serviceId);
     }
+    public function getShortlistCount($serviceId) {
+        return Shortlist::countShortlists($serviceId);
+    }
 }
+
+
 
 ?>

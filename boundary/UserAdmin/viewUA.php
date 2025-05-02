@@ -1,23 +1,25 @@
 <?php
 session_start();  // Start the session to access session variables
+
+// 1. Access Control: Only allow User Admin
 if ($_SESSION['profileName'] !== 'User Admin') {
     header('Location: ../login.php');
     exit();
 }
-// Include necessary files
-require_once(__DIR__ . '/../adminNavbar.php');
-require_once(__DIR__ . '/../controllers/ViewUAController.php');
 
-// Pagination Setup
+// 2. Include necessary files (navbar and controller)
+require_once(__DIR__ . '/adminNavbar.php');
+require_once(__DIR__ . '/../../controllers/UserAdmin/ViewUAController.php');
+
+// 3. Pagination setup
 $perPage = 10;
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $offset = ($page - 1) * $perPage;
 
-
-// Get the search query from GET request
+// 4. Get search query from GET request (if any)
 $searchQuery = isset($_GET['search']) ? $_GET['search'] : null;
 
-// Instantiate the controller and fetch user data
+// 5. Fetch user accounts using the controller
 $controller = new ViewUserAccountController();
 $result = $controller->viewUserAccounts($searchQuery, $perPage, $offset);
 $userAccounts = $result['data'];
@@ -32,22 +34,19 @@ $totalPages = ceil($result['total'] / $perPage);
     <title>View User Accounts</title>
     <style>
         body { font-family: Arial; background: #f4f4f4; margin: 0; padding: 40px; }
-        .container { background: white; padding: 30px; width: 100%; margin: 80px 0 0 0; margin-top: 80px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); box-sizing: border-box; }
+        .container { background: white; padding: 30px; width: 100%; margin-top: 80px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); box-sizing: border-box; }
         h1 { margin-bottom: 20px; }
-        .detail { margin-bottom: 15px; }
-        .label { font-weight: bold; }
         .search-container { margin-bottom: 20px; text-align: center; }
-        .search-container h2 { margin-top: 0; }
         .search-input { padding: 10px; border: 1px solid #ddd; border-radius: 4px; width: 60%; margin-bottom: 10px; }
         .search-button { padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; }
         .search-button:hover { background-color: #0056b3; }
-        .reset-button {padding: 10px 20px;background-color: #808080; color: white; border: none;border-radius: 4px;cursor: pointer;}
-        .reset-button:hover {background-color: #565656; /* Darker Gray */}
+        .reset-button { padding: 10px 20px; background-color: #808080; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .reset-button:hover { background-color: #565656; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
         th { background-color: #f2f2f2; font-weight: bold; }
         .actions-buttons button { padding: 8px 12px; margin-right: 5px; border: none; border-radius: 4px; cursor: pointer; }
-        .actions-buttons .update-button { background-color: #007bff; color: white; text-decoration: none; }
+        .actions-buttons .update-button { background-color: #007bff; color: white; }
         .actions-buttons .suspend-button { background-color: #dc3545; color: white; }
         .actions-buttons button:hover { opacity: 0.8; }
         .no-results { text-align: center; font-style: italic; color: #777; }
@@ -70,12 +69,13 @@ $totalPages = ceil($result['total'] / $perPage);
 </head>
 <body>
 
-    <div class="container">
+<div class="container">
 
-        <!-- Search Form -->
-        <div class="search-container">
+    <!-- Search Form -->
+    <div class="search-container">
         <h2>Search by Username or ID</h2>
         <form action="" method="GET">
+            <!-- Always reset to page 1 on new search -->
             <input type="hidden" name="page" value="1">
             <input type="text" class="search-input" name="search" 
                    placeholder="Enter username or user ID" 
@@ -86,53 +86,50 @@ $totalPages = ceil($result['total'] / $perPage);
         </form>
     </div>
 
-        
+    <h2>User List</h2>
 
-        <h2>User List</h2>
+    <!-- User Accounts Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>User ID</th>
+                <th>Username</th>
+                <th>Password</th>
+                <th>Email</th>
+                <th>Full Name</th>
+                <th>Profile</th>
+                <th>Is Suspended</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            // Show "No results" if the user list is empty
+            if (empty($userAccounts)) {
+                echo "<tr><td colspan='8' class='no-results'>No results found.</td></tr>";
+            } else {
+                // Loop through user accounts and display each in a table row
+                foreach ($userAccounts as $account) {
+                    echo "<tr>";
+                    echo "<td>" . htmlspecialchars($account->getId()) . "</td>"; 
+                    echo "<td>" . htmlspecialchars($account->getUsername()) . "</td>"; 
+                    echo "<td>" . htmlspecialchars($account->getPassword()) . "</td>";
+                    echo "<td>" . htmlspecialchars($account->getEmail()) . "</td>";
+                    echo "<td>" . htmlspecialchars($account->getFullName()) . "</td>";
+                    echo "<td>" . htmlspecialchars($account->getProfile()) . "</td>";
+                    echo "<td>" . ($account->getIsSuspended() ? 'Yes' : 'No') . "</td>";
+                    echo "<td class='actions-buttons'>
+                            <button onclick=\"window.location.href='updateUA.php?userid=" . $account->getId() . "';\" class='update-button'>Update</button>
+                            <button onclick=\"return confirm('Are you sure you want to suspend this user?') ? window.location.href='suspendUA.php?userid=" . $account->getId() . "' : false;\" class='suspend-button'>Suspend</button>
+                          </td>";
+                    echo "</tr>";
+                }
+            }
+            ?>
+        </tbody>
+    </table>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>User ID</th>
-                    <th>Username</th>
-                    <th>Password</th>
-                    <th>Email</th>
-                    <th>Full Name</th>
-                    <th>Profile</th>
-                    <th>Is Suspended</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                    // Check if there is a search query
-                    $searchQuery = isset($_GET['search']) ? $_GET['search'] : null;
-
-                    // Instantiate the UserAccount model and controller
-
-                    if (empty($userAccounts)) {
-                        echo "<tr><td colspan='6' class='no-results'>No results found.</td></tr>";
-                    } else {
-                        foreach ($userAccounts as $account) {
-                            echo "<tr>";
-                            echo "<td>" . htmlspecialchars($account->getId()) . "</td>"; 
-                            echo "<td>" . htmlspecialchars($account->getUsername()) . "</td>"; 
-                            echo "<td>" . htmlspecialchars($account->getPassword()) . "</td>";
-                            echo " <td> Placeholder_Email </td>";
-                            echo "<td> Full_Name</td>";
-                            echo "<td>" . htmlspecialchars($account->getProfile()) . "</td>";
-                            echo "<td>" . htmlspecialchars($account->getIsSuspended() ? 'Yes' : 'No') . "</td>";
-                            echo "<td class='actions-buttons'>
-                                    <button onclick=\"window.location.href='updateUA.php?userid=" . $account->getId() . "';\" class='update-button'>Update</button>
-                                    <button onclick=\"return confirm('Are you sure you want to suspend this user?') ? window.location.href='suspendUA.php?userid=" . $account->getId() . "' : false;\" class='suspend-button'>Suspend</button>
-                                  </td>";
-                            echo "</tr>";
-                        }
-                    }
-                ?>
-            </tbody>
-        </table>
-        <!-- Pagination -->
+    <!-- Pagination Controls -->
     <div class="pagination">
         <?php if($page > 1): ?>
             <a href="?page=1<?= $searchQuery ? '&search='.urlencode($searchQuery) : '' ?>">First</a>
@@ -151,7 +148,6 @@ $totalPages = ceil($result['total'] / $perPage);
             <a href="?page=<?= $totalPages ?><?= $searchQuery ? '&search='.urlencode($searchQuery) : '' ?>">Last</a>
         <?php endif; ?>
     </div>
-    </div>
+</div>
 </body>
 </html>
-

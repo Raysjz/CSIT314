@@ -1,18 +1,25 @@
 <?php
+namespace Csit314\CleaningPlatform;
+
 require_once(__DIR__ . '/ConnectiontoDB.php');
 
 class UserAccount {
     protected $id;
     protected $username;
     protected $password;
+    protected $fullName;      
+    protected $email;        
     protected $profile;
     protected $profileId;
     protected $isSuspended;
 
-    public function __construct($id, $username, $password, $profile, $profileId, $isSuspended) {
+    // Updated constructor with new fields
+    public function __construct($id, $username, $password, $fullName, $email, $profile, $profileId, $isSuspended) {
         $this->id = $id;
         $this->username = $username;
         $this->password = $password;
+        $this->fullName = $fullName;  
+        $this->email = $email;         
         $this->profile = $profile;
         $this->profileId = $profileId;
         $this->isSuspended = $isSuspended;
@@ -31,18 +38,29 @@ class UserAccount {
         return $this->password;
     }
 
+    public function getFullName() {      
+        return $this->fullName;
+    }
+
+    public function getEmail() {         
+        return $this->email;
+    }
+
     public function getProfile() {
         return $this->profile;
     }
+
     public function getProfileId() {
         return $this->profileId;
     }
-    
+
     public function getIsSuspended() {
         return $this->isSuspended;
     }
 
-    // Validate user login data
+
+
+    // Validate User Account Login Data
     public function validateUser($username, $password, $profile) {
         $conn = Database::getPgConnect(); // Ensure database connection is correct
     
@@ -76,12 +94,20 @@ class UserAccount {
     
     // Validate user input data
     public function validateUserAccount() {
-        if (empty($this->username) || empty($this->password) || empty($this->profile)) {
+        if (empty($this->fullName) || empty($this->username) || empty($this->email) || empty($this->password)) {
             return "All fields are required.";
         }
-
+    
         $db = Database::getPDO();
-
+    
+        // Check if email already exists
+        $stmt = $db->prepare("SELECT * FROM user_accounts WHERE email = :email");
+        $stmt->bindParam(':email', $this->email);
+        $stmt->execute();
+        if ($stmt->rowCount() > 0) {
+            return "Email already exists.";
+        }
+    
         // Check if username already exists
         $stmt = $db->prepare("SELECT * FROM user_accounts WHERE ua_username = :username");
         $stmt->bindParam(':username', $this->username);
@@ -89,26 +115,30 @@ class UserAccount {
         if ($stmt->rowCount() > 0) {
             return "Username already taken.";
         }
-
+    
         return "Validation passed.";
     }
-
+    
+    // Inserts New UserAccount into Database
     public function saveUserAccount() {
         $db = Database::getPDO();
     
-        // Insert into user_accounts with the profile_name, profile_id, and is_suspended
-        $stmt = $db->prepare("INSERT INTO user_accounts (ua_username, ua_password, profile_name, profile_id, is_suspended) 
-                              VALUES (:ua_username, :ua_password, :profile_name, :profile_id, :is_suspended)");
+        $stmt = $db->prepare("INSERT INTO user_accounts 
+            (ua_username, ua_password, full_name, email, profile_name, profile_id, is_suspended) 
+            VALUES 
+            (:ua_username, :ua_password, :full_name, :email, :profile_name, :profile_id, :is_suspended)");
     
-        // Bind parameters
         $stmt->bindParam(':ua_username', $this->username);
         $stmt->bindParam(':ua_password', $this->password);
+        $stmt->bindParam(':full_name', $this->fullName);
+        $stmt->bindParam(':email', $this->email);
         $stmt->bindParam(':profile_name', $this->profile);
         $stmt->bindParam(':profile_id', $this->profileId);
         $stmt->bindParam(':is_suspended', $this->isSuspended, PDO::PARAM_BOOL);
     
         return $stmt->execute();
     }
+    
     
     // View all user accounts (ordered by ID ascending)
     public static function viewUserAccounts() {
@@ -125,6 +155,8 @@ class UserAccount {
                 $row['account_id'],
                 $row['ua_username'],
                 $row['ua_password'],
+                $row['full_name'], 
+                $row['email'], 
                 $row['profile_name'], 
                 $row['profile_id'],
                 isset($row['is_suspended']) ? (bool)$row['is_suspended'] : false
@@ -134,8 +166,6 @@ class UserAccount {
         return $userAccounts;
     }
     
-
-
 
 
     // Fetches user by ID
@@ -214,7 +244,9 @@ class UserAccount {
                 $row['account_id'],
                 $row['ua_username'],
                 $row['ua_password'],
-                $row['profile_name'],
+                $row['full_name'], 
+                $row['email'], 
+                $row['profile_name'], 
                 $row['profile_id'],
                 isset($row['is_suspended']) ? (bool)$row['is_suspended'] : false
             );
@@ -250,7 +282,9 @@ class UserAccount {
                 $row['account_id'],
                 $row['ua_username'],
                 $row['ua_password'],
-                $row['profile_name'],
+                $row['full_name'], 
+                $row['email'], 
+                $row['profile_name'], 
                 $row['profile_id'],
                 isset($row['is_suspended']) ? (bool)$row['is_suspended'] : false
             );
@@ -284,4 +318,4 @@ class UserAccount {
     }
 }
 ?>
-}
+

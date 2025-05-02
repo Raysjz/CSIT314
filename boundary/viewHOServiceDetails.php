@@ -9,10 +9,12 @@ require_once(__DIR__ . '/..//controllers/ViewHOServiceController.php');
 require_once(__DIR__ . '/../controllers/PlatformCategoryController.php');
 require_once(__DIR__ . '/../controllers/UserAccountController.php');
 require_once(__DIR__ . '/../controllers/ShortlistController.php');
+require_once(__DIR__ . '/../controllers/ServiceViewController.php');
 
 $serviceId = $_GET['id'] ?? null;
 $controller = new ViewHOServiceController();
 list($service, $cleaner) = $controller->getServiceAndCleaner($serviceId);
+
 
 if (!$service) {
     echo "<p>Service not found.</p>";
@@ -23,8 +25,23 @@ $categoryName = method_exists($service, 'getCategoryName') ? $service->getCatego
 
 
 
+//------------------------- Service View Controller
+$serviceId = $_GET['id'];
+$viewerAccountId = $_SESSION['user_id'] ?? null;
+
+$viewController = new ServiceViewController();
+
+// Only log once per session per service
+$viewedKey = 'viewed_service_' . $serviceId;
+if (empty($_SESSION[$viewedKey])) {
+    $viewController->logView($serviceId, $viewerAccountId);
+    $_SESSION[$viewedKey] = true;
+}
+//-----------------------------------------------------
 
 
+
+//----------------------------------------Short List Controller
 $message = "";
 if (isset($_GET['success']) && $_GET['success'] == 1) {
     $message = "✅ Service successfully added to your shortlist!";
@@ -35,6 +52,7 @@ if (isset($_GET['error']) && $_GET['error'] === 'already_shortlisted') {
 if (isset($_GET['removed']) && $_GET['removed'] == 1) {
     $message = "✅ Service removed from your shortlist.";
 }
+//----------------------------------------------------------------
 
 $homeownerAccountId = $_SESSION['user_id']; // or $_SESSION['accountId'], use your session variable
 $shortlistController = new ShortlistController();
