@@ -61,6 +61,7 @@ $categories = PlatformCategory::getAllCategories();
             align-items: center;
             gap: 8px;
         }
+        
     </style>
 </head>
 <body>

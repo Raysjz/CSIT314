@@ -19,13 +19,13 @@ $serviceCategories = $controller->viewPlatformCategory($searchQuery);
     <title>View User Accounts</title>
     <style>
         body { font-family: Arial; background: #f4f4f4; margin: 0; padding: 40px; }
-        .container { background: white; padding: 30px; max-width: 1000px; margin: auto; margin-top: 80px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .container { background: white; padding: 30px; width: 100%; margin-top: 80px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); box-sizing: border-box; }
         h1 { margin-bottom: 20px; }
         .detail { margin-bottom: 15px; }
         .label { font-weight: bold; }
-        .search-container { margin-bottom: 20px; text-align: center; }
         .search-container h2 { margin-top: 0; }
-        .search-input { padding: 10px; border: 1px solid #ddd; border-radius: 4px; width: 60%; margin-bottom: 10px; }
+        .search-container {display: flex; flex-direction:column; margin-right: 20px;}
+        .search-container input[type="text"] {padding: 8px;border: 1px solid #ccc;border-radius: 4px 0 0 4px;width: 300px; /* Adjust width as needed */font-family: Arial, sans-serif;}
         .search-button { padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
         .search-button:hover { background-color: #0056b3; }
         .reset-button {padding: 10px 20px;background-color: #808080; color: white; border: none;border-radius: 4px;cursor: pointer;}
@@ -33,6 +33,12 @@ $serviceCategories = $controller->viewPlatformCategory($searchQuery);
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
         th { background-color: #f2f2f2; font-weight: bold; }
+        .actions-buttons {
+            display: flex;
+            justify-content: center; /* centers buttons horizontally */
+            gap: 8px; /* space between buttons */
+            align-items: center; /* vertically center if needed */
+        }
         .actions-buttons button { padding: 8px 12px; margin-right: 5px; border: none; border-radius: 4px; cursor: pointer; }
         .actions-buttons .update-button { background-color: #28a745; color: white; text-decoration: none; }
         .actions-buttons .suspend-button { background-color: #dc3545; color: white; }
@@ -48,7 +54,7 @@ $serviceCategories = $controller->viewPlatformCategory($searchQuery);
         <div class="search-container">
         <h2>Search by Category Name or ID</h2>
             <form action="" method="GET">
-                <input type="text" class="search-input" name="search" placeholder="Enter username or user ID" value="<?php echo htmlspecialchars($searchQuery); ?>">
+                <input type="text" class="search-input" name="search" placeholder="Enter category or category ID" value="<?php echo htmlspecialchars($searchQuery); ?>">
                 <button type="submit" class="search-button">Search</button>
                 <button type="reset" class="reset-button" onclick="window.location.href = window.location.pathname;">Reset</button>
             </form>

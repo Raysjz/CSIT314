@@ -35,10 +35,10 @@ $viewController = new ServiceViewController();
     <title>View Cleaning Services</title>
     <style>
         body { font-family: Arial; background: #f4f4f4; margin: 0; padding: 40px; }
-        .container { background: white; padding: 30px; max-width: 1200px; margin: auto; margin-top: 80px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .container { background: white; padding: 30px; width: 100%; margin-top: 80px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); box-sizing: border-box; }
         h1, h2 { margin-bottom: 20px; }
-        .search-container { margin-bottom: 20px; text-align: center; }
-        .search-input { padding: 10px; border: 1px solid #ddd; border-radius: 4px; width: 60%; margin-bottom: 10px; }
+        .search-container {display: flex; flex-direction:column; margin-right: 20px;}
+        .search-container input[type="text"] {padding: 8px;border: 1px solid #ccc;border-radius: 4px 0 0 4px;width: 300px; /* Adjust width as needed */font-family: Arial, sans-serif;}
         .search-button { padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
         .search-button:hover { background-color: #0056b3; }
         .reset-button {padding: 10px 20px;background-color: #808080; color: white; border: none;border-radius: 4px;cursor: pointer;}
@@ -51,6 +51,22 @@ $viewController = new ServiceViewController();
         .actions-buttons .suspend-button { background-color: #dc3545; color: white; }
         .actions-buttons button:hover { opacity: 0.8; }
         .no-results { text-align: center; font-style: italic; color: #777; }
+        .create-button {
+            margin-top: 15px; /* spacing below the form */
+            padding: 10px 20px;
+            background-color:rgb(122, 130, 139); /* same as search-button */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .create-button:hover {
+            background-color:rgb(85, 90, 95); /* same hover as search-button */
+        }
         .desc-cell { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     </style>
 </head>
@@ -68,7 +84,7 @@ $viewController = new ServiceViewController();
             </form>
         </div>
         <!-- Create New Service Button (right above the table) -->
-        <div style="text-align: right; margin-bottom: 10px;">
+        <div style="text-align: left; margin-bottom: 10px;">
             <button class="create-button" onclick="window.location.href='createCS.php'">Create New Service</button>
         </div>
 

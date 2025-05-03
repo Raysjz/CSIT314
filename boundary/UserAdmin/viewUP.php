@@ -6,8 +6,8 @@ if ($_SESSION['profileName'] !== 'User Admin') {
 }
 // Include necessary files
 require_once(__DIR__ . '/adminNavbar.php');
-require_once(__DIR__ . '/../controllers/ViewUPController.php');
-require_once(__DIR__ . '/../controllers/SearchUPController.php');
+require_once(__DIR__ . '/../../controllers/UserAdmin/ViewUPController.php');
+require_once(__DIR__ . '/../../controllers/UserAdmin/SearchUPController.php');
 
 // Get the search query from GET request
 $searchQuery = isset($_GET['search']) ? $_GET['search'] : null;
@@ -34,28 +34,22 @@ if ($searchQuery) {
     <title>View User Profiles</title>
     <style>
         body { font-family: Arial; background: #f4f4f4; margin: 0; padding: 40px; }
-        .container { background: white; padding: 30px; width: 100%; margin-top: 80px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); box-sizing: border-box; }
+        .container { background: white; padding: 30px; max-width: 1000px; margin: auto; margin-top: 80px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         h1 { margin-bottom: 20px; }
         .detail { margin-bottom: 15px; }
         .label { font-weight: bold; }
+        .search-container { margin-bottom: 20px; text-align: center; }
         .search-container h2 { margin-top: 0; }
-        .search-container {display: flex; flex-direction:column; margin-right: 20px;}
-        .search-container input[type="text"] {padding: 8px;border: 1px solid #ccc;border-radius: 4px 0 0 4px;width: 300px; /* Adjust width as needed */font-family: Arial, sans-serif;}
-        .search-button { padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        .search-button:hover { background-color: #218838; }
+        .search-input { padding: 10px; border: 1px solid #ddd; border-radius: 4px; width: 60%; margin-bottom: 10px; }
+        .search-button { padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .search-button:hover { background-color: #0056b3; }
         .reset-button {padding: 10px 20px;background-color: #808080; color: white; border: none;border-radius: 4px;cursor: pointer;}
         .reset-button:hover {background-color: #565656; /* Darker Gray */}
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
         th { background-color: #f2f2f2; font-weight: bold; }
-        .actions-buttons {
-            display: flex;
-            justify-content: center; /* Center horizontally */
-            align-items: center;     /* Center vertically (optional) */
-            gap: 8px;                /* Space between buttons */
-        }
         .actions-buttons button { padding: 8px 12px; margin-right: 5px; border: none; border-radius: 4px; cursor: pointer; }
-        .actions-buttons .update-button { background-color: #007bff; color: white; text-decoration: none; }
+        .actions-buttons .update-button { background-color: #28a745; color: white; text-decoration: none; }
         .actions-buttons .suspend-button { background-color: #dc3545; color: white; }
         .actions-buttons button:hover { opacity: 0.8; }
         .no-results { text-align: center; font-style: italic; color: #777; }

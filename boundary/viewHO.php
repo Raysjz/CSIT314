@@ -43,8 +43,8 @@ $shortlistedIds = array_map(function($svc) {
         body { font-family: Arial; background: #f4f4f4; margin: 0; padding: 40px; }
         .container { background: white; padding: 30px; width: 100%; margin-top: 80px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); box-sizing: border-box; }
         h1, h2 { margin-bottom: 20px; }
-        .search-container { margin-bottom: 20px; text-align: center; }
-        .search-input { padding: 10px; border: 1px solid #ddd; border-radius: 4px; width: 60%; margin-bottom: 10px; }
+        .search-container {display: flex; flex-direction:column; margin-right: 20px;}
+        .search-container input[type="text"] {padding: 8px;border: 1px solid #ccc;border-radius: 4px 0 0 4px;width: 300px; /* Adjust width as needed */font-family: Arial, sans-serif;}
         .search-button {
             padding: 10px 20px;
             background-color: #28a745; /* Bootstrap green */
