@@ -10,8 +10,10 @@ session_start();  // Start the session to access session variables
         <a href="#">Generate Weekly Report</a>
         <a href="#">Generate Monthly Report</a> 
     </div>
+    <div class="navbar-center">
+        <text>Welcome, <?php echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'; ?></text>
+    </div>
     <div class="navbar-right">
-        <text color ="white" >Welcome, <?php echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'; ?> </text>
         <a href="/CSIT314/logout.php">Logout</a>
     </div>
 </div>
@@ -48,6 +50,14 @@ session_start();  // Start the session to access session variables
 
     .navbar-right text {
     color: white;
+    }
+    .navbar-center text {
+        color: white;
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+        font-weight: bold;
+        font-style: italic;
     }
 
 </style>

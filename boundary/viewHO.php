@@ -41,12 +41,21 @@ $shortlistedIds = array_map(function($svc) {
     <title>View Cleaning Services</title>
     <style>
         body { font-family: Arial; background: #f4f4f4; margin: 0; padding: 40px; }
-        .container { background: white; padding: 30px; max-width: 1200px; margin: auto; margin-top: 80px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .container { background: white; padding: 30px; width: 100%; margin-top: 80px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); box-sizing: border-box; }
         h1, h2 { margin-bottom: 20px; }
         .search-container { margin-bottom: 20px; text-align: center; }
         .search-input { padding: 10px; border: 1px solid #ddd; border-radius: 4px; width: 60%; margin-bottom: 10px; }
-        .search-button { padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        .search-button:hover { background-color: #0056b3; }
+        .search-button {
+            padding: 10px 20px;
+            background-color: #28a745; /* Bootstrap green */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .search-button:hover {
+            background-color: #218838; /* darker green on hover */
+        }
         .reset-button {padding: 10px 20px;background-color: #808080; color: white; border: none;border-radius: 4px;cursor: pointer;}
         .reset-button:hover {background-color: #565656;}
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
@@ -54,8 +63,73 @@ $shortlistedIds = array_map(function($svc) {
         th { background-color: #f2f2f2; font-weight: bold; }
         .no-results { text-align: center; font-style: italic; color: #777; }
         .desc-cell { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .action-links {
+            display: flex;
+            flex-direction: row;     /* Ensure horizontal layout */
+            justify-content: center; /* Center horizontally in the cell */
+            align-items: center;     /* Center vertically in the cell */
+            gap: 8px;                /* Space between buttons */
+            height: 100%;
+        }
         .action-links a { margin-right: 8px; text-decoration: none; color: #007bff; }
         .action-links a:hover { text-decoration: underline; }
+        .action-links a {
+            display: flex;                /* Use flexbox for the link itself */
+    align-items: center;          /* Center vertically */
+    justify-content: center; 
+            width: 140px;      /* Fixed width for all buttons */
+            height: 50px;      /* Fixed height for all buttons */
+            text-align: center;
+            justify-content: center;
+            padding: 8px 6px;
+            border: none;
+            border-radius: 4px;
+            color: white !important;
+            font-weight: bold;
+            font-size: 1rem;
+            text-decoration: none;
+            background-color: #007bff;
+            box-sizing: border-box;
+            white-space: normal;      /* Allow text to wrap */
+            word-break: break-word;   /* Break long words if needed */
+            vertical-align: middle;
+            line-height: normal;
+        }
+
+        .action-links a.view-details {
+            background-color: #007bff;
+        }
+        .action-links a.view-details:hover {
+            background-color: #0056b3;
+        }
+
+        .action-links a.add-shortlist {
+            background-color: #28a745; /* green */
+        }
+        .action-links a.add-shortlist:hover {
+            background-color: #218838;
+        }
+
+        .action-links a.remove-shortlist {
+            background-color: #dc3545; /* red */
+        }
+        .action-links a.remove-shortlist:hover {
+            background-color: #a71d2a;
+        }
+
+        .action-links a:hover {
+            background-color: #0056b3;
+            text-decoration: none;
+        }
+
+        .action-links a.remove-shortlist {
+            background-color: #dc3545; /* Red for remove */
+        }
+
+        .action-links a.remove-shortlist:hover {
+            background-color: #a71d2a;
+        }
+        
     </style>
 </head>
 <body>
@@ -98,13 +172,13 @@ $shortlistedIds = array_map(function($svc) {
                         echo "<td>$" . htmlspecialchars(number_format($service->getPrice(), 2)) . "</td>";
                         echo "<td>" . htmlspecialchars($service->getAvailability()) . "</td>";
                         echo "<td class='action-links'>
-                              <a href='viewHOServiceDetails.php?id=" . $service->getServiceId() . "'>View Details</a>";
-                            if (in_array($service->getServiceId(), $shortlistedIds)) {
-                                echo " | <a href='removeShortlist.php?id=" . $service->getServiceId() . "' style='color:#dc3545;'>Remove from Shortlist</a>";
-                            } else {
-                                echo " | <a href='addShortlist.php?id=" . $service->getServiceId() . "' style='color:#007bff;'>Add to Shortlist</a>";
-                            }
-                            echo "</td>";
+                        <a href='viewHOServiceDetails.php?id=" . $service->getServiceId() . "' class='view-details'>View Details</a>";
+                    if (in_array($service->getServiceId(), $shortlistedIds)) {
+                        echo "<a href='removeShortlist.php?id=" . $service->getServiceId() . "' class='remove-shortlist'>Remove from Shortlist</a>";
+                    } else {
+                        echo "<a href='addShortlist.php?id=" . $service->getServiceId() . "' class='add-shortlist'>Add to Shortlist</a>";
+                    }
+                    echo "</td>";
 
                         echo "</tr>";
                     }

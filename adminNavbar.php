@@ -1,16 +1,3 @@
-<div class="Navbar">
-    <div class="navbar-left">
-        <a href="/CSIT314/boundary/viewCS.php">My Services</a>
-        <a href="shortlistHistory.php">Bookings</a>
-    </div>
-    <div class="navbar-center">
-        <text>Welcome, <?php echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'; ?></text>
-    </div>
-    <div class="navbar-right">
-        <a href="/CSIT314/logout.php">Logout</a>
-    </div>
-</div>
-
 <style>
     .navbar {
         display: flex;
@@ -49,5 +36,21 @@
         font-weight: bold;
         font-style: italic;
     }
-
 </style>
+
+<div class="navbar">
+    <div class="navbar-left">
+        <a href="/CSIT314/boundary/viewUA.php">View Accounts</a>
+        <a href="/CSIT314/boundary/createUA.php">Create Account</a> 
+        <a href="/CSIT314/boundary/viewUP.php">View Profiles</a>
+        <a href="/CSIT314/boundary/createUP.php">Create Profile</a> 
+    </div>
+    
+    <div class="navbar-center">
+        <text>Welcome, <?php echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'; ?></text>
+    </div>
+    
+    <div class="navbar-right">
+        <a href="/CSIT314/logout.php">Logout</a>
+    </div>
+</div>

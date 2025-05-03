@@ -3,8 +3,10 @@
         <a href="past_bookings.php">Past Bookings</a>
         <a href="/CSIT314/boundary/viewHOshortlist.php">Shortlist</a>
     </div>
+    <div class="navbar-center">
+        <text>Welcome, <?php echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'; ?></text>
+    </div>
     <div class="navbar-right">
-        <text color ="white" >Welcome, <?php echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'; ?> </text>
         <a href="/CSIT314/logout.php">Logout</a>
     </div>
 </div>
@@ -23,6 +25,11 @@
         z-index: 999;
     }
 
+    .navbar-left, .navbar-right, .navbar-center {
+        display: flex;
+        align-items: center;
+    }
+
     .navbar a {
         color: white;
         text-decoration: none;
@@ -34,13 +41,13 @@
         text-decoration: underline;
     }
 
-    .navbar-left, .navbar-right {
-        display: flex;
-        align-items: center;
-    }
-
-    .navbar-right text {
-    color: white;
+    .navbar-center text {
+        color: white;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        font-weight: bold;
+        font-style: italic;
     }
 
 </style>

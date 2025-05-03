@@ -6,8 +6,8 @@ if ($_SESSION['profileName'] !== 'User Admin') {
 }
 // Include necessary files
 require_once(__DIR__ . '/adminNavbar.php');
-require_once(__DIR__ . '/../controllers/CreateUAController.php');
-require_once(__DIR__ . '/../controllers/UserProfileController.php');  // Include the UserProfileController
+require_once(__DIR__ . '/../../controllers/UserAdmin/CreateUAController.php');
+require_once(__DIR__ . '/../../controllers/UserAdmin/UserProfileController.php');  // Include the UserProfileController
 
 /* Debug: Display all POST data
 
@@ -84,7 +84,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Create New Account</title>
     <style>
         body { font-family: Arial; background: #f4f4f4; margin: 0; padding: 40px; }
-        .container { background: white; padding: 30px; width: 100%; margin-top: 80px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); box-sizing: border-box; }
+        .container { background: white; padding: 30px; max-width: 500px; margin: auto; margin-top: 80px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         h1 { margin-bottom: 20px; }
         label { display: block; margin-top: 15px; }
         input, select { width: 100%; padding: 10px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; }
@@ -113,7 +113,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <form id="createForm" action="createUA.php" method="post" onsubmit="return handleFormSubmit(event)">
 
-        <label for="fullname"><b>Full Name<b></label>
+        <label for="fullname">Full Name</label>
         <input type="text" id="fullname" name="fullname" required>
 
         <label for="username">Username</label>
