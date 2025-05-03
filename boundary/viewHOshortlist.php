@@ -46,13 +46,10 @@ if ($searchQuery !== '') {
         .desc-cell { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .action-links a { margin-right: 8px; text-decoration: none; color: #007bff; }
         .action-links a:hover { text-decoration: underline; }
-        .back-button { background: #6c757d; color: white; padding: 8px 16px; border-radius: 4px; text-decoration: none; margin-bottom: 20px; display: inline-block;}
-        .back-button:hover { background: #5a6268; }
     </style>
 </head>
 <body>
     <div class="container">
-        <a href="viewHO.php" class="back-button">Back to List</a>
         <!-- Search Form -->
         <div class="search-container">
             <h2>Search by Shortlist ID, Service ID, or Title</h2>
