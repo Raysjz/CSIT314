@@ -1,6 +1,6 @@
 <?php
 // controllers/UserAccountController.php
-require_once(__DIR__ . '/../../entities/UserAccount.php');
+require_once(__DIR__ . '/../entities/UserAccount.php');
 
 class UserAccountController {
     public function getUserById($id) {

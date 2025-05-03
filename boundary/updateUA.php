@@ -6,9 +6,8 @@ if ($_SESSION['profileName'] !== 'User Admin') {
 }
 // Include necessary files
 require_once(__DIR__ . '/adminNavbar.php');
-require_once(__DIR__ . '/../../controllers/UserAdmin/UpdateUAController.php');
-require_once(__DIR__ . '/../../controllers/UserAdmin/UserProfileController.php');
-
+require_once(__DIR__ . '/../controllers/UpdateUAController.php');
+require_once(__DIR__ . '/../controllers/UserProfileController.php');
 
 // Instantiate the UserProfileController
 $userProfileController = new UserProfileController();
@@ -36,9 +35,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         'userid' => $_POST['userid'],
         'username' => $_POST['username'],
         'password' => $_POST['password'],
+        'fullname' => $_POST['fullname'],
+        'email'    => $_POST['email'],
         'profileName' => $_POST['profile_name'],
         'profileId' => $_POST['profile_id'],
-        'isSuspended' => isset($_POST['isSuspended']) ? true : false // Default to false if not set
+        'isSuspended' => isset($_POST['is_suspended']) ? $_POST['is_suspended'] : false
     ];
     
     
@@ -86,8 +87,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <label for="userid">User ID</label>
             <input type="text" id="userid" name="userid" value="<?php echo htmlspecialchars($userToUpdate->getId()); ?>" readonly>
 
+            <label for="fullname">Full Name</label>
+             <input type="text" id="fullname" name="fullname" value="<?php echo htmlspecialchars($userToUpdate->getFullName()); ?>" required>
+
             <label for="username">Username</label>
             <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($userToUpdate->getUsername()); ?>" required>
+
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($userToUpdate->getEmail()); ?>" required>
 
             <label for="password">Password</label>
             <input type="text" id="password" name="password" value="<?php echo htmlspecialchars($userToUpdate->getPassword()); ?>" required>

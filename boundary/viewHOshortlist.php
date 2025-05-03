@@ -90,7 +90,7 @@ if ($searchQuery !== '') {
                     echo "<td>$" . htmlspecialchars(number_format($service->price, 2)) . "</td>";
                     echo "<td>" . htmlspecialchars($service->availability) . "</td>";
                     echo "<td class='action-links'>
-                            <a href='shortlistBooking.php?id=" . $service->service_id . "'>View Details</a>
+                            <a href='shortlistBooking.php?id=" . $service->shortlist_id . "'>View Details</a>
                             | <a href='removeShortlist.php?id=" . $service->service_id . "' style='color:#dc3545;'>Remove</a>
                           </td>";
                     echo "</tr>";

@@ -1,7 +1,4 @@
 <?php
-namespace Csit314\CleaningPlatform;
-
-
 class ServiceView {
     public static function logView($serviceId, $viewerAccountId = null) {
         $db = Database::getPDO();

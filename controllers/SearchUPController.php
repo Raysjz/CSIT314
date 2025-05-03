@@ -1,6 +1,6 @@
 <?php
 // SearchUserProfileController.php
-require_once(__DIR__ . '/../../entities/UserProfile.php');
+require_once(__DIR__ . '/../entities/UserProfile.php');
 
 class SearchUserProfileController {
     // Method to search for user profiles based on search query

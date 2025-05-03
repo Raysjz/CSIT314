@@ -6,8 +6,8 @@ if ($_SESSION['profileName'] !== 'User Admin') {
 }
 // Include necessary files
 require_once(__DIR__ . '/adminNavbar.php');
-require_once(__DIR__ . '/../../controllers/UserAdmin/ViewUPController.php');
-require_once(__DIR__ . '/../../controllers/UserAdmin/SearchUPController.php');
+require_once(__DIR__ . '/../controllers/ViewUPController.php');
+require_once(__DIR__ . '/../controllers/SearchUPController.php');
 
 // Get the search query from GET request
 $searchQuery = isset($_GET['search']) ? $_GET['search'] : null;

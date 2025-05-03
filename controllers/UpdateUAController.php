@@ -13,6 +13,8 @@ class UpdateUserAccountController {
             $data['userid'],   // User ID
             $data['username'], // Username
             $data['password'], // Password
+            $data['fullname'], 
+            $data['email'], 
             $data['profileName'],
             $data['profileId'],
             isset($data['isSuspended']) ? $data['isSuspended'] : false

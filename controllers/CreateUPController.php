@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . '/../../entities/userProfile.php');
+require_once(__DIR__ . '/../entities/userProfile.php');
 
 class CreateUserProfileController {
     private $userProfile;

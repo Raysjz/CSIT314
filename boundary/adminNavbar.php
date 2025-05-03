@@ -40,10 +40,10 @@
 
 <div class="navbar">
     <div class="navbar-left">
-        <a href="/CSIT314/boundary/UserAdmin/viewUA.php">View Accounts</a>
-        <a href="/CSIT314/boundary/UserAdmin/createUA.php">Create Account</a> 
-        <a href="/CSIT314/boundary/UserAdmin/viewUP.php">View Profiles</a>
-        <a href="/CSIT314/boundary/UserAdmin/createUP.php">Create Profile</a> 
+        <a href="/CSIT314/boundary/viewUA.php">View Accounts</a>
+        <a href="/CSIT314/boundary/createUA.php">Create Account</a> 
+        <a href="/CSIT314/boundary/viewUP.php">View Profiles</a>
+        <a href="/CSIT314/boundary/createUP.php">Create Profile</a> 
     </div>
     
     <div class="navbar-center">

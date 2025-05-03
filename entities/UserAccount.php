@@ -1,6 +1,4 @@
 <?php
-namespace Csit314\CleaningPlatform;
-
 require_once(__DIR__ . '/ConnectiontoDB.php');
 
 class UserAccount {
@@ -37,7 +35,7 @@ class UserAccount {
     public function getPassword() {
         return $this->password;
     }
-
+    
     public function getFullName() {      
         return $this->fullName;
     }
@@ -96,6 +94,14 @@ class UserAccount {
     public function validateUserAccount() {
         if (empty($this->fullName) || empty($this->username) || empty($this->email) || empty($this->password)) {
             return "All fields are required.";
+        }
+    
+        if (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+            return "Invalid email format.";
+        }
+    
+        if (strlen($this->password) < 6) {
+            return "Password must be at least 6 characters long.";
         }
     
         $db = Database::getPDO();
@@ -165,8 +171,8 @@ class UserAccount {
 
         return $userAccounts;
     }
-    
 
+    /* Old Get AccountbyID
 
     // Fetches user by ID
     public static function getAccountUserById($id) {
@@ -183,6 +189,8 @@ class UserAccount {
                 $user['account_id'],
                 $user['ua_username'],
                 $user['ua_password'],
+                $user['full_name'], 
+                $user['email'], 
                 $user['profile_name'],
                 $user['profile_id'],
                 isset($user['is_suspended']) ? (bool)$user['is_suspended'] : false
@@ -192,24 +200,99 @@ class UserAccount {
         }
     }
 
+    */
+
+
+    public static function getAccountUserById($id) {
+        $db = Database::getPDO();
+        $stmt = $db->prepare("SELECT * FROM user_accounts WHERE account_id = :id");
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+        if ($user) {
+            switch ($user['profile_name']) {
+                case 'Cleaner':
+                    return new Cleaner(
+                        $user['account_id'],
+                        $user['ua_username'],
+                        $user['ua_password'],
+                        $user['full_name'],
+                        $user['email'],
+                        $user['profile_name'],
+                        $user['profile_id'],
+                        isset($user['is_suspended']) ? (bool)$user['is_suspended'] : false
+                    );
+                case 'Homeowner':
+                    return new Homeowner(
+                        $user['account_id'],
+                        $user['ua_username'],
+                        $user['ua_password'],
+                        $user['full_name'],
+                        $user['email'],
+                        $user['profile_name'],
+                        $user['profile_id'],
+                        isset($user['is_suspended']) ? (bool)$user['is_suspended'] : false
+                    ); 
+                case 'User Admin':
+                    return new UserAdmin(
+                        $user['account_id'],
+                        $user['ua_username'],
+                        $user['ua_password'],
+                        $user['full_name'],
+                        $user['email'],
+                        $user['profile_name'],
+                        $user['profile_id'],
+                        isset($user['is_suspended']) ? (bool)$user['is_suspended'] : false
+                    );
+                case 'Platform Management':
+                    return new PlatformManagement(
+                        $user['account_id'],
+                        $user['ua_username'],
+                        $user['ua_password'],
+                        $user['full_name'],
+                        $user['email'],
+                        $user['profile_name'],
+                        $user['profile_id'],
+                        isset($user['is_suspended']) ? (bool)$user['is_suspended'] : false
+                    );
+                default:
+                    return new UserAccount(
+                        $user['account_id'],
+                        $user['ua_username'],
+                        $user['ua_password'],
+                        $user['full_name'],
+                        $user['email'],
+                        $user['profile_name'],
+                        $user['profile_id'],
+                        isset($user['is_suspended']) ? (bool)$user['is_suspended'] : false
+                    );
+            }
+        } else {
+            return null;
+        }
+    }
+
      // Updates user account by id
      public function updateUserAccount() {
         $db = Database::getPDO();
     
-        // Make sure to use the correct column names in the SQL query
         $stmt = $db->prepare("UPDATE user_accounts 
-                              SET ua_username = :username, ua_password = :password, profile_name = :profile, profile_id = :profileId, is_suspended = :is_suspended 
+                              SET ua_username = :username, ua_password = :password, full_name = :fullName, email = :email, profile_name = :profile, profile_id = :profileId, is_suspended = :is_suspended 
                               WHERE account_id = :id");
     
         $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);  
         $stmt->bindParam(':username', $this->username);  
         $stmt->bindParam(':password', $this->password);  
+        $stmt->bindParam(':fullName', $this->fullName); // <-- match SQL
+        $stmt->bindParam(':email', $this->email); 
         $stmt->bindParam(':profile', $this->profile);    
         $stmt->bindParam(':profileId', $this->profileId);   
         $stmt->bindParam(':is_suspended', $this->isSuspended, PDO::PARAM_BOOL);  
     
-        return $stmt->execute();  // Execute the update query
+        return $stmt->execute();
     }
+    
     
 
     // Suspend a user (set is_suspended to true)
@@ -219,12 +302,12 @@ class UserAccount {
         $stmt = $db->prepare("UPDATE user_accounts SET is_suspended = true WHERE account_id = :id");
         $stmt->bindParam(':id', $this->id);
 
-        // Use :id in bindParam instead of :profile_id
         $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);  // Correctly binding the profile ID
 
         return $stmt->execute(); // Execute the query
     }
-            // NEW METHODS FOR PAGINATION
+
+    // NEW METHODS FOR PAGINATION
     public static function getPaginatedAccounts($perPage = 10, $offset = 0) {
         $db = Database::getPDO();
         
@@ -255,67 +338,125 @@ class UserAccount {
         return $userAccounts;
     }
 
-    public static function searchUserAccounts($searchQuery, $perPage = 10, $offset = 0) {
-        $db = Database::getPDO();
-
-        if (is_numeric($searchQuery)) {
-            $stmt = $db->prepare("SELECT * FROM user_accounts 
-                                WHERE account_id = :search
-                                LIMIT :limit OFFSET :offset");
-        } else {
-            $stmt = $db->prepare("SELECT * FROM user_accounts 
-                                WHERE ua_username LIKE :search
-                                LIMIT :limit OFFSET :offset");
-            $searchQuery = "%" . $searchQuery . "%";
-        }
-
-        $stmt->bindParam(':search', $searchQuery);
-        $stmt->bindValue(':limit', (int)$perPage, PDO::PARAM_INT);
-        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
-        $stmt->execute();
-
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $userAccounts = [];
-        foreach ($result as $row) {
-            $userAccounts[] = new UserAccount(
-                $row['account_id'],
-                $row['ua_username'],
-                $row['ua_password'],
-                $row['full_name'], 
-                $row['email'], 
-                $row['profile_name'], 
-                $row['profile_id'],
-                isset($row['is_suspended']) ? (bool)$row['is_suspended'] : false
-            );
-        }
-
-        return $userAccounts;
-    }
-
+    // Count all users
     public static function countAllUsers() {
         $db = Database::getPDO();
         $stmt = $db->query("SELECT COUNT(*) FROM user_accounts");
         return (int)$stmt->fetchColumn();
     }
 
+    // Search with pagination
+    public static function searchUserAccounts($searchQuery, $perPage, $offset) {
+        $db = Database::getPDO();
+        $pattern = "%$searchQuery%";
+        $stmt = $db->prepare(
+            "SELECT * FROM user_accounts
+            WHERE ua_username ILIKE :pattern
+                OR full_name ILIKE :pattern
+                OR email ILIKE :pattern
+                OR CAST(account_id AS TEXT) ILIKE :pattern
+            LIMIT :limit OFFSET :offset"
+        );
+        $stmt->bindValue(':pattern', $pattern, PDO::PARAM_STR);
+        $stmt->bindValue(':limit', (int)$perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $stmt->execute();
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $accounts = [];
+        foreach ($results as $row) {
+            $accounts[] = new UserAccount(
+                $row['account_id'],
+                $row['ua_username'],
+                $row['ua_password'],
+                $row['full_name'],
+                $row['email'],
+                $row['profile_name'] ?? '',
+                $row['profile_id'] ?? 0,
+                isset($row['is_suspended']) ? (bool)$row['is_suspended'] : false
+            );
+        }
+        return $accounts;
+    }
+
+    // Count search results
     public static function countSearchResults($searchQuery) {
         $db = Database::getPDO();
-
-        if (is_numeric($searchQuery)) {
-            $stmt = $db->prepare("SELECT COUNT(*) FROM user_accounts 
-                                WHERE account_id = :search");
-        } else {
-            $stmt = $db->prepare("SELECT COUNT(*) FROM user_accounts 
-                                WHERE ua_username LIKE :search");
-            $searchQuery = "%" . $searchQuery . "%";
-        }
-
-        $stmt->bindParam(':search', $searchQuery);
+        $pattern = "%$searchQuery%";
+        $stmt = $db->prepare(
+            "SELECT COUNT(*) FROM user_accounts
+            WHERE ua_username ILIKE :pattern
+                OR full_name ILIKE :pattern
+                OR email ILIKE :pattern
+                OR CAST(account_id AS TEXT) ILIKE :pattern"
+        );
+        $stmt->bindValue(':pattern', $pattern, PDO::PARAM_STR);
         $stmt->execute();
-
         return (int)$stmt->fetchColumn();
     }
-}
-?>
 
+}
+
+    // Cleaner child class
+class Cleaner extends UserAccount {
+    public function __construct($id, $username, $password, $fullName, $email, $profile, $profileId, $isSuspended) {
+        parent::__construct($id, $username, $password, $fullName, $email, $profile, $profileId, $isSuspended);
+    }
+
+    // Example: Get all services for this cleaner
+    public function getServices() {
+        $db = Database::getPDO();
+        $stmt = $db->prepare("SELECT * FROM cleaner_services WHERE cleaner_account_id = :id");
+        $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+}
+
+// UserAdmin child class
+class UserAdmin extends UserAccount {
+    public function __construct($id, $username, $password, $fullName, $email, $profile, $profileId, $isSuspended) {
+        parent::__construct($id, $username, $password, $fullName, $email, $profile, $profileId, $isSuspended);
+    }
+
+    // Example: Admin-specific method
+    public function canManageUsers() {
+        return true;
+    }
+}
+
+// PlatformManagement child class
+class PlatformManagement extends UserAccount {
+    public function __construct($id, $username, $password, $fullName, $email, $profile, $profileId, $isSuspended) {
+        parent::__construct($id, $username, $password, $fullName, $email, $profile, $profileId, $isSuspended);
+    }
+
+    // Example: Get all categories created by this manager (if you track created_by)
+    public function getCategories() {
+        $db = Database::getPDO();
+        $stmt = $db->prepare("SELECT * FROM service_categories WHERE created_by = :id");
+        $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+}
+
+// Homeowner child class
+class Homeowner extends UserAccount {
+    public function __construct($id, $username, $password, $fullName, $email, $profile, $profileId, $isSuspended) {
+        parent::__construct($id, $username, $password, $fullName, $email, $profile, $profileId, $isSuspended);
+    }
+
+    // Example: Get all shortlists for this homeowner
+    public function getShortlists() {
+        $db = Database::getPDO();
+        $stmt = $db->prepare("SELECT * FROM service_shortlists WHERE homeowner_account_id = :id");
+        $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+}
+
+
+
+?>

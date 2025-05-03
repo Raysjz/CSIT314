@@ -1,57 +1,60 @@
 <?php
-session_start();  // Start the session to access session variables
+session_start();
 if ($_SESSION['profileName'] !== 'Homeowner') {
     header('Location: ../login.php');
     exit();
 }
 require_once(__DIR__ . '/../homeownerNavbar.php');
-require_once(__DIR__ . '/..//controllers/ViewHOServiceController.php');
-require_once(__DIR__ . '/../controllers/PlatformCategoryController.php');
 require_once(__DIR__ . '/../controllers/UserAccountController.php');
 require_once(__DIR__ . '/../controllers/ShortlistController.php');
 
-$serviceId = $_GET['id'] ?? null;
-$controller = new ViewHOServiceController();
-list($service, $cleaner) = $controller->getServiceAndCleaner($serviceId);
+// 1. Get shortlist ID from URL
+$shortlistId = $_GET['id'] ?? null;
+if (!$shortlistId) {
+    echo "<p>Shortlist not specified.</p>";
+    exit;
+}
+
+$homeownerAccountId = $_SESSION['user_id']; // or $_SESSION['accountId'], use your session variable
+
+// 2. Get service_id from shortlist
+$db = Database::getPDO();
+$stmt = $db->prepare("SELECT service_id FROM service_shortlists WHERE shortlist_id = :shortlist_id");
+$stmt->bindParam(':shortlist_id', $shortlistId, PDO::PARAM_INT);
+$stmt->execute();
+$shortlist = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$shortlist) {
+    echo "<p>Shortlist not found.</p>";
+    exit;
+}
+$serviceId = $shortlist['service_id'];
+
+// 3. Get service details (including cleaner_account_id, category_id, etc.)
+$stmt = $db->prepare("SELECT * FROM cleaner_services WHERE service_id = :service_id");
+$stmt->bindParam(':service_id', $serviceId, PDO::PARAM_INT);
+$stmt->execute();
+$service = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$service) {
     echo "<p>Service not found.</p>";
     exit;
 }
 
-$categoryName = method_exists($service, 'getCategoryName') ? $service->getCategoryName() : '';
+// 4. Get the cleaner's user account
+$accountController = new UserAccountController();
+$cleaner = $accountController->getUserById($service['cleaner_account_id']);
 
+// 5. Get the category name (optional)
+$stmt = $db->prepare("SELECT category_name FROM service_categories WHERE category_id = :category_id");
+$stmt->bindParam(':category_id', $service['category_id'], PDO::PARAM_INT);
+$stmt->execute();
+$category = $stmt->fetch(PDO::FETCH_ASSOC);
+$categoryName = $category ? $category['category_name'] : 'Unknown';
 
-
-
-
-$message = "";
-if (isset($_GET['success']) && $_GET['success'] == 1) {
-    $message = "✅ Service successfully added to your shortlist!";
-}
-if (isset($_GET['error']) && $_GET['error'] === 'already_shortlisted') {
-    $message = "⚠️ This service is already in your shortlist.";
-}
-if (isset($_GET['removed']) && $_GET['removed'] == 1) {
-    $message = "✅ Service removed from your shortlist.";
-}
-
-$homeownerAccountId = $_SESSION['user_id']; // or $_SESSION['accountId'], use your session variable
-$shortlistController = new ShortlistController();
-$shortlistedServices = $shortlistController->getShortlistedServices($homeownerAccountId);
-$shortlistedIds = array_map(function($svc) {
-    return is_object($svc) ? $svc->service_id : $svc['service_id'];
-}, $shortlistedServices);
-$isShortlisted = in_array($service->getServiceId(), $shortlistedIds);
-
-// Build an array of shortlisted service IDs for easy lookup
-$shortlistedIds = array_map(function($svc) {
-    return is_object($svc) ? $svc->service_id : $svc['service_id'];
-}, $shortlistedServices);
-
-$isShortlisted = in_array($service->getServiceId(), $shortlistedIds);
-
-
+// 6. Prepare cleaner details
+$cleanerName = $cleaner ? $cleaner->getFullName() : 'Not available';
+$cleanerEmail = $cleaner ? $cleaner->getEmail() : 'Not available';
 
 ?>
 <!DOCTYPE html>
@@ -117,27 +120,16 @@ $isShortlisted = in_array($service->getServiceId(), $shortlistedIds);
 </head>
 <body>
 <div class="details-container">
-    <?php if ($message): ?>
-        <div class="message <?php echo (strpos($message, 'successfully') !== false || strpos($message, 'removed') !== false) ? 'success' : 'error'; ?>">
-            <?php echo $message; ?>
-        </div>
-    <?php endif; ?>
-    <h2><?php echo htmlspecialchars($service->getTitle()); ?></h2>
+    <h2><?php echo htmlspecialchars($service['title']); ?></h2>
     <div class="details-row"><span class="label">Category:</span> <?php echo htmlspecialchars($categoryName); ?></div>
-    <div class="details-row"><span class="label">Price:</span> $<?php echo number_format($service->getPrice(),2); ?></div>
-    <div class="details-row"><span class="label">Availability:</span> <?php echo htmlspecialchars($service->getAvailability()); ?></div>
-    <div class="details-row"><span class="label">Description:</span> <?php echo htmlspecialchars($service->getDescription()); ?></div>
-    <div class="details-row"><span class="label">Contact:</span> [Contact information available after booking]</div>
+    <div class="details-row"><span class="label">Price:</span> $<?php echo number_format($service['price'],2); ?></div>
+    <div class="details-row"><span class="label">Availability:</span> <?php echo htmlspecialchars($service['availability']); ?></div>
+    <div class="details-row"><span class="label">Description:</span> <?php echo htmlspecialchars($service['description']); ?></div>
+    <div class="details-row"><span class="label">Cleaner Name:</span> <?php echo htmlspecialchars($cleanerName); ?></div>
+    <div class="details-row"><span class="label">Contact Email:</span> <?php echo htmlspecialchars($cleanerEmail); ?></div>
     <div style="margin-top:30px;">
         <a href="viewHOshortlist.php" class="back-button">Back to List</a>
         <a href="#" class="book-button">Book</a>
-        <?php if ($isShortlisted): ?>
-            <a href="removeShortlist.php?id=<?php echo $service->getServiceId(); ?>" class="remove-button">Remove from Shortlist</a>
-        <?php else: ?>
-            <a href="addShortlist.php?id=<?php echo $service->getServiceId(); ?>" class="shortlist-button">Add to Shortlist</a>
-        <?php endif; ?>
-
-
     </div>
 </div>
 </body>

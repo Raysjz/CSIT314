@@ -1,6 +1,4 @@
 <?php
-namespace Csit314\CleaningPlatform;
-
 // Database connection
 class Database {
     private static $host = 'aws-0-ap-southeast-1.pooler.supabase.com';

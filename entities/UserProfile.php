@@ -1,5 +1,10 @@
 <?php
-namespace Csit314\CleaningPlatform;
+/*namespace Csit314\CleaningPlatform;
+use PDO;
+use PDOException;
+
+For use in compose (docker CI/CD)
+*/
 
 require_once(__DIR__ . '/ConnectiontoDB.php');
 

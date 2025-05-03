@@ -1,6 +1,7 @@
 <?php
-require_once(__DIR__ . '/../../entities/UserAccount.php');
+require_once(__DIR__ . '/../entities/UserAccount.php');
 
+/*
 class ViewUserAccountController {
     public function viewUserAccounts($searchQuery = null, $perPage = 10, $offset = 0) {
         if ($searchQuery) {
@@ -18,3 +19,19 @@ class ViewUserAccountController {
     }
 }
 ?>
+*/
+
+
+class ViewUserAccountController {
+    public function viewUserAccounts($perPage = 10, $offset = 0) {
+        $data = UserAccount::getPaginatedAccounts($perPage, $offset);
+        $total = UserAccount::countAllUsers();
+        return [
+            'data' => $data,
+            'total' => $total
+        ];
+    }
+}
+
+?>
+
