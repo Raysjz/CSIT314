@@ -75,7 +75,7 @@ $totalPages = ceil($total / $perPage);
 
     <!-- Search Form -->
     <div class="search-container">
-        <h2>Search by Username or ID</h2>
+        <h2>Search</h2>
         <form action="" method="GET">
             <!-- Always reset to page 1 on new search -->
             <input type="hidden" name="page" value="1">
