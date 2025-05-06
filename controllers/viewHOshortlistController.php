@@ -8,5 +8,9 @@ class ViewHOShortlistController {
     public function getShortlistId($homeownerAccountId, $serviceId) {
         return Shortlist::getShortlistId($homeownerAccountId, $serviceId);
     }
+    public function getShortlistById($shortlistId) {
+        return Shortlist::getById($shortlistId);
+    }
+    
 }
 ?>

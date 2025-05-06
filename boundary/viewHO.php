@@ -32,6 +32,8 @@ $shortlistedIds = array_map(function($svc) {
 }, $shortlistedServices);
 
 
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -159,9 +161,9 @@ $shortlistedIds = array_map(function($svc) {
                 </tr>
             </thead>
             <tbody>
-                <?php
+            <?php
                 if (empty($displayedServices)) {
-                    echo "<tr><td colspan='6' class='no-results'>No results found.</td></tr>";
+                    echo "<tr><td colspan='7' class='no-results'>No results found.</td></tr>";
                 } else {
                     foreach ($displayedServices as $service) {
                         echo "<tr>";
@@ -171,15 +173,15 @@ $shortlistedIds = array_map(function($svc) {
                         echo "<td class='desc-cell'>" . htmlspecialchars($service->getDescription()) . "</td>";
                         echo "<td>$" . htmlspecialchars(number_format($service->getPrice(), 2)) . "</td>";
                         echo "<td>" . htmlspecialchars($service->getAvailability()) . "</td>";
-                        echo "<td class='action-links'>
-                        <a href='viewHOServiceDetails.php?id=" . $service->getServiceId() . "' class='view-details'>View Details</a>";
-                    if (in_array($service->getServiceId(), $shortlistedIds)) {
-                        echo "<a href='removeShortlist.php?id=" . $service->getServiceId() . "' class='remove-shortlist'>Remove from Shortlist</a>";
-                    } else {
-                        echo "<a href='addShortlist.php?id=" . $service->getServiceId() . "' class='add-shortlist'>Add to Shortlist</a>";
-                    }
-                    echo "</td>";
-
+                        echo "<td class='action-links'>";
+                        // Correctly concatenate the URL parameter:
+                        echo "<a href='viewHOCleanerDetails.php?service_id=" . urlencode($service->getServiceId()) . "' class='view-details' title='View Cleaner Profile & Services'>View Details</a>";
+                        if (in_array($service->getServiceId(), $shortlistedIds)) {
+                            echo "<a href='removeShortlist.php?id=" . $service->getServiceId() . "' class='remove-shortlist'>Remove from Shortlist</a>";
+                        } else {
+                            echo "<a href='addShortlist.php?id=" . $service->getServiceId() . "' class='add-shortlist'>Add to Shortlist</a>";
+                        }
+                        echo "</td>";
                         echo "</tr>";
                     }
                 }

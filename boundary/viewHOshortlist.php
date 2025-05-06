@@ -161,7 +161,7 @@ if ($searchQuery !== '') {
                     echo "<td>$" . htmlspecialchars(number_format($service->price, 2)) . "</td>";
                     echo "<td>" . htmlspecialchars($service->availability) . "</td>";
                     echo "<td class='action-links'>
-                            <a href='shortlistBooking.php?id=" . $service->shortlist_id . "' class = 'view-details'>View Details</a>
+                            <a href='viewHOshortlistDetails.php?id=" . $service->shortlist_id . "' class = 'view-details'>View Details</a>
                             | <a href='removeShortlist.php?id=" . $service->service_id . "' class='remove-shortlist'>Remove</a>
                           </td>";
                     echo "</tr>";

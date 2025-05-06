@@ -172,18 +172,16 @@ class UserAccount {
         return $userAccounts;
     }
 
-    /* Old Get AccountbyID
-
     // Fetches user by ID
     public static function getAccountUserById($id) {
         $db = Database::getPDO();
-
+    
         $stmt = $db->prepare("SELECT * FROM user_accounts WHERE account_id = :id");
-        $stmt->bindParam(':id', $id);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
-
+    
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
+    
         if ($user) {
             return new UserAccount(
                 $user['account_id'],
@@ -199,79 +197,8 @@ class UserAccount {
             return null;
         }
     }
-
-    */
-
-
-    public static function getAccountUserById($id) {
-        $db = Database::getPDO();
-        $stmt = $db->prepare("SELECT * FROM user_accounts WHERE account_id = :id");
-        $stmt->bindParam(':id', $id);
-        $stmt->execute();
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
     
-        if ($user) {
-            switch ($user['profile_name']) {
-                case 'Cleaner':
-                    return new Cleaner(
-                        $user['account_id'],
-                        $user['ua_username'],
-                        $user['ua_password'],
-                        $user['full_name'],
-                        $user['email'],
-                        $user['profile_name'],
-                        $user['profile_id'],
-                        isset($user['is_suspended']) ? (bool)$user['is_suspended'] : false
-                    );
-                case 'Homeowner':
-                    return new Homeowner(
-                        $user['account_id'],
-                        $user['ua_username'],
-                        $user['ua_password'],
-                        $user['full_name'],
-                        $user['email'],
-                        $user['profile_name'],
-                        $user['profile_id'],
-                        isset($user['is_suspended']) ? (bool)$user['is_suspended'] : false
-                    ); 
-                case 'User Admin':
-                    return new UserAdmin(
-                        $user['account_id'],
-                        $user['ua_username'],
-                        $user['ua_password'],
-                        $user['full_name'],
-                        $user['email'],
-                        $user['profile_name'],
-                        $user['profile_id'],
-                        isset($user['is_suspended']) ? (bool)$user['is_suspended'] : false
-                    );
-                case 'Platform Management':
-                    return new PlatformManagement(
-                        $user['account_id'],
-                        $user['ua_username'],
-                        $user['ua_password'],
-                        $user['full_name'],
-                        $user['email'],
-                        $user['profile_name'],
-                        $user['profile_id'],
-                        isset($user['is_suspended']) ? (bool)$user['is_suspended'] : false
-                    );
-                default:
-                    return new UserAccount(
-                        $user['account_id'],
-                        $user['ua_username'],
-                        $user['ua_password'],
-                        $user['full_name'],
-                        $user['email'],
-                        $user['profile_name'],
-                        $user['profile_id'],
-                        isset($user['is_suspended']) ? (bool)$user['is_suspended'] : false
-                    );
-            }
-        } else {
-            return null;
-        }
-    }
+
 
      // Updates user account by id
      public function updateUserAccount() {
@@ -395,66 +322,6 @@ class UserAccount {
         return (int)$stmt->fetchColumn();
     }
 
-}
-
-    // Cleaner child class
-class Cleaner extends UserAccount {
-    public function __construct($id, $username, $password, $fullName, $email, $profile, $profileId, $isSuspended) {
-        parent::__construct($id, $username, $password, $fullName, $email, $profile, $profileId, $isSuspended);
-    }
-
-    // Example: Get all services for this cleaner
-    public function getServices() {
-        $db = Database::getPDO();
-        $stmt = $db->prepare("SELECT * FROM cleaner_services WHERE cleaner_account_id = :id");
-        $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-}
-
-// UserAdmin child class
-class UserAdmin extends UserAccount {
-    public function __construct($id, $username, $password, $fullName, $email, $profile, $profileId, $isSuspended) {
-        parent::__construct($id, $username, $password, $fullName, $email, $profile, $profileId, $isSuspended);
-    }
-
-    // Example: Admin-specific method
-    public function canManageUsers() {
-        return true;
-    }
-}
-
-// PlatformManagement child class
-class PlatformManagement extends UserAccount {
-    public function __construct($id, $username, $password, $fullName, $email, $profile, $profileId, $isSuspended) {
-        parent::__construct($id, $username, $password, $fullName, $email, $profile, $profileId, $isSuspended);
-    }
-
-    // Example: Get all categories created by this manager (if you track created_by)
-    public function getCategories() {
-        $db = Database::getPDO();
-        $stmt = $db->prepare("SELECT * FROM service_categories WHERE created_by = :id");
-        $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-}
-
-// Homeowner child class
-class Homeowner extends UserAccount {
-    public function __construct($id, $username, $password, $fullName, $email, $profile, $profileId, $isSuspended) {
-        parent::__construct($id, $username, $password, $fullName, $email, $profile, $profileId, $isSuspended);
-    }
-
-    // Example: Get all shortlists for this homeowner
-    public function getShortlists() {
-        $db = Database::getPDO();
-        $stmt = $db->prepare("SELECT * FROM service_shortlists WHERE homeowner_account_id = :id");
-        $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
 }
 
 

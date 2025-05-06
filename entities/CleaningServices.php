@@ -241,6 +241,49 @@ class CleaningService {
         
             return $stmt->execute();
         }
+
+        public static function getCleanerByServiceId($serviceId) {
+            $db = Database::getPDO();
+            $sql = "SELECT u.*
+                    FROM cleaner_services cs
+                    JOIN user_accounts u ON cs.cleaner_account_id = u.account_id
+                    WHERE cs.service_id = :service_id";
+            $stmt = $db->prepare($sql);
+            $stmt->execute([':service_id' => $serviceId]);
+            return $stmt->fetch(PDO::FETCH_OBJ);
+        }
+        
+        
+        
+        public static function getServicesByCleaner($cleanerId) {
+            $db = Database::getPDO();
+            $sql = "SELECT cs.*, sc.category_name
+                    FROM cleaner_services cs
+                    JOIN service_categories sc ON cs.category_id = sc.category_id
+                    WHERE cs.cleaner_account_id = :cleaner_id
+                    ORDER BY cs.service_id ASC";
+            $stmt = $db->prepare($sql);
+            $stmt->execute([':cleaner_id' => $cleanerId]);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+            $services = [];
+            foreach ($result as $row) {
+                $services[] = new CleaningService(
+                    $row['service_id'],
+                    $row['cleaner_account_id'],
+                    $row['category_id'],
+                    $row['title'],
+                    $row['description'],
+                    $row['price'],
+                    $row['availability'],
+                    $row['is_suspended'],
+                    $row['created_at'],
+                    $row['updated_at'],
+                    $row['category_name']
+                );
+            }
+            return $services;
+        }
         
 
 }

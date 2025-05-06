@@ -1,20 +1,28 @@
 <?php
-session_start();  // Start the session to access session variables
+session_start();
 if ($_SESSION['profileName'] !== 'Homeowner') {
     header('Location: ../login.php');
     exit();
 }
 require_once(__DIR__ . '/../homeownerNavbar.php');
-require_once(__DIR__ . '/..//controllers/ViewHOServiceController.php');
-require_once(__DIR__ . '/../controllers/PlatformCategoryController.php');
-require_once(__DIR__ . '/../controllers/UserAccountController.php');
 require_once(__DIR__ . '/../controllers/ShortlistController.php');
-require_once(__DIR__ . '/../controllers/ServiceViewController.php');
+require_once(__DIR__ . '/../controllers/viewHOServiceController.php');
 
-$serviceId = $_GET['id'] ?? null;
-$controller = new ViewHOServiceController();
-list($service, $cleaner) = $controller->getServiceAndCleaner($serviceId);
+$homeownerAccountId = $_SESSION['user_id'];
+$shortlistId = isset($_GET['id']) ? (int)$_GET['id'] : null;
 
+// 1. Fetch shortlist entry by shortlist_id
+$shortlistEntry = Shortlist::getById($shortlistId);
+
+// 2. Security check: does this entry belong to the current user?
+if (!$shortlistEntry || $shortlistEntry->homeowner_account_id != $homeownerAccountId) {
+    echo "<p>Shortlist entry not found or access denied.</p>";
+    exit;
+}
+
+// 3. Fetch service details using service_id from shortlist entry
+$serviceId = $shortlistEntry->service_id;
+$service = HomeownerCleaningService::getCleaningServiceById($serviceId);
 
 if (!$service) {
     echo "<p>Service not found.</p>";
@@ -23,12 +31,9 @@ if (!$service) {
 
 $categoryName = method_exists($service, 'getCategoryName') ? $service->getCategoryName() : '';
 
-
-
 //------------------------- Service View Controller
-$serviceId = $_GET['id'];
 $viewerAccountId = $_SESSION['user_id'] ?? null;
-
+require_once(__DIR__ . '/../controllers/ServiceViewController.php');
 $viewController = new ServiceViewController();
 
 // Only log once per session per service
@@ -38,8 +43,6 @@ if (empty($_SESSION[$viewedKey])) {
     $_SESSION[$viewedKey] = true;
 }
 //-----------------------------------------------------
-
-
 
 //----------------------------------------Short List Controller
 $message = "";
@@ -54,24 +57,11 @@ if (isset($_GET['removed']) && $_GET['removed'] == 1) {
 }
 //----------------------------------------------------------------
 
-$homeownerAccountId = $_SESSION['user_id']; // or $_SESSION['accountId'], use your session variable
-$shortlistController = new ShortlistController();
-$shortlistedServices = $shortlistController->getShortlistedServices($homeownerAccountId);
-$shortlistedIds = array_map(function($svc) {
-    return is_object($svc) ? $svc->service_id : $svc['service_id'];
-}, $shortlistedServices);
-$isShortlisted = in_array($service->getServiceId(), $shortlistedIds);
-
-// Build an array of shortlisted service IDs for easy lookup
-$shortlistedIds = array_map(function($svc) {
-    return is_object($svc) ? $svc->service_id : $svc['service_id'];
-}, $shortlistedServices);
-
-$isShortlisted = in_array($service->getServiceId(), $shortlistedIds);
-
-
+// For the details page, you can check if this service is in the user's shortlist
+$isShortlisted = true; // Since this page is for a specific shortlist entry
 
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -88,11 +78,11 @@ $isShortlisted = in_array($service->getServiceId(), $shortlistedIds);
             text-align: center;
         }
         .success {
-            background-color: #28a745;  /* Green background for success */
+            background-color: #28a745;
             color: white;
         }
         .error {
-            background-color: #ffc107;  /* Yellow background for warning */
+            background-color: #ffc107;
             color: #856404;
         }
         .shortlist-button, .remove-button, .back-button {
@@ -110,8 +100,6 @@ $isShortlisted = in_array($service->getServiceId(), $shortlistedIds);
         .remove-button:hover { background: #c82333; }
         .back-button { background: #6c757d; }
         .back-button:hover { background: #5a6268; }
-
-
     </style>
 </head>
 <body>
@@ -128,14 +116,12 @@ $isShortlisted = in_array($service->getServiceId(), $shortlistedIds);
     <div class="details-row"><span class="label">Description:</span> <?php echo htmlspecialchars($service->getDescription()); ?></div>
     <div class="details-row"><span class="label">Contact:</span> [Contact information available after booking]</div>
     <div style="margin-top:30px;">
-        <a href="viewHO.php" class="back-button">Back to List</a>
+        <a href="viewHOshortlist.php" class="back-button">Back to List</a>
         <?php if ($isShortlisted): ?>
             <a href="removeShortlist.php?id=<?php echo $service->getServiceId(); ?>" class="remove-button">Remove from Shortlist</a>
         <?php else: ?>
             <a href="addShortlist.php?id=<?php echo $service->getServiceId(); ?>" class="shortlist-button">Add to Shortlist</a>
         <?php endif; ?>
-
-
     </div>
 </div>
 </body>
