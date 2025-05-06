@@ -71,7 +71,7 @@ class UserProfile {
         $db = Database::getPDO();
     
         // Prepare the SQL statement to fetch user profiles
-        $stmt = $db->prepare("SELECT * FROM user_profiles");
+        $stmt = $db->prepare("SELECT * FROM user_profiles ORDER by profile_id ASC");
         $stmt->execute();
     
         // Fetch all the profiles as an associative array
