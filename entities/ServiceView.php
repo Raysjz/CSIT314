@@ -2,7 +2,12 @@
 class ServiceView {
     public static function logView($serviceId, $viewerAccountId = null) {
         $db = Database::getPDO();
-        $stmt = $db->prepare("INSERT INTO service_views (service_id, viewer_account_id) VALUES (:service_id, :viewer_account_id)");
+        $stmt = $db->prepare("
+            INSERT INTO service_views (service_id, viewer_account_id)
+            VALUES (:service_id, :viewer_account_id)
+            ON CONFLICT (service_id, viewer_account_id)
+            DO UPDATE SET viewed_at = CURRENT_TIMESTAMP
+        ");
         $stmt->bindParam(':service_id', $serviceId, PDO::PARAM_INT);
         if ($viewerAccountId) {
             $stmt->bindParam(':viewer_account_id', $viewerAccountId, PDO::PARAM_INT);

@@ -1,15 +1,15 @@
 <?php
 session_start();
-if ($_SESSION['profileName'] !== 'Cleaner') {
+if ($_SESSION['profileName'] !== 'Homeowner') {
     header('Location: ../login.php');
     exit();
 }
-require_once(__DIR__ . '/../cleanerNavbar.php');
+
+require_once(__DIR__ . '/../homeownerNavbar.php');
 require_once(__DIR__ . '/../controllers/UserAccountController.php');
 require_once(__DIR__ . '/../controllers/PlatformCategoryController.php');
-require_once(__DIR__ . '/../controllers/viewCleanerMatchesController.php');
-require_once(__DIR__ . '/../controllers/SearchCleanerMatchesController.php');
-
+require_once(__DIR__ . '/../controllers/viewHOBookingController.php');
+require_once(__DIR__ . '/../controllers/SearchHOBookingController.php');
 
 // Get filter values
 $accountId = $_SESSION['user_id'] ?? null;
@@ -17,7 +17,10 @@ $categoryId = (isset($_GET['category_id']) && $_GET['category_id'] !== '') ? $_G
 $startDate = (isset($_GET['start_date']) && $_GET['start_date'] !== '') ? $_GET['start_date'] : null;
 $endDate = (isset($_GET['end_date']) && $_GET['end_date'] !== '') ? $_GET['end_date'] : null;
 
-$viewController = new ViewCleanerMatchesController();
+
+$viewController = new viewHomeownerBookingsController();
+$bookings = $viewController->viewHomeownerBookings($accountId);
+
 
 if (
     empty($categoryId) &&
@@ -25,24 +28,25 @@ if (
     empty($endDate)
 ) {
     // No filters: show all completed bookings
-    $bookings = $viewController->viewCleanerMatches($accountId);
+    $bookings = $viewController->viewHomeownerBookings($accountId);
 } else {
     // Filters: use the search controller
-    $searchController = new SearchCleanerMatchesController();
-    $bookings = $searchController->searchCleanerMatches(
+    $searchController = new searchHOBookingController();
+    $bookings = $searchController->searchHOBooking(
         $accountId,
         $categoryId,
         $startDate,
         $endDate
     );
+
 }
-
-
 
 // Get all categories for dropdown
 $userAccountController = new UserAccountController();
 $categoryController = new PlatformCategoryController();
 $categories = $categoryController->getAllCategories();
+
+
 
 
 
@@ -84,14 +88,14 @@ $categories = $categoryController->getAllCategories();
         <h2>Search Bookings</h2>
         <!-- Filter/Search Form -->
         <form method="get" style="margin-bottom: 20px;">
-            <select name="category_id">
-                <option value="">All Categories</option>
-                <?php foreach ($categories as $cat): ?>
-                    <option value="<?= $cat['category_id'] ?>" <?= ($categoryId == $cat['category_id']) ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($cat['category_name']) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
+                        <select name="category_id">
+                    <option value="">All Categories</option>
+                    <?php foreach ($categories as $cat): ?>
+                        <option value="<?= (int)$cat['category_id'] ?>" <?= ($categoryId == $cat['category_id']) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($cat['category_name']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
             <input type="date" name="start_date" value="<?= htmlspecialchars($startDate) ?>">
             <input type="date" name="end_date" value="<?= htmlspecialchars($endDate) ?>">
             <button type="submit" class="search-button">Filter</button>
@@ -107,9 +111,9 @@ $categories = $categoryController->getAllCategories();
     <thead>
     <tr>
         <th>Match ID</th>
-        <th>Homeowner Name</th>
+        <th>Cleaner Name</th>
         <th>Service ID</th>
-        <th>Category ID</th>
+        <th>Category Name</th>
         <th>Booking Date</th>
         <th>Status</th>
     </tr>
@@ -119,9 +123,9 @@ $categories = $categoryController->getAllCategories();
     <tr><td colspan="9" class="no-results">No bookings found.</td></tr>
 <?php else: foreach ($bookings as $booking): ?>
     <?php
-        // Get Homeowner object
-        $homeowner = $userAccountController->getUserById($booking->getHomeownerAccountId());
-        $homeownerName = $homeowner ? $homeowner->getFullName() : "Unknown";
+        // Get Cleaner object
+        $cleaner = $userAccountController->getUserById($booking->getCleanerAccountId());
+        $cleanerName = $cleaner ? $cleaner->getFullName() : "Unknown";
 
         // Get Category object
         $category = $categoryController->getCategoryById($booking->getCategoryId());
@@ -129,7 +133,7 @@ $categories = $categoryController->getAllCategories();
     ?>
     <tr>
         <td><?= htmlspecialchars($booking->getMatchId()) ?></td>
-        <td><?= htmlspecialchars($homeownerName) ?></td>
+        <td><?= htmlspecialchars($cleanerName) ?></td>
         <td><?= htmlspecialchars($booking->getServiceId()) ?></td>
         <td><?= htmlspecialchars($categoryName) ?></td>
         <td><?= htmlspecialchars($booking->getBookingDate()) ?></td>
