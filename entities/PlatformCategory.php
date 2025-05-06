@@ -115,7 +115,7 @@ class PlatformCategory{
     // Fetch user by ID
     public static function getPlatformCategoryById($id) {
         $db = Database::getPDO();
-        $stmt = $db->prepare("SELECT * FROM service_categories WHERE category_id = :id WHERE is_suspended = false");
+        $stmt = $db->prepare("SELECT * FROM service_categories WHERE category_id = :id AND is_suspended = false");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
     
@@ -128,10 +128,12 @@ class PlatformCategory{
                 isset($result['is_suspended']) ? (bool)$result['is_suspended'] : false
             );
         } else {
-            // Debugging: If no user is found
-            echo "No user found with category_id: " . htmlspecialchars($id) . "<br>";
+            // Debugging: If no category is found
+           // echo "No category found with category_id: " . htmlspecialchars($id) . "<br>";
             return null;
         }
+        
+        
     }
     
 

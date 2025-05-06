@@ -5,10 +5,10 @@ if ($_SESSION['profileName'] !== 'Cleaner') {
     exit();
 }
 require_once(__DIR__ . '/../cleanerNavbar.php');
-require_once(__DIR__ . '/../controllers/viewCleanerBookingHistoryController.php');
-require_once(__DIR__ . '/../controllers/ServiceViewController.php');
+require_once(__DIR__ . '/../controllers/UserAccountController.php');
 require_once(__DIR__ . '/../controllers/PlatformCategoryController.php');
-require_once(__DIR__ . '/../controllers/SearchCleanerBookingHistoryController.php');
+require_once(__DIR__ . '/../controllers/viewCleanerMatchesController.php');
+require_once(__DIR__ . '/../controllers/SearchCleanerMatchesController.php');
 
 
 // Get filter values
@@ -17,21 +17,33 @@ $categoryId = (isset($_GET['category_id']) && $_GET['category_id'] !== '') ? $_G
 $startDate = (isset($_GET['start_date']) && $_GET['start_date'] !== '') ? $_GET['start_date'] : null;
 $endDate = (isset($_GET['end_date']) && $_GET['end_date'] !== '') ? $_GET['end_date'] : null;
 
+$viewController = new ViewCleanerMatchesController();
 
-$controller = new SearchCleanerBookingHistoryController();
-$bookings = $controller->searchCleanerBookingHistory(
-    $accountId,
-    $categoryId,
-    $startDate,
-    $endDate
-);
-
-
+if (
+    empty($categoryId) &&
+    empty($startDate) &&
+    empty($endDate)
+) {
+    // No filters: show all completed bookings
+    $bookings = $viewController->viewCleanerMatches($accountId);
+} else {
+    // Filters: use the search controller
+    $searchController = new SearchCleanerMatchesController();
+    $bookings = $searchController->searchCleanerMatches(
+        $accountId,
+        $categoryId,
+        $startDate,
+        $endDate
+    );
+}
 
 
 
 // Get all categories for dropdown
-$categories = PlatformCategory::getAllCategories();
+$userAccountController = new UserAccountController();
+$categoryController = new PlatformCategoryController();
+$categories = $categoryController->getAllCategories();
+
 
 
 ?>
@@ -92,40 +104,44 @@ $categories = PlatformCategory::getAllCategories();
 
     <h2>Bookings List</h2>
     <table>
-        <thead>
-            <tr>
-                <th>Booking ID</th>
-                <th>Title</th>
-                <th>Category</th>
-                <th>Price</th>
-                <th>Homeowner</th>
-                <th>Booking Date</th>
-                <th>Completed At</th>
-                <th>Status</th>
-                <!-- <th>Actions</th> Uncomment if you want actions -->
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (empty($bookings)): ?>
-                <tr><td colspan="8" class="no-results">No bookings found.</td></tr>
-            <?php else: foreach ($bookings as $booking): ?>
-                <tr>
-                    <td><?= htmlspecialchars($booking['booking_id']) ?></td>
-                    <td><?= htmlspecialchars($booking['title']) ?></td>
-                    <td><?= htmlspecialchars($booking['category_name']) ?></td>
-                    <td>$<?= htmlspecialchars(number_format($booking['price'], 2)) ?></td>
-                    <td><?= htmlspecialchars($booking['homeowner_name']) ?></td>
-                    <td><?= htmlspecialchars($booking['booking_date']) ?></td>
-                    <td><?= htmlspecialchars($booking['completed_at']) ?></td>
-                    <td><?= htmlspecialchars($booking['status']) ?></td>
-                    <!--
-                    <td class='actions-buttons'>
-                        <button onclick="window.location.href='viewBooking.php?bookingid=<?= $booking['booking_id'] ?>';" class='update-button'>View</button>
-                    </td>
-                    -->
-                </tr>
-            <?php endforeach; endif; ?>
-        </tbody>
+    <thead>
+    <tr>
+        <th>Match ID</th>
+        <th>Homeowner Name</th>
+        <th>Cleaner Account ID</th>
+        <th>Service ID</th>
+        <th>Category ID</th>
+        <th>Booking Date</th>
+        <th>Status</th>
+    </tr>
+</thead>
+<tbody>
+<?php if (empty($bookings)): ?>
+    <tr><td colspan="9" class="no-results">No bookings found.</td></tr>
+<?php else: foreach ($bookings as $booking): ?>
+    <?php
+        // Get Homeowner object
+        $homeowner = $userAccountController->getUserById($booking->getHomeownerAccountId());
+        $homeownerName = $homeowner ? $homeowner->getFullName() : "Unknown";
+
+        // Get Category object
+        $category = $categoryController->getCategoryById($booking->getCategoryId());
+        $categoryName = $category ? $category->getName() : "Unknown";
+    ?>
+    <tr>
+        <td><?= htmlspecialchars($booking->getMatchId()) ?></td>
+        <td><?= htmlspecialchars($homeownerName) ?></td>
+        <td><?= htmlspecialchars($booking->getCleanerAccountId()) ?></td>
+        <td><?= htmlspecialchars($booking->getServiceId()) ?></td>
+        <td><?= htmlspecialchars($categoryName) ?></td>
+        <td><?= htmlspecialchars($booking->getBookingDate()) ?></td>
+        <td><?= htmlspecialchars($booking->getStatus()) ?></td>
+    </tr>
+<?php endforeach; endif; ?>
+</tbody>
+
+
+
     </table>
 </div>
 </body>

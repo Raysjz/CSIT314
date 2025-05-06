@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once(__DIR__ . '/adminNavbar.php');
-require_once(__DIR__ . '/../entities/UserAccount.php');
+require_once(__DIR__ . '/../controllers/viewUAController.php');
 
 // Pagination parameters
 $perPage = 10;
