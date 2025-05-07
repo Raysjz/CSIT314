@@ -1,25 +1,27 @@
 <?php
-require_once(__DIR__ . '/../../entities/PlatformMgmt/PlatformCategory.php'); 
+require_once(__DIR__ . '/../../entities/PlatformMgmt/PlatformCategory.php');
 
+/**
+ * Controller for updating platform categories.
+ */
 class UpdatePlatformCategoryController {
-    // Fetch user profile by ID
-    public function getPlatformCategoryById($userId) {
-        return PlatformCategory::getPlatformCategoryById($userId);  // Ensure this returns a valid user profile object
+    /**
+     * Fetch category by ID.
+     */
+    public function getPlatformCategoryById($categoryId) {
+        return PlatformCategory::getPlatformCategoryById($categoryId);
     }
 
-    // Update the user profile with the new data
+    /**
+     * Update the category with the new data.
+     */
     public function updatePlatformCategory($data) {
-        $user = new PlatformCategory(
-            $data['id'],          // Profile ID
-            $data['name'],        // Profile Name
-            isset($data['isSuspended']) ? $data['isSuspended'] : false  // Suspended status
+        $category = new PlatformCategory(
+            $data['id'],
+            $data['name'],
+            isset($data['isSuspended']) ? $data['isSuspended'] : false
         );
-
-        return $user->updatePlatformCategory();  // Return true if update is successful
+        return $category->updatePlatformCategory();
     }
 }
-
-
-
-
 ?>

@@ -1,26 +1,23 @@
 <?php
-session_start();  // Start the session to access session variables
+session_start();
 if ($_SESSION['profileName'] !== 'Platform Management') {
     header('Location: ../login.php');
     exit();
 }
-// Include necessary files
 require_once(__DIR__ . '/platformNavbar.php');
 require_once(__DIR__ . '/../../controllers/PlatformMgmt/weeklyReportController.php');
 
-
+// Initialize variables for report results
 $shortlists = $weeklyViews = $weekly = null;
 
+// Only generate report if button is clicked
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_report'])) {
     $controller = new WeeklyReportController();
     $shortlists = $controller->getWeeklyShortlistsAdded();
     $weeklyViews = $controller->getWeeklyServiceViews();
     $weekly = $controller->getWeeklyServicesCreated();
 }
-
-
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -41,9 +38,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_report'])) {
         <button type="submit" name="generate_report" class="generate-btn">Generate Report</button>
     </form>
     <?php if ($shortlists !== null && $weeklyViews !== null && $weekly !== null): ?>
-    <div class="details-row"><span class="label">Shortlists added Weekly:</span>  <?php echo $shortlists; ?></div>
-    <div class="details-row"><span class="label">Service Views Weekly:</span>  <?php echo $weeklyViews; ?></div>
-    <div class="details-row"><span class="label">New Services Created Weekly:</span> <?php echo $weekly; ?></div>
+        <div class="details-row"><span class="label">Shortlists added Weekly:</span>  <?php echo htmlspecialchars($shortlists); ?></div>
+        <div class="details-row"><span class="label">Service Views Weekly:</span>  <?php echo htmlspecialchars($weeklyViews); ?></div>
+        <div class="details-row"><span class="label">New Services Created Weekly:</span> <?php echo htmlspecialchars($weekly); ?></div>
     <?php endif; ?>
 </div>
 </body>

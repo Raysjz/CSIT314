@@ -1,58 +1,51 @@
 <?php
-// updatePC.php -> updatePlatformCategoryController.php -> PlatformCategory.php
-session_start();  // Start the session to access session variables
+session_start();
 if ($_SESSION['profileName'] !== 'Platform Management') {
     header('Location: ../login.php');
     exit();
 }
-// Include necessary files
 require_once(__DIR__ . '/platformNavbar.php');
 require_once(__DIR__ . '/../../controllers/PlatformMgmt/UpdatePlatformCategoryController.php');
 
-// Get the user ID from the query parameter
-$userIdToUpdate = isset($_GET['userid']) ? $_GET['userid'] : null;
-//echo "User ID to update: " . htmlspecialchars($userIdToUpdate) . "<br>";
+// Get the category ID from the query parameter
+$categoryId = isset($_GET['categoryid']) ? $_GET['categoryid'] : null;
 
+// Instantiate the controller for fetching and updating category data
+$controller = new UpdatePlatformCategoryController();
+$categoryToUpdate = $controller->getPlatformCategoryById($categoryId);
 
-// Instantiate the Controller for fetching and updating user profile data
-$controller = new UpdatePlatformCategoryController(); 
-$userToUpdate = $controller->getPlatformCategoryById($userIdToUpdate);
-
-// If no user is found, show an error message
-if (!$userToUpdate) {
-    echo "❌ No user found with ID: " . htmlspecialchars($userIdToUpdate);
-    exit;  // Stop the script if no user is found
+// If no category is found, show an error message and stop
+if (!$categoryToUpdate) {
+    echo "❌ No category found with ID: " . htmlspecialchars($categoryId);
+    exit;
 }
 
 // Initialize message variable
 $message = "";
 
-// Handle form submission for updating user data
+// Handle form submission for updating category data
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Collect form data and sanitize it
     $data = [
         'id' => $_POST['id'],
         'name' => $_POST['name'],
-        'isSuspended' => isset($_POST['is_suspended']) ? $_POST['is_suspended'] : false
+        // Ensure the value is 1 or 0
+        'isSuspended' => isset($_POST['is_suspended']) ? (int)$_POST['is_suspended'] : 0
     ];
 
-    // Call controller to update user profile
     $result = $controller->updatePlatformCategory($data);
 
-    // Show appropriate message based on the result
     if ($result) {
-        $message = "✅ Profile successfully updated!";
+        $message = "✅ Category successfully updated!";
     } else {
-        $message = "❌ Error updating profile.";
+        $message = "❌ Error updating category.";
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Update Profile</title>
+    <title>Update Service Category</title>
     <style>
         body { font-family: Arial; background: #f4f4f4; margin: 0; padding: 40px; }
         .container { background: white; padding: 30px; max-width: 500px; margin: auto; margin-top: 80px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
@@ -66,11 +59,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             text-align: center;
         }
         .success {
-            background-color: #28a745;  /* Green background for success */
+            background-color: #28a745;
             color: white;
         }
         .error {
-            background-color: #dc3545;  /* Red background for error */
+            background-color: #dc3545;
             color: white;
         }
         .button-container { display: flex; justify-content: space-between; margin-top: 20px; }
@@ -82,36 +75,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </style>
 </head>
 <body>
-
 <div class="container">
     <h1>Update Service Category</h1>
 
-    <!-- Display success or error message -->
     <?php if ($message): ?>
         <div class="message <?php echo (strpos($message, '❌') !== false) ? 'error' : 'success'; ?>">
             <?php echo $message; ?>
         </div>
     <?php endif; ?>
 
-    <!-- Update form -->
-    <form action="updatePC.php?userid=<?php echo htmlspecialchars($userToUpdate->getId()); ?>" method="post">
-        <input type="hidden" name="id" value="<?php echo htmlspecialchars($userToUpdate->getId()); ?>">
+    <form action="updatePC.php?categoryid=<?php echo htmlspecialchars($categoryToUpdate->getId()); ?>" method="post">
+        <input type="hidden" name="id" value="<?php echo htmlspecialchars($categoryToUpdate->getId()); ?>">
 
         <label for="name">Service Category Name</label>
-        <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($userToUpdate->getName()); ?>" required>
+        <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($categoryToUpdate->getName()); ?>" required>
 
         <label for="is_suspended">Is Suspended</label>
         <select id="is_suspended" name="is_suspended">
-            <option value="1" <?php echo $userToUpdate->getIsSuspended() ? 'selected' : ''; ?>>Yes</option>
-            <option value="0" <?php echo !$userToUpdate->getIsSuspended() ? 'selected' : ''; ?>>No</option>
+            <option value="1" <?php echo $categoryToUpdate->getIsSuspended() ? 'selected' : ''; ?>>Yes</option>
+            <option value="0" <?php echo !$categoryToUpdate->getIsSuspended() ? 'selected' : ''; ?>>No</option>
         </select>
 
         <div class="button-container">
             <a href="viewPC.php" class="back-button">Back</a>
-            <button type="submit" class="update-button">Update Profile</button>
+            <button type="submit" class="update-button">Update Category</button>
         </div>
     </form>
 </div>
-
 </body>
 </html>

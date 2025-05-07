@@ -1,32 +1,28 @@
 <?php
 // createPC.php -> createPlatformCategoryController.php -> PlatformCategory.php
-session_start();  // Start the session to access session variables
+session_start();
 if ($_SESSION['profileName'] !== 'Platform Management') {
     header('Location: ../login.php');
     exit();
 }
-// Include necessary files
 require_once(__DIR__ . '/platformNavbar.php');
 require_once(__DIR__ . '/../../controllers/PlatformMgmt/createPlatformCategoryController.php');
 
-
-// Initialize message variable
 $message = "";
 
-// Main processing logic for user Service Category creation
+// Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $data = [
         'name' => $_POST['name'],
-        'isSuspended' => isset($_POST['isSuspended']) ? $_POST['isSuspended'] : false // Default to false if not set
+        'isSuspended' => isset($_POST['isSuspended']) ? $_POST['isSuspended'] : false
     ];
 
-    // Instantiate the controller with validated data
-    $controller = new CreatePlatformCategoryController(new PlatformCategory(null, $data['name'], $data['isSuspended']));
-
-    // Call handleFormSubmission method to process and create the user Service Category
+    // Instantiate controller and process submission
+    $controller = new CreatePlatformCategoryController(
+        new PlatformCategory(null, $data['name'], $data['isSuspended'])
+    );
     $result = $controller->handleFormSubmission($data);
 
-    // Check the result and display an appropriate message
     if ($result === true) {
         $message = "✅ Service Category successfully created!";
     } else {
@@ -34,7 +30,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -69,28 +64,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </style>
 </head>
 <body>
-
 <div class="container">
     <h1>Create Service Category</h1>
-
-    <!-- Display message if available -->
     <?php if ($message): ?>
         <div class="message <?php echo (strpos($message, '❌') !== false) ? 'error' : 'success'; ?>">
             <?php echo $message; ?>
         </div>
     <?php endif; ?>
-
     <form id="createForm" action="createPC.php" method="post">
-        
         <label for="name">Category Name</label>
         <input type="text" id="name" name="name" required>
-
         <div class="button-container">
             <a href="viewPC.php" class="back-button">Back</a>
             <button type="submit" class="update-button">Create Category</button>
         </div>
     </form>
 </div>
-
 </body>
 </html>

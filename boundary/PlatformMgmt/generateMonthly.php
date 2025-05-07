@@ -4,22 +4,20 @@ if ($_SESSION['profileName'] !== 'Platform Management') {
     header('Location: ../login.php');
     exit();
 }
-// Include necessary files
 require_once(__DIR__ . '/platformNavbar.php');
 require_once(__DIR__ . '/../../controllers/PlatformMgmt/monthlyReportController.php');
 
+// Initialize variables for report results
 $shortlists = $monthlyViews = $monthly = null;
 
+// Generate report only when button is clicked
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_report'])) {
     $controller = new MonthlyReportController();
     $shortlists = $controller->getMonthlyShortlistsAdded();
     $monthlyViews = $controller->getMonthlyServiceViews();
     $monthly = $controller->getMonthlyServicesCreated();
 }
-
-
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -40,9 +38,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_report'])) {
         <button type="submit" name="generate_report" class="generate-btn">Generate Report</button>
     </form>
     <?php if ($shortlists !== null && $monthlyViews !== null && $monthly !== null): ?>
-    <div class="details-row"><span class="label">Shortlists added Monthly:</span>  <?php echo $shortlists; ?></div>
-    <div class="details-row"><span class="label">Service Views Monthly: </span>  <?php echo $monthlyViews; ?></div>
-    <div class="details-row"><span class="label">New Services Created Monthly:</span> <?php echo $monthly; ?></div>
+        <div class="details-row"><span class="label">Shortlists added Monthly:</span>  <?php echo htmlspecialchars($shortlists); ?></div>
+        <div class="details-row"><span class="label">Service Views Monthly:</span>  <?php echo htmlspecialchars($monthlyViews); ?></div>
+        <div class="details-row"><span class="label">New Services Created Monthly:</span> <?php echo htmlspecialchars($monthly); ?></div>
     <?php endif; ?>
 </div>
 </body>

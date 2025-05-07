@@ -1,22 +1,22 @@
 <?php
 require_once(__DIR__ . '/../../entities/PlatformMgmt/PlatformCategory.php');
 
-class suspendPlatformCategoryController {
-    // Fetch user by ID
-    public function getPlatformCategoryById($userId) {
-        return PlatformCategory::getPlatformCategoryById($userId); // Return the user object from the database
+/**
+ * Controller for suspending platform categories.
+ */
+class SuspendPlatformCategoryController {
+    // Fetch category by ID
+    public function getPlatformCategoryById($categoryId) {
+        return PlatformCategory::getPlatformCategoryById($categoryId);
     }
 
-    // Suspend the user Profile
-    public function suspendPlatformCategory($userId) {
-        $user = $this->getPlatformCategoryById($userId);
-
-        if ($user) {
-            // Suspend the user by calling the suspendUserProfile method in the UserProfile entity
-            return $user->suspendPlatformCategory();
+    // Suspend the category
+    public function suspendPlatformCategory($categoryId) {
+        $category = $this->getPlatformCategoryById($categoryId);
+        if ($category) {
+            return $category->suspendPlatformCategory();
         }
-        
-        return false; // User not found
+        return false; // Category not found
     }
 }
 ?>

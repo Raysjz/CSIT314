@@ -7,8 +7,10 @@ if ($_SESSION['profileName'] !== 'Platform Management') {
 require_once(__DIR__ . '/platformNavbar.php');
 require_once(__DIR__ . '/../../controllers/PlatformMgmt/dailyReportController.php');
 
+// Initialize variables
 $shortlists = $dailyViews = $daily = null;
 
+// Generate report on button click
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_report'])) {
     $controller = new DailyReportController();
     $shortlists = $controller->getDailyShortlistsAdded();
@@ -19,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_report'])) {
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Generate Daily Report Details</title>
+    <title>Daily Platform Report</title>
     <style>
         .details-container { max-width: 600px; margin: 40px auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         .details-container h2 { margin-top: 0; }
@@ -31,14 +33,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_report'])) {
 </head>
 <body>
 <div class="details-container">
-    <h2>Generate Daily Report Details</h2>
+    <h2>Generate Daily Report</h2>
     <form method="post">
         <button type="submit" name="generate_report" class="generate-btn">Generate Report</button>
     </form>
     <?php if ($shortlists !== null && $dailyViews !== null && $daily !== null): ?>
-        <div class="details-row"><span class="label">Shortlists added Today:</span>  <?php echo $shortlists; ?></div>
-        <div class="details-row"><span class="label">Service Views Daily:</span>  <?php echo $dailyViews; ?></div>
-        <div class="details-row"><span class="label">New Services Created Daily:</span> <?php echo $daily; ?></div>
+        <div class="details-row"><span class="label">Shortlists Added Today:</span> <?php echo htmlspecialchars($shortlists); ?></div>
+        <div class="details-row"><span class="label">Service Views Today:</span> <?php echo htmlspecialchars($dailyViews); ?></div>
+        <div class="details-row"><span class="label">New Services Created Today:</span> <?php echo htmlspecialchars($daily); ?></div>
     <?php endif; ?>
 </div>
 </body>

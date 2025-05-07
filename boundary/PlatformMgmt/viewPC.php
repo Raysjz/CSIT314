@@ -87,23 +87,23 @@ if ($searchQuery) {
                 </tr>
             </thead>
             <tbody>
-                <?php
-                    if (empty($serviceCategories)) {
-                        echo "<tr><td colspan='6' class='no-results'>No results found.</td></tr>";
-                    } else {
-                        foreach ($serviceCategories as $services) {
-                            echo "<tr>";
-                            echo "<td>" . htmlspecialchars($services->getId()) . "</td>"; 
-                            echo "<td>" . htmlspecialchars($services->getName()) . "</td>"; 
-                            echo "<td>" . htmlspecialchars($services->getIsSuspended() ? 'Yes' : 'No') . "</td>";
-                            echo "<td class='actions-buttons'>
-                                    <button onclick=\"window.location.href='updatePC.php?userid=" . $services->getId() . "';\" class='update-button'>Update</button>
-                                    <button onclick=\"return confirm('Are you sure you want to suspend this user?') ? window.location.href='suspendPC.php?userid=" . $services->getId() . "' : false;\" class='suspend-button'>Suspend</button>
-                                  </td>";
-                            echo "</tr>";
-                        }
+            <?php
+                if (empty($serviceCategories)) {
+                    echo "<tr><td colspan='4' class='no-results'>No results found.</td></tr>";
+                } else {
+                    foreach ($serviceCategories as $category) {
+                        echo "<tr>";
+                        echo "<td>" . htmlspecialchars($category->getId()) . "</td>";
+                        echo "<td>" . htmlspecialchars($category->getName()) . "</td>";
+                        echo "<td>" . ($category->getIsSuspended() ? 'Yes' : 'No') . "</td>";
+                        echo "<td class='actions-buttons'>
+                                <button onclick=\"window.location.href='updatePC.php?categoryid=" . $category->getId() . "';\" class='update-button'>Update</button>
+                                <button onclick=\"return confirm('Are you sure you want to suspend this category?') ? window.location.href='suspendPC.php?categoryid=" . $category->getId() . "' : false;\" class='suspend-button'>Suspend</button>
+                            </td>";
+                        echo "</tr>";
                     }
-                ?>
+                }
+            ?>
             </tbody>
         </table>
     </div>
