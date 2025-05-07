@@ -55,19 +55,22 @@ class PlatformCategory{
     // Search services by username or id
     public static function searchPlatformCategory($searchQuery) {
         $db = Database::getPDO();
-
+    
         if (is_numeric($searchQuery)) {
+            // Search by ID
             $stmt = $db->prepare("SELECT * FROM service_categories WHERE category_id = :search");
+            $stmt->bindValue(':search', (int)$searchQuery, PDO::PARAM_INT);
         } else {
-            $stmt = $db->prepare("SELECT * FROM service_categories WHERE category_name LIKE :search");
-            $searchQuery = "%" . $searchQuery . "%";
+            // Search by name (case-insensitive)
+            $stmt = $db->prepare("SELECT * FROM service_categories WHERE LOWER(category_name) LIKE :search");
+            $searchTerm = '%' . strtolower($searchQuery) . '%';
+            $stmt->bindValue(':search', $searchTerm, PDO::PARAM_STR);
         }
-
-        $stmt->bindParam(':search', $searchQuery);
+    
         $stmt->execute();
-
+    
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+    
         $serviceCategories = [];
         foreach ($result as $row) {
             $serviceCategories[] = new PlatformCategory(
@@ -76,12 +79,14 @@ class PlatformCategory{
                 isset($row['is_suspended']) ? (bool)$row['is_suspended'] : false
             );
         }
-
+    
         return $serviceCategories;
     }
+    
+    
 
     // Validate user input data
-    public function validateSC() {
+    public function validatePC() {
         if (empty($this->name)) {
             return "All fields are required.";
         }

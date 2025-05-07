@@ -1,4 +1,5 @@
 <?php
+// createPC.php -> createPlatformCategoryController.php -> PlatformCategory.php
 session_start();  // Start the session to access session variables
 if ($_SESSION['profileName'] !== 'Platform Management') {
     header('Location: ../login.php');

@@ -1,4 +1,6 @@
 <?php
+// viewPC.php -> viewPlatformCategoryController.php -> PlatformCategory.php
+// viewPC.php -> searchPlatformCategoryController.php -> PlatformCategory.php
 session_start();  // Start the session to access session variables
 if ($_SESSION['profileName'] !== 'Platform Management') {
     header('Location: ../login.php');
@@ -86,16 +88,6 @@ if ($searchQuery) {
             </thead>
             <tbody>
                 <?php
-                    // Check if there is a search query
-                    $searchQuery = isset($_GET['search']) ? $_GET['search'] : null;
-
-                    // Instantiate the UserAccount model and controller
-                    $serviceCategories = new PlatformCategory(null, '', 0); // Empty fields since we just want to fetch users
-                    $viewPC = new ViewPlatformCategoryController();
-
-                    // Fetch user accounts based on the search query
-                    $serviceCategories = $viewPC->viewPlatformCategory($searchQuery);
-
                     if (empty($serviceCategories)) {
                         echo "<tr><td colspan='6' class='no-results'>No results found.</td></tr>";
                     } else {

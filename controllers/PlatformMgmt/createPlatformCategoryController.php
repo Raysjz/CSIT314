@@ -10,7 +10,7 @@ class CreatePlatformCategoryController{
 
     // Process the user creation
     public function processPlatformCategoryCreation() {
-        $validationResult = $this->PlatformCategory->validateSC();
+        $validationResult = $this->PlatformCategory->validatePC();
         
         if ($validationResult === "Validation passed.") {
             if ($this->PlatformCategory->savePlatformCategory()) {

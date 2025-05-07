@@ -322,6 +322,58 @@ class UserAccount {
         return (int)$stmt->fetchColumn();
     }
 
+    //Platform Reporting Generation
+    public static function countUsersCreatedToday() {
+        $db = Database::getPDO();
+        $start = date('Y-m-d 00:00:00');
+        $now = date('Y-m-d H:i:s');
+    
+        $sql = "SELECT COUNT(*) AS user_count FROM user_accounts WHERE created_at BETWEEN :start AND :now";
+        $stmt = $db->prepare($sql);
+        $stmt->bindValue(':start', $start);
+        $stmt->bindValue(':now', $now);
+        $stmt->execute();
+    
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? (int)$row['user_count'] : 0;
+    }
+    
+    //Platform Reporting Generation
+    public static function getActiveSuspendedCountsByProfile() {
+        $db = Database::getPDO();
+        $sql = "SELECT profile_name,
+                       SUM(CASE WHEN is_suspended = FALSE THEN 1 ELSE 0 END) AS active_users,
+                       SUM(CASE WHEN is_suspended = TRUE THEN 1 ELSE 0 END) AS suspended_users
+                FROM user_accounts
+                GROUP BY profile_name";
+        $stmt = $db->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    //Platform Reporting Generation
+    public static function getTotalAccountsByProfile() {
+        $db = Database::getPDO();
+        $sql = "SELECT profile_name, COUNT(*) AS total_accounts
+                FROM user_accounts
+                GROUP BY profile_name";
+        $stmt = $db->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    //Platform Reporting Generation
+    public static function getAllProfilesWithAccountCounts() {
+        $db = Database::getPDO();
+        $sql = "SELECT up.profile_name, COUNT(ua.account_id) AS total_accounts
+                FROM user_profiles up
+                LEFT JOIN user_accounts ua ON up.profile_name = ua.profile_name
+                GROUP BY up.profile_name";
+        $stmt = $db->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    
+
+
 }
 
 
