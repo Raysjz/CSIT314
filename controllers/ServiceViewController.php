@@ -1,4 +1,5 @@
 <?php
+//ServiceViewController.php
 require_once(__DIR__ . '/../entities/ServiceView.php');
 
 class ServiceViewController {
@@ -9,5 +10,6 @@ class ServiceViewController {
     public function getViewCount($serviceId) {
         return ServiceView::countViews($serviceId);
     }
+
 }
 ?>

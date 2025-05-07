@@ -1,4 +1,5 @@
 <?php
+//Service View Entity
 class ServiceView {
     public static function logView($serviceId, $viewerAccountId = null) {
         $db = Database::getPDO();
@@ -23,6 +24,37 @@ class ServiceView {
         $stmt->bindParam(':service_id', $serviceId, PDO::PARAM_INT);
         $stmt->execute();
         return (int) $stmt->fetchColumn();
+    }
+
+    //---------Platform Generate Report-----------------
+    public static function countViewsDaily() {
+        $db = Database::getPDO();
+        $sql = "SELECT COUNT(*) AS service_views
+                FROM service_views
+                WHERE viewed_at::date = CURRENT_DATE";
+        $stmt = $db->query($sql);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? (int)$row['service_views'] : 0;
+    }
+
+    public static function countViewsWeekly() {
+        $db = Database::getPDO();
+        $sql = "SELECT COUNT(*) AS service_views
+                FROM service_views
+                WHERE viewed_at >= CURRENT_DATE - INTERVAL '6 days'";
+        $stmt = $db->query($sql);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? (int)$row['service_views'] : 0;
+    }
+
+    public static function countViewsMonthly() {
+        $db = Database::getPDO();
+        $sql = "SELECT COUNT(*) AS service_views
+                FROM service_views
+                WHERE DATE_TRUNC('month', viewed_at) = DATE_TRUNC('month', CURRENT_DATE)";
+        $stmt = $db->query($sql);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? (int)$row['service_views'] : 0;
     }
 }
 

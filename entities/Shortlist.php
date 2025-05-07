@@ -118,5 +118,40 @@ class Shortlist {
         $stmt->execute();
         return (int)$stmt->fetchColumn();
     }
+
+    //---------Platform Generate Report-----------------
+    public static function countShortlistsAddedDaily() {
+        $db = Database::getPDO();
+        $sql = "SELECT COUNT(*) AS shortlists_added
+                FROM service_shortlists
+                WHERE shortlisted_at::date = CURRENT_DATE
+                  AND is_deleted = FALSE";
+        $stmt = $db->query($sql);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? (int)$row['shortlists_added'] : 0;
+    }
+
+    public static function countShortlistsAddedWeekly() {
+        $db = Database::getPDO();
+        $sql = "SELECT COUNT(*) AS shortlists_added
+                FROM service_shortlists
+                WHERE shortlisted_at >= CURRENT_DATE - INTERVAL '6 days'
+                  AND is_deleted = FALSE";
+        $stmt = $db->query($sql);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? (int)$row['shortlists_added'] : 0;
+    }
+
+    public static function countShortlistsAddedMonthly() {
+        $db = Database::getPDO();
+        $sql = "SELECT COUNT(*) AS shortlists_added
+                FROM service_shortlists
+                WHERE DATE_TRUNC('month', shortlisted_at) = DATE_TRUNC('month', CURRENT_DATE)
+                  AND is_deleted = FALSE";
+        $stmt = $db->query($sql);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? (int)$row['shortlists_added'] : 0;
+    }
+
 }
 ?>

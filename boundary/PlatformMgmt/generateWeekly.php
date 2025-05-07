@@ -1,25 +1,30 @@
 <?php
-session_start();
+session_start();  // Start the session to access session variables
 if ($_SESSION['profileName'] !== 'Platform Management') {
     header('Location: ../login.php');
     exit();
 }
+// Include necessary files
 require_once(__DIR__ . '/platformNavbar.php');
-require_once(__DIR__ . '/../../controllers/PlatformMgmt/dailyReportController.php');
+require_once(__DIR__ . '/../../controllers/PlatformMgmt/weeklyReportController.php');
 
-$shortlists = $dailyViews = $daily = null;
+
+$shortlists = $weeklyViews = $weekly = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_report'])) {
-    $controller = new DailyReportController();
-    $shortlists = $controller->getDailyShortlistsAdded();
-    $dailyViews = $controller->getDailyServiceViews();
-    $daily = $controller->getDailyServicesCreated();
+    $controller = new WeeklyReportController();
+    $shortlists = $controller->getWeeklyShortlistsAdded();
+    $weeklyViews = $controller->getWeeklyServiceViews();
+    $weekly = $controller->getWeeklyServicesCreated();
 }
+
+
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Generate Daily Report Details</title>
+    <title>Generate Weekly Report Details</title>
     <style>
         .details-container { max-width: 600px; margin: 40px auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         .details-container h2 { margin-top: 0; }
@@ -31,14 +36,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_report'])) {
 </head>
 <body>
 <div class="details-container">
-    <h2>Generate Daily Report Details</h2>
+    <h2>Generate Weekly Report Details</h2>
     <form method="post">
         <button type="submit" name="generate_report" class="generate-btn">Generate Report</button>
     </form>
-    <?php if ($shortlists !== null && $dailyViews !== null && $daily !== null): ?>
-        <div class="details-row"><span class="label">Shortlists added Today:</span>  <?php echo $shortlists; ?></div>
-        <div class="details-row"><span class="label">Service Views Daily:</span>  <?php echo $dailyViews; ?></div>
-        <div class="details-row"><span class="label">New Services Created Daily:</span> <?php echo $daily; ?></div>
+    <?php if ($shortlists !== null && $weeklyViews !== null && $weekly !== null): ?>
+    <div class="details-row"><span class="label">Shortlists added Weekly:</span>  <?php echo $shortlists; ?></div>
+    <div class="details-row"><span class="label">Service Views Weekly:</span>  <?php echo $weeklyViews; ?></div>
+    <div class="details-row"><span class="label">New Services Created Weekly:</span> <?php echo $weekly; ?></div>
     <?php endif; ?>
 </div>
 </body>

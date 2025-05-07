@@ -284,6 +284,37 @@ class CleaningService {
             }
             return $services;
         }
+
+        //---------Platform Generate Report-----------------
+        public static function countCreatedDaily() {
+            $db = Database::getPDO();
+            $sql = "SELECT COUNT(*) AS new_services_created
+                    FROM cleaner_services
+                    WHERE created_at::date = CURRENT_DATE";
+            $stmt = $db->query($sql);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $row ? (int)$row['new_services_created'] : 0;
+        }
+    
+        public static function countCreatedWeekly() {
+            $db = Database::getPDO();
+            $sql = "SELECT COUNT(*) AS new_services_created
+                    FROM cleaner_services
+                    WHERE created_at >= CURRENT_DATE - INTERVAL '6 days'";
+            $stmt = $db->query($sql);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $row ? (int)$row['new_services_created'] : 0;
+        }
+    
+        public static function countCreatedMonthly() {
+            $db = Database::getPDO();
+            $sql = "SELECT COUNT(*) AS new_services_created
+                    FROM cleaner_services
+                    WHERE DATE_TRUNC('month', created_at) = DATE_TRUNC('month', CURRENT_DATE)";
+            $stmt = $db->query($sql);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $row ? (int)$row['new_services_created'] : 0;
+        }
         
 
 }

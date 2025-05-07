@@ -7,24 +7,6 @@ class UserAccountController {
         return UserAccount::getAccountUserById($id);
     }
 
-    public function generateUsersCreatedAtNow() {
-    return UserAccount::countUsersCreatedToday();
-    }   
-
-    public function getActiveSuspendedCountsByProfile() {
-    return UserAccount::countUsersCreatedToday();
-    }  
-
-    public function getTotalAccountsByProfile() {
-    return UserAccount::countUsersCreatedToday();
-    }  
-
-
-    public function getAllProfilesWithAccountCounts() {
-    return UserAccount::countUsersCreatedToday();
-    }  
-
-
 }
 
 ?>

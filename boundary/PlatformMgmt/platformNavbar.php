@@ -4,8 +4,8 @@
         <a href="/CSIT314/boundary/PlatformMgmt/viewPC.php">View Service Categories</a>
         <a href="/CSIT314/boundary/PlatformMgmt/createPC.php">Create Service Categories</a> 
         <a href="/CSIT314/boundary/PlatformMgmt/generateDaily.php">Generate Daily Report</a>
-        <a href="#">Generate Weekly Report</a>
-        <a href="#">Generate Monthly Report</a> 
+        <a href="/CSIT314/boundary/PlatformMgmt/generateWeekly.php">Generate Weekly Report</a>
+        <a href="/CSIT314/boundary/PlatformMgmt/generateMonthly.php">Generate Monthly Report</a> 
     </div>
     <div class="navbar-center">
         <text>Welcome, <?php echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'; ?></text>

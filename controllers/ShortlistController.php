@@ -4,6 +4,7 @@
 require_once(__DIR__ . '/../entities/Shortlist.php');
 
 class ShortlistController {
+
     public function addToShortlist($homeownerAccountId, $serviceId) {
         return Shortlist::add($homeownerAccountId, $serviceId);
     }
@@ -19,9 +20,8 @@ class ShortlistController {
     public function getShortlistCount($serviceId) {
         return Shortlist::countShortlists($serviceId);
     }
+
 }
-
-
 
 
 ?>
