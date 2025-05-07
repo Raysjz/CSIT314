@@ -1,7 +1,12 @@
 <?php
+session_start();  // Start the session to access session variables
+if ($_SESSION['profileName'] !== 'Platform Management') {
+    header('Location: ../login.php');
+    exit();
+}
 // Include necessary files
-require_once(__DIR__ . '/../platNavbar.php');
-require_once(__DIR__ . '/../controllers/ViewPCController.php');
+require_once(__DIR__ . '/platNavbar.php');
+require_once(__DIR__ . '/../../controllers/PlatformMgmt/ViewPCController.php');
 
 // Get the search query from GET request
 $searchQuery = isset($_GET['search']) ? $_GET['search'] : null;

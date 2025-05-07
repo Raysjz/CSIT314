@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . '/../entities/PlatformCategory.php');
+require_once(__DIR__ . '/../../entities/PlatformMgmt/PlatformCategory.php');
 
 class suspendPlatformCategoryController {
     // Fetch user by ID

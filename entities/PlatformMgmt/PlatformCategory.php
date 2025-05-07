@@ -1,5 +1,6 @@
 <?php
-require_once(__DIR__ . '/ConnectiontoDB.php');
+require_once(__DIR__ . '/../../entities/ConnectiontoDB.php');
+
 
 class PlatformCategory{
     protected $id;
@@ -115,7 +116,7 @@ class PlatformCategory{
     // Fetch user by ID
     public static function getPlatformCategoryById($id) {
         $db = Database::getPDO();
-        $stmt = $db->prepare("SELECT * FROM service_categories WHERE category_id = :id AND is_suspended = false");
+        $stmt = $db->prepare("SELECT * FROM service_categories WHERE category_id = :id");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
     
@@ -146,7 +147,6 @@ class PlatformCategory{
     
     
     
-
     // Update user category (method to handle update in the database)
     public function updatePlatformCategory() {
         $db = Database::getPDO();

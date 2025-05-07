@@ -1,7 +1,12 @@
 <?php
+session_start();  // Start the session to access session variables
+if ($_SESSION['profileName'] !== 'Platform Management') {
+    header('Location: ../login.php');
+    exit();
+}
 // Include necessary files
-require_once(__DIR__ . '/../platNavbar.php');
-require_once(__DIR__ . '/../controllers/CreatePCController.php');
+require_once(__DIR__ . '/platNavbar.php');
+require_once(__DIR__ . '/../../controllers/PlatformMgmt/CreatePCController.php');
 
 // Initialize message variable
 $message = "";
@@ -73,13 +78,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     <?php endif; ?>
 
-    <form id="createForm" action="createSC.php" method="post">
+    <form id="createForm" action="createPC.php" method="post">
         
         <label for="name">Category Name</label>
         <input type="text" id="name" name="name" required>
 
         <div class="button-container">
-            <a href="viewSC.php" class="back-button">Back</a>
+            <a href="viewPC.php" class="back-button">Back</a>
             <button type="submit" class="update-button">Create Category</button>
         </div>
     </form>

@@ -1,7 +1,12 @@
 <?php
+session_start();  // Start the session to access session variables
+if ($_SESSION['profileName'] !== 'Platform Management') {
+    header('Location: ../login.php');
+    exit();
+}
 // Include necessary files
-require_once(__DIR__ . '/../adminNavbar.php');
-require_once(__DIR__ . '/../controllers/UpdatePCController.php');
+require_once(__DIR__ . '/platNavbar.php');
+require_once(__DIR__ . '/../../controllers/PlatformMgmt/UpdatePCController.php');
 
 // Get the user ID from the query parameter
 $userIdToUpdate = isset($_GET['userid']) ? $_GET['userid'] : null;

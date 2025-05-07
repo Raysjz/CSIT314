@@ -44,18 +44,18 @@ if (empty($_SESSION[$viewedKey])) {
 }
 //-----------------------------------------------------
 
-//----------------------------------------Short List Controller
-$message = "";
-if (isset($_GET['success']) && $_GET['success'] == 1) {
-    $message = "✅ Service successfully added to your shortlist!";
-}
-if (isset($_GET['error']) && $_GET['error'] === 'already_shortlisted') {
-    $message = "⚠️ This service is already in your shortlist.";
-}
-if (isset($_GET['removed']) && $_GET['removed'] == 1) {
-    $message = "✅ Service removed from your shortlist.";
-}
-//----------------------------------------------------------------
+    //----------------------------------------Short List Controller
+    $message = "";
+    if (isset($_GET['success']) && $_GET['success'] == 1) {
+        $message = "✅ Service successfully added to your shortlist!";
+    }
+    if (isset($_GET['error']) && $_GET['error'] === 'already_shortlisted') {
+        $message = "⚠️ This service is already in your shortlist.";
+    }
+    if (isset($_GET['removed']) && $_GET['removed'] == 1) {
+        $message = "✅ Service removed from your shortlist.";
+    }
+    //----------------------------------------------------------------
 
 // For the details page, you can check if this service is in the user's shortlist
 $isShortlisted = true; // Since this page is for a specific shortlist entry

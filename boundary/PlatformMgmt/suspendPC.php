@@ -1,7 +1,12 @@
 <?php
+session_start();  // Start the session to access session variables
+if ($_SESSION['profileName'] !== 'Platform Management') {
+    header('Location: ../login.php');
+    exit();
+}
 // Include necessary files
-require_once(__DIR__ . '/../platNavbar.php');
-require_once(__DIR__ . '/../controllers/SuspendPCController.php');
+require_once(__DIR__ . '/platNavbar.php');
+require_once(__DIR__ . '/../../controllers/PlatformMgmt/SuspendPCController.php');
 
 // Initialize message variable
 $message = "";

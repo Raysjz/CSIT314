@@ -1,10 +1,4 @@
 <?php
-session_start();  // Start the session to access session variables
-if ($_SESSION['profileName'] !== 'Cleaner') {
-    header('Location: ../login.php');
-    exit();
-}
-
 require_once(__DIR__ . '/cleanerNavbar.php');
 
 ?>
@@ -26,7 +20,7 @@ require_once(__DIR__ . '/cleanerNavbar.php');
     <body>
         <br><br>
         <h2>Welcome, <?php echo $_SESSION['username']; ?> to the Dashboard !</h2>
-        <p>You are logged in as: <strong><?php echo $_SESSION['profileName']; ?></strong></p>
+        <p>You are logged in as: <strong><?php echo $_SESSION['profile']; ?></strong></p>
         <a href="/CSIT314/logout.php">Logout</a>
     </body>
 </html>

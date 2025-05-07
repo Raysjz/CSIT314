@@ -23,7 +23,14 @@ if (!isset($_SESSION['profile']) || $_SESSION['profile'] !== 'User Admin') {
         <title>Admin Dashboard</title>
             <style>
             body { font-family: Arial; background: #f4f4f4; margin: 0; padding: 40px; }
-            .container { background: white; padding: 30px; max-width: 500px; margin: auto; margin-top: 80px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+            .container {
+                        background: white;
+                        padding: 30px;
+                        width: 100%;           /* Stretch container to full width */
+                        margin: 40px 0 0 0;    /* Only add top margin, remove auto centering */
+                        border-radius: 8px;
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                        }
             h1 { margin-bottom: 20px; }
             label { display: block; margin-top: 15px; }
             input, select { width: 100%; padding: 10px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; }

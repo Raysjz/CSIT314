@@ -1,11 +1,8 @@
-<?php
-session_start();  // Start the session to access session variables
-?>
 
 <div class="Navbar">
     <div class="navbar-left">
-        <a href="/CSIT314/boundary/viewPC.php">View Service Categories</a>
-        <a href="/CSIT314/boundary/createPC.php">Create Service Categories</a> 
+        <a href="/CSIT314/boundary/PlatformMgmt/viewPC.php">View Service Categories</a>
+        <a href="/CSIT314/boundary/PlatformMgmt/createPC.php">Create Service Categories</a> 
         <a href="#">Generate Daily Report</a>
         <a href="#">Generate Weekly Report</a>
         <a href="#">Generate Monthly Report</a> 
