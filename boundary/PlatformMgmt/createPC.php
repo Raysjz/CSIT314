@@ -5,8 +5,9 @@ if ($_SESSION['profileName'] !== 'Platform Management') {
     exit();
 }
 // Include necessary files
-require_once(__DIR__ . '/platNavbar.php');
-require_once(__DIR__ . '/../../controllers/PlatformMgmt/CreatePCController.php');
+require_once(__DIR__ . '/platformNavbar.php');
+require_once(__DIR__ . '/../../controllers/PlatformMgmt/createPlatformCategoryController.php');
+
 
 // Initialize message variable
 $message = "";

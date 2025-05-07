@@ -5,8 +5,8 @@ if ($_SESSION['profileName'] !== 'Platform Management') {
     exit();
 }
 // Include necessary files
-require_once(__DIR__ . '/platNavbar.php');
-require_once(__DIR__ . '/../../controllers/PlatformMgmt/UpdatePCController.php');
+require_once(__DIR__ . '/platformNavbar.php');
+require_once(__DIR__ . '/../../controllers/PlatformMgmt/UpdatePlatformCategoryController.php');
 
 // Get the user ID from the query parameter
 $userIdToUpdate = isset($_GET['userid']) ? $_GET['userid'] : null;

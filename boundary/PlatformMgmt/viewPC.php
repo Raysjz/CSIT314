@@ -5,15 +5,21 @@ if ($_SESSION['profileName'] !== 'Platform Management') {
     exit();
 }
 // Include necessary files
-require_once(__DIR__ . '/platNavbar.php');
-require_once(__DIR__ . '/../../controllers/PlatformMgmt/ViewPCController.php');
+require_once(__DIR__ . '/platformNavbar.php');
+require_once(__DIR__ . '/../../controllers/PlatformMgmt/searchPlatformCategoryController.php');
+require_once(__DIR__ . '/../../controllers/PlatformMgmt/viewPlatformCategoryController.php');
 
-// Get the search query from GET request
-$searchQuery = isset($_GET['search']) ? $_GET['search'] : null;
 
-// Instantiate the controller and fetch user data
-$controller = new ViewPlatformCategoryController();
-$serviceCategories = $controller->viewPlatformCategory($searchQuery);
+$searchQuery = isset($_GET['search']) ? trim($_GET['search']) : null;
+
+if ($searchQuery) {
+    $searchController = new SearchPlatformCategoryController();
+    $serviceCategories = $searchController->searchPlatformCategory($searchQuery);
+} else {
+    $viewController = new ViewPlatformCategoryController();
+    $serviceCategories = $viewController->viewPlatformCategory();
+}
+
 ?>
 
 <!DOCTYPE html>
