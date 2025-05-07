@@ -1,15 +1,12 @@
 <?php
-session_start();  // Start the session to access session variables
+session_start();
 if ($_SESSION['profileName'] !== 'User Admin') {
     header('Location: ../login.php');
     exit();
 }
 // Include necessary files
 require_once(__DIR__ . '/adminNavbar.php');
-require_once(__DIR__ . '/../controllers/SuspendUAController.php');
-
-// Initialize message variable
-$message = "";
+require_once(__DIR__ . '/../../controllers/UserAdmin/suspendUAController.php');
 
 // Get the user ID from the URL query parameter
 $userIdToSuspend = isset($_GET['userid']) ? $_GET['userid'] : null;
@@ -17,15 +14,14 @@ $userIdToSuspend = isset($_GET['userid']) ? $_GET['userid'] : null;
 // Instantiate the controller
 $controller = new SuspendUserAccountController();
 
-// If the user ID is provided, suspend the user
+// Main logic
 if ($userIdToSuspend !== null) {
-    // Call the controller to suspend the user
     $result = $controller->suspendUserAccount($userIdToSuspend);
 
     if ($result) {
-        // Success message
-        $message = "✅ User has been successfully suspended!";
-        header("Location: viewUA.php"); // Redirect to the user list page
+        // Use session to pass success message after redirect
+        $_SESSION['success_message'] = "✅ User has been successfully suspended!";
+        header("Location: viewUA.php");
         exit;
     } else {
         $message = "❌ User not found.";
@@ -34,7 +30,6 @@ if ($userIdToSuspend !== null) {
     $message = "❌ No user ID provided.";
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -45,14 +40,9 @@ if ($userIdToSuspend !== null) {
         body { font-family: Arial; background: #f4f4f4; margin: 0; padding: 40px; }
         .container { background: white; padding: 30px; max-width: 500px; margin: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: relative; }
         h1 { margin-bottom: 20px; }
-        label { display: block; margin-top: 15px; }
-        input, select { width: 100%; padding: 10px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; }
         .button-container { display: flex; justify-content: space-between; margin-top: 20px; }
-        .back-button, .update-button { padding: 10px 20px; border: none; color: white; border-radius: 4px; cursor: pointer; text-decoration: none; }
-        .back-button { background: #6c757d; }
+        .back-button { padding: 10px 20px; border: none; color: white; border-radius: 4px; cursor: pointer; text-decoration: none; background: #6c757d; }
         .back-button:hover { background: #5a6268; }
-        .update-button { background: #28a745; }
-        .update-button:hover { background: #218838; }
     </style>
 </head>
 <body>
@@ -67,5 +57,3 @@ if ($userIdToSuspend !== null) {
     </div>
 </body>
 </html>
-
-

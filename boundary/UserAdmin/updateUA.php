@@ -6,8 +6,9 @@ if ($_SESSION['profileName'] !== 'User Admin') {
 }
 // Include necessary files
 require_once(__DIR__ . '/adminNavbar.php');
-require_once(__DIR__ . '/../controllers/UpdateUAController.php');
-require_once(__DIR__ . '/../controllers/UserProfileController.php');
+require_once(__DIR__ . '/../../controllers/UserAdmin/UpdateUAController.php');
+require_once(__DIR__ . '/../../controllers/UserAdmin/UserProfileController.php');
+
 
 // Instantiate the UserProfileController
 $userProfileController = new UserProfileController();

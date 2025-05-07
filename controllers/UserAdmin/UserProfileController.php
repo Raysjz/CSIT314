@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . '/../entities/UserProfile.php');
+require_once(__DIR__ . '/../../entities/UserProfile.php');
 
 class UserProfileController {
     // Fetch all profiles (for dropdowns)

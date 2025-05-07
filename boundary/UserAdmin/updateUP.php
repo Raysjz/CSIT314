@@ -1,52 +1,46 @@
 <?php
-session_start();  // Start the session to access session variables
+session_start();
 if ($_SESSION['profileName'] !== 'User Admin') {
     header('Location: ../login.php');
     exit();
 }
-// Include necessary files
 require_once(__DIR__ . '/adminNavbar.php');
-require_once(__DIR__ . '/../controllers/UpdateUPController.php');
+require_once(__DIR__ . '/../../controllers/UserAdmin/UpdateUPController.php');
 
 // Get the user ID from the query parameter
 $userIdToUpdate = isset($_GET['userid']) ? $_GET['userid'] : null;
-//echo "User ID to update: " . htmlspecialchars($userIdToUpdate) . "<br>";
 
-
-// Instantiate the Controller for fetching and updating user profile data
-$controller = new UpdateUserProfileController(); 
+$controller = new UpdateUserProfileController();
 $userToUpdate = $controller->getUserProfileById($userIdToUpdate);
 
-// If no user is found, show an error message
 if (!$userToUpdate) {
     echo "❌ No user found with ID: " . htmlspecialchars($userIdToUpdate);
-    exit;  // Stop the script if no user is found
+    exit;
 }
 
-// Initialize message variable
 $message = "";
 
 // Handle form submission for updating user data
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Collect form data and sanitize it
     $data = [
         'id' => $_POST['id'],
         'name' => $_POST['name'],
-        'isSuspended' => isset($_POST['is_suspended']) ? $_POST['is_suspended'] : false
+        // Convert to boolean: "1" => true, "0" => false
+        'isSuspended' => isset($_POST['is_suspended']) && $_POST['is_suspended'] == "1"
     ];
 
-    // Call controller to update user profile
     $result = $controller->updateUserProfile($data);
 
-    // Show appropriate message based on the result
     if ($result) {
         $message = "✅ Profile successfully updated!";
+        // Optionally, redirect to viewUP.php with a success message:
+        // $_SESSION['success_message'] = $message;
+        // header('Location: viewUP.php'); exit;
     } else {
         $message = "❌ Error updating profile.";
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -58,20 +52,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         h1 { margin-bottom: 20px; }
         label { display: block; margin-top: 15px; }
         input, select { width: 100%; padding: 10px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; }
-        .message {
-            padding: 10px;
-            margin: 20px 0;
-            border-radius: 5px;
-            text-align: center;
-        }
-        .success {
-            background-color: #28a745;  /* Green background for success */
-            color: white;
-        }
-        .error {
-            background-color: #dc3545;  /* Red background for error */
-            color: white;
-        }
+        .message { padding: 10px; margin: 20px 0; border-radius: 5px; text-align: center; }
+        .success { background-color: #28a745; color: white; }
+        .error { background-color: #dc3545; color: white; }
         .button-container { display: flex; justify-content: space-between; margin-top: 20px; }
         .back-button, .update-button { padding: 10px 20px; border: none; color: white; border-radius: 4px; cursor: pointer; text-decoration: none; }
         .back-button { background: #6c757d; }
@@ -81,36 +64,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </style>
 </head>
 <body>
-
 <div class="container">
     <h1>Update Profile</h1>
-
-    <!-- Display success or error message -->
     <?php if ($message): ?>
         <div class="message <?php echo (strpos($message, '❌') !== false) ? 'error' : 'success'; ?>">
-            <?php echo $message; ?>
+            <?php echo htmlspecialchars($message); ?>
         </div>
     <?php endif; ?>
-
-    <!-- Update form -->
     <form action="updateUP.php?userid=<?php echo htmlspecialchars($userToUpdate->getProfileId()); ?>" method="post">
         <input type="hidden" name="id" value="<?php echo htmlspecialchars($userToUpdate->getProfileId()); ?>">
-
         <label for="name">Profile Name</label>
         <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($userToUpdate->getName()); ?>" required>
-
         <label for="is_suspended">Is Suspended</label>
         <select id="is_suspended" name="is_suspended">
             <option value="1" <?php echo $userToUpdate->getIsSuspended() ? 'selected' : ''; ?>>Yes</option>
             <option value="0" <?php echo !$userToUpdate->getIsSuspended() ? 'selected' : ''; ?>>No</option>
         </select>
-
         <div class="button-container">
             <a href="viewUP.php" class="back-button">Back</a>
             <button type="submit" class="update-button">Update Profile</button>
         </div>
     </form>
 </div>
-
 </body>
 </html>

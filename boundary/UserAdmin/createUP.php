@@ -1,30 +1,24 @@
 <?php
-session_start();  // Start the session to access session variables
+session_start();
 if ($_SESSION['profileName'] !== 'User Admin') {
     header('Location: ../login.php');
     exit();
 }
-// Include necessary files
 require_once(__DIR__ . '/adminNavbar.php');
-require_once(__DIR__ . '/../controllers/CreateUPController.php');
+require_once(__DIR__ . '/../../controllers/UserAdmin/createUPController.php');
 
-// Initialize message variable
 $message = "";
 
 // Main processing logic for user profile creation
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $data = [
         'name' => $_POST['name'],
-        'isSuspended' => isset($_POST['isSuspended']) ? $_POST['isSuspended'] : false // Default to false if not set
+        'isSuspended' => isset($_POST['isSuspended']) ? $_POST['isSuspended'] : false
     ];
 
-    // Instantiate the controller with validated data
-    $controller = new CreateUserProfileController(new userProfile(null, $data['name'], $data['isSuspended']));
-
-    // Call handleFormSubmission method to process and create the user profile
+    $controller = new CreateUserProfileController();
     $result = $controller->handleFormSubmission($data);
 
-    // Check the result and display an appropriate message
     if ($result === true) {
         $message = "✅ Profile successfully created!";
     } else {
@@ -32,7 +26,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -44,20 +37,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         h1 { margin-bottom: 20px; }
         label { display: block; margin-top: 15px; }
         input, select { width: 100%; padding: 10px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; }
-        .message {
-            padding: 10px;
-            margin: 20px 0;
-            border-radius: 5px;
-            text-align: center;
-        }
-        .success {
-            background-color: #28a745;  /* Green background for success */
-            color: white;
-        }
-        .error {
-            background-color: #dc3545;  /* Red background for error */
-            color: white;
-        }
+        .message { padding: 10px; margin: 20px 0; border-radius: 5px; text-align: center; }
+        .success { background-color: #28a745; color: white; }
+        .error { background-color: #dc3545; color: white; }
         .button-container { display: flex; justify-content: space-between; margin-top: 20px; }
         .back-button, .update-button { padding: 10px 20px; border: none; color: white; border-radius: 4px; cursor: pointer; text-decoration: none; }
         .back-button { background: #6c757d; }
@@ -67,28 +49,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </style>
 </head>
 <body>
-
 <div class="container">
     <h1>Create Profile</h1>
-
-    <!-- Display message if available -->
     <?php if ($message): ?>
         <div class="message <?php echo (strpos($message, '❌') !== false) ? 'error' : 'success'; ?>">
-            <?php echo $message; ?>
+            <?php echo htmlspecialchars($message); ?>
         </div>
     <?php endif; ?>
-
-    <form id="createForm" action="createUP.php" method="post">
-        
+    <form id="createForm" action="" method="post">
         <label for="name">Profile Name</label>
         <input type="text" id="name" name="name" required>
-
         <div class="button-container">
             <a href="viewUP.php" class="back-button">Back</a>
             <button type="submit" class="update-button">Create Profile</button>
         </div>
     </form>
 </div>
-
 </body>
 </html>

@@ -1,16 +1,16 @@
 <?php
-session_start();  // Start the session to access session variables
-if ($_SESSION['profileName'] !== 'User Admin') {
-    header('Location: ../login.php');
+session_start(); // Start the session to access session variables
+if ($_SESSION["profileName"] !== "User Admin") {
+    header("Location: ../login.php");
     exit();
 }
 // Include necessary files
-require_once(__DIR__ . '/adminNavbar.php');
-require_once(__DIR__ . '/../controllers/ViewUPController.php');
-require_once(__DIR__ . '/../controllers/SearchUPController.php');
+require_once __DIR__ . "/adminNavbar.php";
+require_once __DIR__ . "/../../controllers/UserAdmin/viewUPController.php";
+require_once __DIR__ . "/../../controllers/UserAdmin/searchUPController.php";
 
 // Get the search query from GET request
-$searchQuery = isset($_GET['search']) ? $_GET['search'] : null;
+$searchQuery = isset($_GET["search"]) ? $_GET["search"] : null;
 
 // Instantiate the controllers
 $viewController = new ViewUserProfileController();
@@ -64,12 +64,13 @@ if ($searchQuery) {
 <body>
 
     <div class="container">
-
         <!-- Search Form -->
         <div class="search-container">
         <h2>Search by Profile Name or ID</h2>
             <form action="" method="GET">
-                <input type="text" class="search-input" name="search" placeholder="Enter profile name or ID" value="<?php echo htmlspecialchars($searchQuery); ?>">
+                <input type="text" class="search-input" name="search" placeholder="Enter profile name or ID" value="<?php echo htmlspecialchars(
+                    $searchQuery
+                ); ?>">
                 <button type="submit" class="search-button">Search</button>
                 <button type="reset" class="reset-button" onclick="window.location.href = window.location.pathname;">Reset</button>
             </form>
@@ -88,24 +89,34 @@ if ($searchQuery) {
                 </tr>
             </thead>
             <tbody>
-                <?php
-                    // Check if user profiles are available
-                    if (empty($userProfiles)) {
-                        echo "<tr><td colspan='4' class='no-results'>No results found.</td></tr>";
-                    } else {
-                        foreach ($userProfiles as $profile) {
-                            echo "<tr>";
-                            echo "<td>" . htmlspecialchars($profile->getProfileId()) . "</td>";
-                            echo "<td>" . htmlspecialchars($profile->getName()) . "</td>";
-                            echo "<td>" . htmlspecialchars($profile->getIsSuspended() ? 'Yes' : 'No') . "</td>";
-                            echo "<td class='actions-buttons'>
-                                    <button onclick=\"window.location.href='updateUP.php?userid=" . $profile->getProfileId() . "';\" class='update-button'>Update</button>
-                                    <button onclick=\"return confirm('Are you sure you want to suspend this user?') ? window.location.href='suspendUP.php?userid=" . $profile->getProfileId() . "' : false;\" class='suspend-button'>Suspend</button>
+                <?php // Check if user profiles are available
+                if (empty($userProfiles)) {
+                    echo "<tr><td colspan='4' class='no-results'>No results found.</td></tr>";
+                } else {
+                    foreach ($userProfiles as $profile) {
+                        echo "<tr>";
+                        echo "<td>" .
+                            htmlspecialchars($profile->getProfileId()) .
+                            "</td>";
+                        echo "<td>" .
+                            htmlspecialchars($profile->getName()) .
+                            "</td>";
+                        echo "<td>" .
+                            htmlspecialchars(
+                                $profile->getIsSuspended() ? "Yes" : "No"
+                            ) .
+                            "</td>";
+                        echo "<td class='actions-buttons'>
+                                    <button onclick=\"window.location.href='updateUP.php?userid=" .
+                            $profile->getProfileId() .
+                            "';\" class='update-button'>Update</button>
+                                    <button onclick=\"return confirm('Are you sure you want to suspend this user?') ? window.location.href='suspendUP.php?userid=" .
+                            $profile->getProfileId() .
+                            "' : false;\" class='suspend-button'>Suspend</button>
                                   </td>";
-                            echo "</tr>";
-                        }
+                        echo "</tr>";
                     }
-                ?>
+                } ?>
             </tbody>
         </table>
     </div>

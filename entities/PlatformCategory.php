@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . '/../../entities/ConnectiontoDB.php');
+require_once(__DIR__ . '/ConnectiontoDB.php');
 
 /**
  * Entity class representing a platform service category.

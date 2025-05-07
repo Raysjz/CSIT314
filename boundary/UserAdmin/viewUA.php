@@ -1,7 +1,8 @@
 <?php
 session_start();
 require_once(__DIR__ . '/adminNavbar.php');
-require_once(__DIR__ . '/../controllers/viewUAController.php');
+require_once(__DIR__ . '/../../controllers/UserAdmin/viewUAController.php');
+require_once(__DIR__ . '/../../controllers/UserAdmin/SearchUAController.php');
 
 // Pagination parameters
 $perPage = 10;
@@ -11,13 +12,17 @@ $offset = ($page - 1) * $perPage;
 // Search query (if any)
 $searchQuery = isset($_GET['search']) ? trim($_GET['search']) : null;
 
-// Fetch accounts and total count
+// Fetch accounts and total count using controllers (BCE)
 if ($searchQuery) {
-    $userAccounts = UserAccount::searchUserAccounts($searchQuery, $perPage, $offset);
-    $total = UserAccount::countSearchResults($searchQuery);
+    $searchController = new SearchUserAccountController();
+    $result = $searchController->searchUserAccounts($searchQuery, $perPage, $offset);
+    $userAccounts = $result['data'];
+    $total = $result['total'];
 } else {
-    $userAccounts = UserAccount::getPaginatedAccounts($perPage, $offset);
-    $total = UserAccount::countAllUsers();
+    $viewController = new ViewUserAccountController();
+    $result = $viewController->viewUserAccounts(null, $perPage, $offset);
+    $userAccounts = $result['data'];
+    $total = $result['total'];
 }
 $totalPages = ceil($total / $perPage);
 ?>
@@ -60,19 +65,30 @@ $totalPages = ceil($total / $perPage);
     justify-content: center; /* Center horizontally */
     align-items: center;     /* Center vertically (optional) */
     gap: 8px;                /* Space between buttons */
-}
+    }
         .pagination a:hover { background-color: #f2f2f2; }
         .pagination .active { 
             background-color: #007bff; 
             color: white; 
             border-color: #007bff;
         }
+        .message.success {
+            background-color: #28a745;
+            color: white;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-
+      <?php  if (isset($_SESSION['success_message'])) {
+            echo '<div class="message success">' . htmlspecialchars($_SESSION['success_message']) . '</div>';
+            unset($_SESSION['success_message']);
+        }?>
     <!-- Search Form -->
     <div class="search-container">
         <h2>Search</h2>
@@ -80,7 +96,7 @@ $totalPages = ceil($total / $perPage);
             <!-- Always reset to page 1 on new search -->
             <input type="hidden" name="page" value="1">
             <input type="text" class="search-input" name="search" 
-                   placeholder="Enter username or user ID" 
+                   placeholder="Enter any field" 
                    value="<?= htmlspecialchars($searchQuery) ?>">
             <button type="submit" class="search-button">Search</button>
             <button type="button" class="reset-button" 

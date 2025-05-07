@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . '/../../entities/PlatformMgmt/PlatformCategory.php');
+require_once(__DIR__ . '/../../entities/PlatformCategory.php');
 
 class SearchPlatformCategoryController {
     // In your SearchPlatformCategoryController
