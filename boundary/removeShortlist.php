@@ -2,17 +2,25 @@
 session_start();
 require_once('../controllers/ShortlistController.php');
 
-$homeownerAccountId = $_SESSION['user_id'];
+$controller = new ShortlistController();
+
+$homeownerAccountId = $_SESSION['user_id'] ?? null;
+$shortlistId = $_GET['shortlist_id'] ?? null;
 $serviceId = $_GET['id'] ?? null;
 
-if ($serviceId) {
-    $controller = new ShortlistController();
+if ($shortlistId) {
+    // Remove by shortlist_id (from shortlist page)
+    $controller->removeByShortlistId($shortlistId);
+    header("Location: viewHOshortlist.php?removed=1");
+    exit();
+} elseif ($serviceId && $homeownerAccountId) {
+    // Remove by service_id (from service details page)
     $controller->removeFromShortlist($homeownerAccountId, $serviceId);
-    header("Location: viewHOServiceDetails.php?id=$serviceId&removed=1");
+    header("Location: viewHO.php?id=$serviceId&removed=1");
     exit();
 } else {
-    header('Location: viewHO.php');
+    // Fallback: redirect to main list
+    header('Location: viewHO.php?error=invalid_request');
     exit();
 }
-
 ?>

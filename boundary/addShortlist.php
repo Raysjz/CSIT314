@@ -15,13 +15,14 @@ if ($serviceId) {
     $controller = new ShortlistController();
     $added = $controller->addToShortlist($homeownerAccountId, $serviceId);
 
-    $redirectUrl = "viewHOServiceDetails.php?id=$serviceId";
+    $redirectUrl = "viewHO.php";
     if ($added) {
-        header("Location: $redirectUrl&success=1");
+        header("Location: $redirectUrl?success=1");
     } else {
-        header("Location: $redirectUrl&error=already_shortlisted");
+        header("Location: $redirectUrl?error=already_shortlisted");
     }
     exit();
+
 
 } else {
     header('Location: viewHO.php');

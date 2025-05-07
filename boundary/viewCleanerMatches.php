@@ -109,7 +109,7 @@ $categories = $categoryController->getAllCategories();
         <th>Match ID</th>
         <th>Homeowner Name</th>
         <th>Service ID</th>
-        <th>Category ID</th>
+        <th>Category Name</th>
         <th>Booking Date</th>
         <th>Status</th>
     </tr>

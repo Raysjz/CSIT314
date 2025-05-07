@@ -11,6 +11,21 @@ $homeownerAccountId = $_SESSION['user_id'];
 $controller = new ViewHOShortlistController();
 $shortlistedServices = $controller->getShortlistedServices($homeownerAccountId);
 
+
+//----------------------------------------Short List Controller
+$message = "";
+if (isset($_GET['success']) && $_GET['success'] == 1) {
+    $message = "✅ Service successfully added to your shortlist!";
+}
+if (isset($_GET['error']) && $_GET['error'] === 'already_shortlisted') {
+    $message = "⚠️ This service is already in your shortlist.";
+}
+if (isset($_GET['removed']) && $_GET['removed'] == 1) {
+    $message = "✅ Service removed from your shortlist.";
+}
+//----------------------------------------------------------------
+
+
 // Shortlist search
 $searchQuery = isset($_GET['search']) ? trim($_GET['search']) : '';
 $filteredServices = $shortlistedServices;
@@ -42,6 +57,20 @@ if ($searchQuery !== '') {
             border: none;
             border-radius: 4px;
             cursor: pointer;
+        }
+        .message {
+            padding: 10px;
+            margin: 20px 0;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .success {
+            background-color: #28a745;
+            color: white;
+        }
+        .error {
+            background-color: #ffc107;
+            color: #856404;
         }
         .search-button:hover {
             background-color: #218838; /* darker green on hover */
@@ -124,6 +153,11 @@ if ($searchQuery !== '') {
 </head>
 <body>
     <div class="container">
+        <?php if ($message): ?>
+            <div class="message <?php echo (strpos($message, 'successfully') !== false || strpos($message, 'removed') !== false) ? 'success' : 'error'; ?>">
+                <?php echo $message; ?>
+            </div>
+        <?php endif; ?>
         <!-- Search Form -->
         <div class="search-container">
             <h2>Search Shortlist</h2>
@@ -162,7 +196,7 @@ if ($searchQuery !== '') {
                     echo "<td>" . htmlspecialchars($service->availability) . "</td>";
                     echo "<td class='action-links'>
                             <a href='viewHOshortlistDetails.php?id=" . $service->shortlist_id . "' class = 'view-details'>View Details</a>
-                            | <a href='removeShortlist.php?id=" . $service->service_id . "' class='remove-shortlist'>Remove</a>
+                            | <a href='removeShortlist.php?shortlist_id=" . $service->shortlist_id . "' class='remove-shortlist'>Remove</a>
                           </td>";
                     echo "</tr>";
                 }

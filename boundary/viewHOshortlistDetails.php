@@ -83,7 +83,7 @@ $isShortlisted = true; // Since this page is for a specific shortlist entry
         }
         .error {
             background-color: #ffc107;
-            color: #856404;
+            color: #856404; 
         }
         .shortlist-button, .remove-button, .back-button {
             padding: 10px 20px;

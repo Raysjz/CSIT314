@@ -10,6 +10,21 @@ require_once(__DIR__ . '/../controllers/SearchHOController.php');
 require_once(__DIR__ . '/../controllers/PlatformCategoryController.php');
 require_once(__DIR__ . '/../controllers/ShortlistController.php');
 
+
+//----------------------------------------Short List Controller
+$message = "";
+if (isset($_GET['success']) && $_GET['success'] == 1) {
+    $message = "✅ Service successfully added to your shortlist!";
+}
+if (isset($_GET['error']) && $_GET['error'] === 'already_shortlisted') {
+    $message = "⚠️ This service is already in your shortlist.";
+}
+if (isset($_GET['removed']) && $_GET['removed'] == 1) {
+    $message = "✅ Service removed from your shortlist.";
+}
+//----------------------------------------------------------------
+
+
 // Handle search query
 $searchQuery = isset($_GET['search']) ? $_GET['search'] : '';
 $displayedServices = [];
@@ -34,7 +49,7 @@ $shortlistedIds = array_map(function($svc) {
 
 
 
-?>
+?>  
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -97,7 +112,29 @@ $shortlistedIds = array_map(function($svc) {
             vertical-align: middle;
             line-height: normal;
         }
-
+        .message {
+            padding: 10px;
+            margin: 20px 0;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .success {
+            background-color: #28a745;
+            color: white;
+        }
+        .error {
+            background-color: #ffc107;
+            color: #856404;
+        }
+        .shortlist-button, .remove-button, .back-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            text-decoration: none;
+            margin-right: 10px;
+            cursor: pointer;
+        }
         .action-links a.view-details {
             background-color: #007bff;
         }
@@ -136,7 +173,11 @@ $shortlistedIds = array_map(function($svc) {
 </head>
 <body>
     <div class="container">
-
+    <?php if ($message): ?>
+        <div class="message <?php echo (strpos($message, 'successfully') !== false || strpos($message, 'removed') !== false) ? 'success' : 'error'; ?>">
+            <?php echo $message; ?>
+        </div>
+    <?php endif; ?>
         <!-- Search Form -->
         <div class="search-container">
             <h2>Search by Title or Service ID</h2>
