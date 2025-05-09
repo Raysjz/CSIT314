@@ -4,10 +4,11 @@ if ($_SESSION['profileName'] !== 'Homeowner') {
     header('Location: ../login.php');
     exit();
 }
-
-require_once(__DIR__ . '/../homeownerNavbar.php');
-require_once(__DIR__ . '/../entities/CleaningServices.php'); // Your CleaningService class
-require_once(__DIR__ . '/../controllers/UserAccountController.php');
+// Include dependencies
+require_once __DIR__ . '/homeownerNavbar.php';
+require_once __DIR__ . '/../../controllers/UserAdmin/UserAccountController.php';
+require_once __DIR__ . '/../../controllers/PlatformMgmt/ServiceCategoryController.php';
+require_once __DIR__ . '/../../controllers/HomeOwner/viewHOcleanerDetailsController.php';
 
 // 1. Get the service_id from URL
 $serviceId = isset($_GET['service_id']) ? (int)$_GET['service_id'] : null;
@@ -16,8 +17,11 @@ if (!$serviceId) {
     exit;
 }
 
+
+$controller = new ViewHOcleanerDetailsController();
+
 // 2. Fetch the service object
-$service = CleaningService::getCleaningServiceById($serviceId);
+$service = $controller->getService($serviceId);
 if (!$service) {
     echo "<p>Service not found.</p>";
     exit;
@@ -27,14 +31,15 @@ if (!$service) {
 $cleanerId = $service->getCleanerAccountId();
 
 // 4. Fetch the cleaner's profile
-$cleaner = CleaningService::getCleanerByServiceId($serviceId);
+$cleaner = $controller->getCleanerByService($serviceId);
 if (!$cleaner) {
     echo "<p>Cleaner not found.</p>";
     exit;
 }
 
 // 5. Fetch all services by this cleaner
-$services = CleaningService::getServicesByCleaner($cleanerId);
+$services = $controller->getServicesByCleaner($cleanerId);
+
 
 ?>
 <!DOCTYPE html>
@@ -91,12 +96,19 @@ $services = CleaningService::getServicesByCleaner($cleanerId);
                 echo "<tr><td colspan='8' style='text-align:center; color:#888;'>No services found.</td></tr>";
             } else {
                 foreach ($services as $svc) {
+                    // Numeric error safeguard
+                    $price = $service->getPrice();
+                    $priceValue = is_numeric($price) ? (float)$price : 0.00;
+
+                    $categoryController = new ServiceCategoryController();
+                    $category = $categoryController->getCategoryById($service->getCategoryId());
+
                     // For each service, get the cleaner's info (should be same for all, but for robustness)
                     $svcCleaner = CleaningService::getCleanerByServiceId($svc->getServiceId());
                     echo "<tr>";
                     echo "<td>" . htmlspecialchars($svc->getServiceId()) . "</td>";
                     echo "<td>" . htmlspecialchars($svc->getTitle()) . "</td>";
-                    echo "<td>" . htmlspecialchars($svc->getCategoryName()) . "</td>";
+                    echo "<td>" . htmlspecialchars($category->getName()) . "</td>";
                     echo "<td>" . htmlspecialchars($svc->getDescription()) . "</td>";
                     echo "<td>$" . htmlspecialchars(number_format($svc->getPrice(), 2)) . "</td>";
                     echo "<td>" . htmlspecialchars($svc->getAvailability()) . "</td>";

@@ -1,8 +1,8 @@
 <div class="Navbar">
     <div class="navbar-left">
-        <a href="/CSIT314/boundary/viewHO.php">Browse for Cleaning Services</a>
-        <a href="/CSIT314/boundary/viewHOshortlist.php">Shortlist</a>
-        <a href="/CSIT314/boundary/viewHObookings.php">Past Bookings</a>
+        <a href="/CSIT314/boundary/HomeOwner/viewHO.php">Browse for Cleaning Services</a>
+        <a href="/CSIT314/boundary/HomeOwner/viewHOshortlist.php">Shortlist</a>
+        <a href="/CSIT314/boundary/HomeOwner/viewHObookings.php">Past Bookings</a>
     </div>
     <div class="navbar-center">
         <text>Welcome, <?php echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'; ?></text>

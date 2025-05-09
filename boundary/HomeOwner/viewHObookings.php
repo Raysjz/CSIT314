@@ -5,11 +5,12 @@ if ($_SESSION['profileName'] !== 'Homeowner') {
     exit();
 }
 
-require_once(__DIR__ . '/../homeownerNavbar.php');
-require_once(__DIR__ . '/../controllers/UserAccountController.php');
-require_once(__DIR__ . '/../controllers/PlatformCategoryController.php');
-require_once(__DIR__ . '/../controllers/viewHOBookingController.php');
-require_once(__DIR__ . '/../controllers/SearchHOBookingController.php');
+// Include dependencies
+require_once __DIR__ . '/homeownerNavbar.php';
+require_once __DIR__ . '/../../controllers/UserAdmin/UserAccountController.php';
+require_once __DIR__ . '/../../controllers/PlatformMgmt/ServiceCategoryController.php';
+require_once __DIR__ . '/../../controllers/HomeOwner/viewHOBookingController.php';
+require_once __DIR__ . '/../../controllers/HomeOwner/SearchHOBookingController.php';
 
 // Get filter values
 $accountId = $_SESSION['user_id'] ?? null;
@@ -43,7 +44,7 @@ if (
 
 // Get all categories for dropdown
 $userAccountController = new UserAccountController();
-$categoryController = new PlatformCategoryController();
+$categoryController = new ServiceCategoryController();
 $categories = $categoryController->getAllCategories();
 
 

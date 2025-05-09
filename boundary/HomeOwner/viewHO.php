@@ -4,11 +4,12 @@ if ($_SESSION['profileName'] !== 'Homeowner') {
     header('Location: ../login.php');
     exit();
 }
-require_once(__DIR__ . '/../homeownerNavbar.php');
-require_once(__DIR__ . '/../controllers/ViewHOController.php');
-require_once(__DIR__ . '/../controllers/SearchHOController.php');
-require_once(__DIR__ . '/../controllers/PlatformCategoryController.php');
-require_once(__DIR__ . '/../controllers/ShortlistController.php');
+// Include dependencies
+require_once __DIR__ . '/homeownerNavbar.php';
+require_once __DIR__ . '/../../controllers/HomeOwner/ViewHOController.php';
+require_once __DIR__ . '/../../controllers/HomeOwner/SearchHOController.php';
+require_once __DIR__ . '/../../controllers/PlatformMgmt/ServiceCategoryController.php';
+require_once __DIR__ . '/../../controllers/ShortlistController.php';
 
 
 //----------------------------------------Short List Controller
@@ -207,12 +208,20 @@ $shortlistedIds = array_map(function($svc) {
                     echo "<tr><td colspan='7' class='no-results'>No results found.</td></tr>";
                 } else {
                     foreach ($displayedServices as $service) {
+                        // Numeric error safeguard
+                        $price = $service->getPrice();
+                        $priceValue = is_numeric($price) ? (float)$price : 0.00;
+
+                        $categoryController = new ServiceCategoryController();
+                        $category = $categoryController->getCategoryById($service->getCategoryId());
+
+
                         echo "<tr>";
                         echo "<td>" . htmlspecialchars($service->getServiceId()) . "</td>";
-                        echo "<td>" . htmlspecialchars($service->getCategoryName()) . "</td>";
+                        echo "<td>" . htmlspecialchars($category->getName()) . "</td>";
                         echo "<td>" . htmlspecialchars($service->getTitle()) . "</td>";
                         echo "<td class='desc-cell'>" . htmlspecialchars($service->getDescription()) . "</td>";
-                        echo "<td>$" . htmlspecialchars(number_format($service->getPrice(), 2)) . "</td>";
+                        echo "<td>$" . htmlspecialchars($price) . "</td>";
                         echo "<td>" . htmlspecialchars($service->getAvailability()) . "</td>";
                         echo "<td class='action-links'>";
                         // Correctly concatenate the URL parameter:

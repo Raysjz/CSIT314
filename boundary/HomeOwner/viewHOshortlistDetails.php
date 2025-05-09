@@ -4,9 +4,11 @@ if ($_SESSION['profileName'] !== 'Homeowner') {
     header('Location: ../login.php');
     exit();
 }
-require_once(__DIR__ . '/../homeownerNavbar.php');
-require_once(__DIR__ . '/../controllers/ShortlistController.php');
-require_once(__DIR__ . '/../controllers/viewHOServiceController.php');
+// Include dependencies
+require_once __DIR__ . '/homeownerNavbar.php';
+require_once __DIR__ . '/../../controllers/ShortlistController.php';
+require_once(__DIR__ . '/../../controllers/ServiceViewController.php');
+require_once __DIR__ . '/../../controllers/HomeOwner/viewHOshortlistDetailsController.php';
 
 $homeownerAccountId = $_SESSION['user_id'];
 $shortlistId = isset($_GET['id']) ? (int)$_GET['id'] : null;
@@ -22,7 +24,7 @@ if (!$shortlistEntry || $shortlistEntry->homeowner_account_id != $homeownerAccou
 
 // 3. Fetch service details using service_id from shortlist entry
 $serviceId = $shortlistEntry->service_id;
-$service = HomeownerCleaningService::getCleaningServiceById($serviceId);
+$service = CleaningService::getCleaningServiceById($serviceId);
 
 if (!$service) {
     echo "<p>Service not found.</p>";
@@ -33,7 +35,7 @@ $categoryName = method_exists($service, 'getCategoryName') ? $service->getCatego
 
 //------------------------- Service View Controller
 $viewerAccountId = $_SESSION['user_id'] ?? null;
-require_once(__DIR__ . '/../controllers/ServiceViewController.php');
+
 $viewController = new ServiceViewController();
 
 // Only log once per session per service

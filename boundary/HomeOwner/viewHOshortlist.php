@@ -4,8 +4,9 @@ if (!isset($_SESSION['profileName']) || $_SESSION['profileName'] !== 'Homeowner'
     header('Location: ../login.php');
     exit();
 }
-require_once(__DIR__ . '/../homeownerNavbar.php');
-require_once(__DIR__ . '/../controllers/ViewHOShortlistController.php');
+// Include dependencies
+require_once __DIR__ . '/homeownerNavbar.php';
+require_once __DIR__ . '/../../controllers/HomeOwner/ViewHOShortlistController.php';
 
 $homeownerAccountId = $_SESSION['user_id'];
 $controller = new ViewHOShortlistController();

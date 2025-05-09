@@ -272,5 +272,75 @@ class CleaningService
         }
         return $services;
     }
+
+     // Views all Cleaning Services   
+     public static function viewHOCleaningServices() {
+        $db = Database::getPDO();
+        $sql = "SELECT cs.*, sc.category_name
+                FROM cleaner_services cs
+                JOIN service_categories sc ON cs.category_id = sc.category_id
+                WHERE cs.is_suspended = false
+                ORDER BY cs.service_id ASC";
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+        $cleaningServices = [];
+        foreach ($result as $row) {
+            $cleaningServices[] = new CleaningService(
+                $row['service_id'],
+                $row['cleaner_account_id'],
+                $row['category_id'],
+                $row['title'],
+                $row['description'],
+                $row['price'],
+                $row['availability'],
+                $row['is_suspended'],
+                $row['created_at'],
+                $row['updated_at']
+            );
+        }
+        return $cleaningServices;
+    }
+    
+
+    // Search Cleaning Services   
+    public static function searchHOCleaningServices($searchQuery) {
+        $db = Database::getPDO();
+    
+        // Prepare the search string for partial matching
+        $searchLike = "%" . $searchQuery . "%";
+    
+        // Only show not suspended services
+        $sql = "SELECT cs.* , sc.category_name
+                FROM cleaner_services cs
+                JOIN service_categories sc ON cs.category_id = sc.category_id
+                WHERE cs.is_suspended = false
+                  AND (title ILIKE :search OR service_id::text ILIKE :search)";
+        $params = [':search' => $searchLike];
+    
+        $stmt = $db->prepare($sql);
+        $stmt->execute($params);
+    
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $cleaningServices = [];
+    
+        foreach ($result as $row) {
+            $cleaningServices[] = new CleaningService(
+                $row['service_id'],
+                $row['category_id'],
+                $row['category_name'],
+                $row['title'],
+                $row['description'],
+                $row['price'],
+                $row['availability'],
+                $row['created_at'],
+                $row['updated_at']
+            );
+        }
+        return $cleaningServices;
+    }
+
+  
 }
 ?>

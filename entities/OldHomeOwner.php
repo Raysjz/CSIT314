@@ -7,7 +7,7 @@ class HomeownerCleaningService {
     protected $categoryId;
     protected $categoryName;
     protected $title;
-    protected $description;
+    protected $description; 
     protected $price;
     protected $availability;
     protected $createdAt;

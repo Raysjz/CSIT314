@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once('../controllers/ShortlistController.php');
+require_once(__DIR__ . '/../../controllers/ShortlistController.php');
 
 $controller = new ShortlistController();
 

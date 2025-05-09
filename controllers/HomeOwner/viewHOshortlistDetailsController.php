@@ -1,10 +1,12 @@
 <?php
-require_once(__DIR__ . '/../entities/Homeowner.php');
+
+// Include dependencies
+require_once __DIR__ . '/../../entities/CleaningService.php';
 
 
 class ViewHOServiceController {
     public function getServiceAndCleaner($serviceId) {
-        $service = HomeownerCleaningService::getCleaningServiceById($serviceId);
+        $service = CleaningService::getCleaningServiceById($serviceId);
         if (!$service) return [null, null];
 
         // If you don't have a UserAccountController or email, just use null or a placeholder

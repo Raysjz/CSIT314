@@ -1,5 +1,6 @@
 <?php
-require_once(__DIR__ . '/../entities/Shortlist.php');
+
+require_once(__DIR__ . '/../../entities/Shortlist.php');
 
 class ViewHOShortlistController {
     public function getShortlistedServices($homeownerAccountId) {
