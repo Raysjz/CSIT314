@@ -8,23 +8,20 @@ require_once(__DIR__ . '/../../controllers/UserAdmin/SearchUAController.php');
 $perPage = 10;
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $offset = ($page - 1) * $perPage;
-
-// Search query (if any)
 $searchQuery = isset($_GET['search']) ? trim($_GET['search']) : null;
 
-// Fetch accounts and total count using controllers (BCE)
 if ($searchQuery) {
     $searchController = new SearchUserAccountController();
     $result = $searchController->searchUserAccounts($searchQuery, $perPage, $offset);
-    $userAccounts = $result['data'];
-    $total = $result['total'];
 } else {
     $viewController = new ViewUserAccountController();
-    $result = $viewController->viewUserAccounts(null, $perPage, $offset);
-    $userAccounts = $result['data'];
-    $total = $result['total'];
+    $result = $viewController->viewUserAccounts($perPage, $offset);
 }
+$userAccounts = $result['data'];
+$total = $result['total'];
 $totalPages = ceil($total / $perPage);
+
+
 ?>
 
 <!DOCTYPE html>
