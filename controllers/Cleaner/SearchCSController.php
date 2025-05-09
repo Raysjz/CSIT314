@@ -1,5 +1,6 @@
 <?php
-require_once(__DIR__ . '/../entities/CleaningServices.php');
+// Include dependencies
+require_once __DIR__ . '/../../entities/CleaningService.php';
 
 class SearchCleaningServicesController {
     // Method to search for cleaning services based on search query and (optionally) cleaner account ID

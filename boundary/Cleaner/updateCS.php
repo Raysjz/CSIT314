@@ -4,19 +4,21 @@ if ($_SESSION['profileName'] !== 'Cleaner') {
     header('Location: ../login.php');
     exit();
 }
-require_once(__DIR__ . '/../cleanerNavbar.php');
-require_once(__DIR__ . '/../controllers/UpdateCSController.php');
-require_once(__DIR__ . '/../controllers/PlatformCategoryController.php');
 
-$serviceIdToUpdate = isset($_GET['serviceid']) ? $_GET['serviceid'] : null;
+// Include dependencies
+require_once __DIR__ . '/cleanerNavbar.php';
+require_once __DIR__ . '/../../controllers/Cleaner/UpdateCSController.php';
+require_once __DIR__ . '/../../controllers/PlatformMgmt/ServiceCategoryController.php';
+
+$serviceID = isset($_GET['serviceid']) ? $_GET['serviceid'] : null;
 $controller = new UpdateCleaningServiceController();
-$serviceToUpdate = $controller->getCleaningServiceById($serviceIdToUpdate);
-$Platformcontroller = new PlatformCategoryController();
+$service = $controller->getCleaningServiceById($serviceID);
+$Servicecontroller = new ServiceCategoryController();
 // Fetch profiles for the dropdown
-$categories = $Platformcontroller->getAllCategories();  // Get all profiles from the database
+$categories = $Servicecontroller->getAllCategories();  // Get all profiles from the database
 
-if (!$serviceToUpdate) {
-    echo "❌ No service found with ID: " . htmlspecialchars($serviceIdToUpdate);
+if (!$service) {
+    echo "❌ No service found with ID: " . htmlspecialchars($serviceID);
     exit;
 }
 
@@ -74,17 +76,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <?php echo $message; ?>
         </div>
     <?php endif; ?>
-    <form action="updateCS.php?serviceid=<?php echo htmlspecialchars($serviceToUpdate->getServiceId()); ?>" method="post">
-        <input type="hidden" name="service_id" value="<?php echo htmlspecialchars($serviceToUpdate->getServiceId()); ?>">
+    <form action="updateCS.php?serviceid=<?php echo htmlspecialchars($service->getServiceId()); ?>" method="post">
+        <input type="hidden" name="service_id" value="<?php echo htmlspecialchars($service->getServiceId()); ?>">
 
         <label for="title">Title</label>
-        <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($serviceToUpdate->getTitle()); ?>" required>
+        <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($service->getTitle()); ?>" required>
 
         <label for="category">Category</label>
         <select id="category_id" name="category_id" required onchange="updateCategoryName()">
             <option value="">-- Select Category --</option>
             <?php
-            $currentCategoryId = $serviceToUpdate->getCategoryId();
+            $currentCategoryId = $service->getCategoryId();
             $currentCategoryName = '';
             foreach ($categories as $category) {
                 $selected = ($category['category_id'] == $currentCategoryId) ? 'selected' : '';
@@ -97,19 +99,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
         <label for="description">Description</label>
-        <textarea id="description" name="description" required><?php echo htmlspecialchars($serviceToUpdate->getDescription()); ?></textarea>
+        <textarea id="description" name="description" required><?php echo htmlspecialchars($service->getDescription()); ?></textarea>
 
         <label for="price">Price</label>
-        <input type="number" id="price" name="price" value="<?php echo htmlspecialchars($serviceToUpdate->getPrice()); ?>" required step="0.01" min="0">
+        <input type="number" id="price" name="price" value="<?php echo htmlspecialchars($service->getPrice()); ?>" required step="0.01" min="0">
 
         <label for="availability">Availability</label>
-        <input type="text" id="availability" name="availability" value="<?php echo htmlspecialchars($serviceToUpdate->getAvailability()); ?>" required>
+        <input type="text" id="availability" name="availability" value="<?php echo htmlspecialchars($service->getAvailability()); ?>" required>
 
 
         <label for="is_suspended">Is Suspended</label>
         <select id="is_suspended" name="is_suspended">
-            <option value="1" <?php echo $serviceToUpdate->isSuspended() ? 'selected' : ''; ?>>Yes</option>
-            <option value="0" <?php echo !$serviceToUpdate->isSuspended() ? 'selected' : ''; ?>>No</option>
+            <option value="1" <?php echo $service->isSuspended() ? 'selected' : ''; ?>>Yes</option>
+            <option value="0" <?php echo !$service->isSuspended() ? 'selected' : ''; ?>>No</option>
         </select>
 
         <div class="button-container">

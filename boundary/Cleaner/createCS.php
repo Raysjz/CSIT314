@@ -4,13 +4,16 @@ if ($_SESSION['profileName'] !== 'Cleaner') {
     header('Location: ../login.php');
     exit();
 }
-require_once(__DIR__ . '/../cleanerNavbar.php');
-require_once(__DIR__ . '/../controllers/CreateCSController.php');
-require_once(__DIR__ . '/../controllers/PlatformCategoryController.php');
 
-$Platformcontroller = new PlatformCategoryController();
+
+// Include dependencies
+require_once __DIR__ . '/cleanerNavbar.php';
+require_once __DIR__ . '/../../controllers/Cleaner/CreateCSController.php';
+require_once __DIR__ . '/../../controllers/PlatformMgmt/ServiceCategoryController.php';
+
+$Servicecontroller = new ServiceCategoryController();
 // Fetch profiles for the dropdown
-$categories = $Platformcontroller->getAllCategories();  // Get all profiles from the database
+$categories = $Servicecontroller->getAllCategories();  // Get all profiles from the database
 
 $message = "";
 

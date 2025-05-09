@@ -1,5 +1,6 @@
 <?php
-require_once(__DIR__ . '/../entities/CleaningServices.php');
+// Include dependencies
+require_once __DIR__ . '/../../entities/CleaningService.php';
 
 class UpdateCleaningServiceController {
     // Fetch cleaning service by ID

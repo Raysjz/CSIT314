@@ -13,11 +13,10 @@ class CleaningService {
     protected $isSuspended;
     protected $createdAt;
     protected $updatedAt;
+    protected $categoryName;
 
-    public function __construct(
-        $serviceId, $cleanerAccountId, $categoryId, $title, $description, $price, $availability,
-        $isSuspended, $createdAt = null, $updatedAt = null
-    ) {
+    // Constructor
+    public function __construct($serviceId, $cleanerAccountId, $categoryId, $title, $description, $price, $availability, $isSuspended, $createdAt = null, $updatedAt = null,$categoryName = null) {
         $this->serviceId = $serviceId;
         $this->cleanerAccountId = $cleanerAccountId;
         $this->categoryId = $categoryId;
@@ -28,10 +27,10 @@ class CleaningService {
         $this->isSuspended = $isSuspended;
         $this->createdAt = $createdAt;
         $this->updatedAt = $updatedAt;
+        $this->categoryName = $categoryName;
     }
-    
 
-    // Getters
+    // Example getter methods
     public function getServiceId() { return $this->serviceId; }
     public function getCleanerAccountId() { return $this->cleanerAccountId; }
     public function getCategoryId() { return $this->categoryId; }
@@ -42,8 +41,10 @@ class CleaningService {
     public function isSuspended() { return $this->isSuspended; }
     public function getCreatedAt() { return $this->createdAt; }
     public function getUpdatedAt() { return $this->updatedAt; }
+    public function getCategoryName() {return $this->categoryName; } // ???
 
-   
+
+    
     // Validate user input data
     public function validateCleaningService() {
         // Check for required fields
@@ -89,7 +90,7 @@ class CleaningService {
     }
     
 
-    // Views all Cleaning Services by Own Cleaner Account ID  
+    // Views all Cleaning Services   
     public static function viewCleaningServices($accountId = null) {
         $db = Database::getPDO();
     
@@ -125,10 +126,10 @@ class CleaningService {
                 $row['availability'],
                 isset($row['is_suspended']) ? (bool)$row['is_suspended'] : false,
                 $row['created_at'],
-                $row['updated_at']
+                $row['updated_at'],
+                $row['category_name'] // <-- Add this
             );
         }
-        
 
         // Return the array of CleaningService objects
         return $cleaningServices;
@@ -285,7 +286,36 @@ class CleaningService {
             return $services;
         }
 
+        //---------Platform Generate Report-----------------
+        public static function countCreatedDaily() {
+            $db = Database::getPDO();
+            $sql = "SELECT COUNT(*) AS new_services_created
+                    FROM cleaner_services
+                    WHERE created_at::date = CURRENT_DATE";
+            $stmt = $db->query($sql);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $row ? (int)$row['new_services_created'] : 0;
+        }
+    
+        public static function countCreatedWeekly() {
+            $db = Database::getPDO();
+            $sql = "SELECT COUNT(*) AS new_services_created
+                    FROM cleaner_services
+                    WHERE created_at >= CURRENT_DATE - INTERVAL '6 days'";
+            $stmt = $db->query($sql);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $row ? (int)$row['new_services_created'] : 0;
+        }
+    
+        public static function countCreatedMonthly() {
+            $db = Database::getPDO();
+            $sql = "SELECT COUNT(*) AS new_services_created
+                    FROM cleaner_services
+                    WHERE DATE_TRUNC('month', created_at) = DATE_TRUNC('month', CURRENT_DATE)";
+            $stmt = $db->query($sql);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $row ? (int)$row['new_services_created'] : 0;
+        }
+        
 
 }
-
-?>

@@ -4,12 +4,14 @@ if ($_SESSION['profileName'] !== 'Cleaner') {
     header('Location: ../login.php');
     exit();
 }
-require_once(__DIR__ . '/../cleanerNavbar.php');
-require_once(__DIR__ . '/../controllers/ViewCSController.php');
-require_once(__DIR__ . '/../controllers/SearchCSController.php');
-require_once(__DIR__ . '/../controllers/PlatformCategoryController.php');
-require_once(__DIR__ . '/../controllers/ShortlistController.php');
-require_once(__DIR__ . '/../controllers/ServiceViewController.php');
+
+// Include dependencies
+require_once __DIR__ . '/cleanerNavbar.php';
+require_once __DIR__ . '/../../controllers/Cleaner/ViewCSController.php';
+require_once __DIR__ . '/../../controllers/Cleaner/SearchCSController.php';
+require_once __DIR__ . '/../../controllers/PlatformMgmt/ServiceCategoryController.php';
+require_once __DIR__ . '/../../controllers/ShortlistController.php';
+require_once __DIR__ . '/../../controllers/ServiceViewController.php';
 
 $searchQuery = isset($_GET['search']) ? $_GET['search'] : null;
 $accountId = $_SESSION['user_id'] ?? null;
@@ -25,6 +27,9 @@ if ($searchQuery) {
 // Instantiate controllers ONCE, use inside loop
 $shortlistController = new ShortlistController();
 $viewController = new ServiceViewController();
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -76,9 +81,9 @@ $viewController = new ServiceViewController();
 
         <!-- Search Form -->
         <div class="search-container">
-            <h2>Search by Title or Service ID</h2>
+            <h2>Search by Service ID or Title</h2>
             <form action="" method="GET">
-                <input type="text" class="search-input" name="search" placeholder="Enter service title or ID" value="<?php echo htmlspecialchars($searchQuery); ?>">
+                <input type="text" class="search-input" name="search" placeholder="Enter Service ID or Title" value="<?php echo htmlspecialchars($searchQuery); ?>">
                 <button type="submit" class="search-button">Search</button>
                 <button type="reset" class="reset-button" onclick="window.location.href = window.location.pathname;">Reset</button>
             </form>
@@ -116,12 +121,19 @@ $viewController = new ServiceViewController();
                             $viewCount = $viewController->getViewCount($serviceId);
                             $shortlistCount = $shortlistController->getShortlistCount($serviceId);
 
+                            // Numeric error safeguard
+                            $price = $service->getPrice();
+                            $priceValue = is_numeric($price) ? (float)$price : 0.00;
+
+                            $categoryController = new ServiceCategoryController();
+                            $category = $categoryController->getCategoryById($service->getCategoryId());
+
                             echo "<tr>";
                             echo "<td>" . htmlspecialchars($serviceId) . "</td>";
-                            echo "<td>" . htmlspecialchars($service->getCategoryName()) . "</td>";
+                            echo "<td>" . htmlspecialchars($category->getName()) . "</td>";
                             echo "<td>" . htmlspecialchars($service->getTitle()) . "</td>";
                             echo "<td class='desc-cell'>" . htmlspecialchars($service->getDescription()) . "</td>";
-                            echo "<td>$" . htmlspecialchars(number_format($service->getPrice(), 2)) . "</td>";
+                            echo "<td>$" . htmlspecialchars($price) . "</td>";
                             echo "<td>" . htmlspecialchars($service->getAvailability()) . "</td>";
                             echo "<td>" . ($service->isSuspended() ? 'Yes' : 'No') . "</td>";
                             echo "<td>$viewCount</td>";

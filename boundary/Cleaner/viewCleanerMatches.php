@@ -4,11 +4,11 @@ if ($_SESSION['profileName'] !== 'Cleaner') {
     header('Location: ../login.php');
     exit();
 }
-require_once(__DIR__ . '/../cleanerNavbar.php');
-require_once(__DIR__ . '/../controllers/UserAccountController.php');
-require_once(__DIR__ . '/../controllers/PlatformCategoryController.php');
-require_once(__DIR__ . '/../controllers/viewCleanerMatchesController.php');
-require_once(__DIR__ . '/../controllers/SearchCleanerMatchesController.php');
+require_once __DIR__ . '/cleanerNavbar.php';
+require_once __DIR__ . '/../../controllers/UserAdmin/UserAccountController.php';
+require_once __DIR__ . '/../../controllers/PlatformMgmt/ServiceCategoryController.php';
+require_once __DIR__ . '/../../controllers/Cleaner/viewCMController.php';
+require_once __DIR__ . '/../../controllers/Cleaner/SearchCMController.php';
 
 
 // Get filter values
@@ -41,7 +41,7 @@ if (
 
 // Get all categories for dropdown
 $userAccountController = new UserAccountController();
-$categoryController = new PlatformCategoryController();
+$categoryController = new ServiceCategoryController();
 $categories = $categoryController->getAllCategories();
 
 

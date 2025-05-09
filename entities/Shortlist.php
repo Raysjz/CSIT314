@@ -1,5 +1,6 @@
 <?php
-require_once(__DIR__ . '/ConnectiontoDB.php');
+// Include dependencies
+require_once(__DIR__ . '/../ConnectiontoDB.php');
 
 // entities/Shortlist.php
 class Shortlist {

@@ -2,7 +2,7 @@
 // User Accounts Entity
 
 // Include dependencies
-require_once(__DIR__ . '/ConnectiontoDB.php');
+require_once(__DIR__ . '/../ConnectiontoDB.php');
 
 class UserAccount {
     protected $id;

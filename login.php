@@ -30,9 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if($result['user']['profile_name'] === 'User Admin') {
             header("Location: /CSIT314/boundary/UserAdmin/viewUA.php");
         }elseif($result['user']['profile_name'] === 'Homeowner'){
-            header("Location: /CSIT314/boundary/viewHO.php");
+            header("Location: /CSIT314/boundary/HomeOwner/viewHO.php");
         }elseif($result['user']['profile_name'] === 'Cleaner'){
-            header("Location: /CSIT314/boundary/viewCS.php");
+            header("Location: /CSIT314/boundary/Cleaner/viewCS.php");
         }elseif($result['user']['profile_name'] === 'Platform Management'){
             header("Location: /CSIT314/boundary/PlatformMgmt/viewSC.php");
         }else {

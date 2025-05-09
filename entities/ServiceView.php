@@ -1,4 +1,7 @@
 <?php
+// Include dependencies
+require_once(__DIR__ . '/../ConnectiontoDB.php');
+
 //Service View Entity
 class ServiceView {
     public static function logView($serviceId, $viewerAccountId = null) {

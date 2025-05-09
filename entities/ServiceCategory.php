@@ -2,7 +2,7 @@
 // Service Category Entity Managed by Platform Mgmt
 
 // Include dependencies
-require_once __DIR__ . '/ConnectiontoDB.php';
+require_once(__DIR__ . '/../ConnectiontoDB.php');
 
 /**
  * Entity class representing a platform service category.
