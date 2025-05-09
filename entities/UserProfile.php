@@ -1,5 +1,7 @@
 <?php
-// Include necessary files
+// User Profile Entity
+
+// Include dependencies
 require_once(__DIR__ . '/ConnectiontoDB.php');
 
 class UserProfile {

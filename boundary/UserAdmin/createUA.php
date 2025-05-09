@@ -1,31 +1,35 @@
 <?php
-session_start();
+// Create User Accounts
+
+session_start(); // Start session
+
+// Redirect if not User Admin
 if ($_SESSION['profileName'] !== 'User Admin') {
     header('Location: ../login.php');
     exit();
 }
-// Include necessary files
-require_once(__DIR__ . '/adminNavbar.php');
-require_once(__DIR__ . '/../../controllers/UserAdmin/UserProfileController.php');
-require_once(__DIR__ . '/../../controllers/UserAdmin/CreateUAController.php');
 
-// Fetch profiles for the dropdown
+// Include dependencies
+require_once __DIR__ . '/adminNavbar.php';
+require_once __DIR__ . '/../../controllers/UserAdmin/UserProfileController.php';
+require_once __DIR__ . '/../../controllers/UserAdmin/CreateUAController.php';
+
+// Fetch profiles for dropdown
 $userProfileController = new UserProfileController();
 $profiles = $userProfileController->getProfiles();
 
-// Initialize message variable
 $message = "";
 
-// Main processing logic for user account creation
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+// Handle form submission to create user account
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $data = [
-        'username'     => $_POST['username'],
-        'password'     => $_POST['password'],
-        'fullname'     => $_POST['fullname'],
-        'email'        => $_POST['email'],
-        'profileName'  => $_POST['profile_name'],
-        'profileId'    => $_POST['profile_id'],
-        'isSuspended'  => isset($_POST['isSuspended']) ? $_POST['isSuspended'] : false
+        'username'    => $_POST['username'],
+        'password'    => $_POST['password'],
+        'fullname'    => $_POST['fullname'],
+        'email'       => $_POST['email'],
+        'profileName' => $_POST['profile_name'],
+        'profileId'   => $_POST['profile_id'],
+        'isSuspended' => isset($_POST['isSuspended']) ? $_POST['isSuspended'] : false
     ];
 
     if (empty($data['profileId'])) {
@@ -34,80 +38,142 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $controller = new CreateUserAccountController();
         $result = $controller->handleFormSubmission($data);
 
-        if ($result === true) {
-            $message = "✅ Profile successfully created!";
-        } else {
-            $message = "❌ Error creating profile: $result";
-        }
+        $message = $result === true
+            ? "✅ Profile successfully created!"
+            : "❌ Error creating profile: $result";
     }
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Create New Account</title>
     <style>
-        body { font-family: Arial; background: #f4f4f4; margin: 0; padding: 40px; }
-        .container { background: white; padding: 30px; width: 100%; margin-top: 80px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); box-sizing: border-box; }
-        h1 { margin-bottom: 20px; }
-        label { display: block; margin-top: 15px; }
-        input, select { width: 100%; padding: 10px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; }
-        .message { padding: 10px; margin: 20px 0; border-radius: 5px; text-align: center; }
-        .success { background-color: #28a745; color: white; }
-        .error { background-color: #dc3545; color: white; }
-        .button-container { display: flex; justify-content: space-between; margin-top: 20px; }
-        .back-button, .update-button { padding: 10px 20px; border: none; color: white; border-radius: 4px; cursor: pointer; text-decoration: none; }
-        .back-button { background: #6c757d; }
-        .back-button:hover { background: #5a6268; }
-        .update-button { background: #28a745; }
-        .update-button:hover { background: #218838; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 40px;
+        }
+        .container {
+            background: #fff;
+            padding: 30px;
+            max-width: 500px;
+            margin: 80px auto 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+        }
+        h1 {
+            margin-bottom: 20px;
+            font-weight: normal;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        .message {
+            padding: 10px;
+            margin: 20px 0;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .success {
+            background-color: #28a745;
+            color: #fff;
+        }
+        .error {
+            background-color: #dc3545;
+            color: #fff;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .back-button,
+        .update-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+        .back-button {
+            background: #6c757d;
+        }
+        .back-button:hover {
+            background: #5a6268;
+        }
+        .update-button {
+            background: #28a745;
+        }
+        .update-button:hover {
+            background: #218838;
+        }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1>Create Account</h1>
-    <?php if ($message): ?>
-        <div class="message <?php echo (strpos($message, '❌') !== false) ? 'error' : 'success'; ?>">
-            <?php echo $message; ?>
-        </div>
-    <?php endif; ?>
-    <form id="createForm" action="createUA.php" method="post">
-        <label for="fullname"><b>Full Name</b></label>
-        <input type="text" id="fullname" name="fullname" required>
+    <div class="container">
+        <h1>Create Account</h1>
 
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" required>
+        <?php if ($message): ?>
+            <div class="message <?php echo (strpos($message, '❌') !== false) ? 'error' : 'success'; ?>">
+                <?php echo htmlspecialchars($message); ?>
+            </div>
+        <?php endif; ?>
 
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" required>
+        <form id="createForm" action="createUA.php" method="post">
+            <label for="fullname">Full Name</label>
+            <input type="text" id="fullname" name="fullname" required />
 
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" required>
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required />
 
-        <label for="profile_id">Profile</label>
-        <select id="profile_id" name="profile_id" required onchange="updateProfileName()">
-            <option value="">-- Select Profile --</option>
-            <?php foreach ($profiles as $profile): ?>
-                <option value="<?php echo htmlspecialchars($profile['profile_id']); ?>">
-                    <?php echo htmlspecialchars($profile['profile_name']); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-        <input type="hidden" id="profile_name" name="profile_name">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required />
 
-        <div class="button-container">
-            <a href="viewUA.php" class="back-button">Back</a>
-            <button type="submit" class="update-button">Create Profile</button>
-        </div>
-    </form>
-</div>
-<script>
-function updateProfileName() {
-    var profileSelect = document.getElementById('profile_id');
-    var profileName = profileSelect.options[profileSelect.selectedIndex].text;
-    document.getElementById('profile_name').value = profileName;
-}
-</script>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required />
+
+            <label for="profile_id">Profile</label>
+            <select id="profile_id" name="profile_id" required onchange="updateProfileName()">
+                <option value="">-- Select Profile --</option>
+                <?php foreach ($profiles as $profile): ?>
+                    <option value="<?php echo htmlspecialchars($profile['profile_id']); ?>">
+                        <?php echo htmlspecialchars($profile['profile_name']); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            <input type="hidden" id="profile_name" name="profile_name" />
+
+            <div class="button-container">
+                <a href="viewUA.php" class="back-button">Back</a>
+                <button type="submit" class="update-button">Create Profile</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Update hidden profile_name input based on selected profile
+        function updateProfileName() {
+            const profileSelect = document.getElementById('profile_id');
+            const profileName = profileSelect.options[profileSelect.selectedIndex].text;
+            document.getElementById('profile_name').value = profileName;
+        }
+    </script>
 </body>
 </html>

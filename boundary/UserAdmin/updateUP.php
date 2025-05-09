@@ -12,13 +12,13 @@ $userIdToUpdate = isset($_GET['userid']) ? $_GET['userid'] : null;
 
 $controller = new UpdateUserProfileController();
 $userToUpdate = $controller->getUserProfileById($userIdToUpdate);
+$message = "";
 
 if (!$userToUpdate) {
     echo "❌ No user found with ID: " . htmlspecialchars($userIdToUpdate);
     exit;
 }
 
-$message = "";
 
 // Handle form submission for updating user data
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -33,9 +33,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($result) {
         $message = "✅ Profile successfully updated!";
-        // Optionally, redirect to viewUP.php with a success message:
-        // $_SESSION['success_message'] = $message;
-        // header('Location: viewUP.php'); exit;
     } else {
         $message = "❌ Error updating profile.";
     }
