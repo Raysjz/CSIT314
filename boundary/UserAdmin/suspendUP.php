@@ -29,7 +29,7 @@ if ($userID !== null) {
         $user = $controller->getUserProfileById($userID);
         if ($user) {
             $name = $user->getName();
-            $message = "✅ User Profile ID: <strong>" . htmlspecialchars($userID) . "</strong>, " . htmlspecialchars($name) . " has been successfully suspended!";
+            $message = "✅ User Profile ID: <strong>" . htmlspecialchars($userID) . "</strong> , " . htmlspecialchars($name) . " has been successfully suspended!";
         } else {
             $message = "✅ User Profile ID: " . htmlspecialchars($userID) . " has been successfully suspended!";
         }
