@@ -26,15 +26,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['isSuspended'] = $result['user']['is_suspended']; // Save the suspension status in session
 
         
-        
-        /*//Debug Echo the session values (for debugging or display purposes)  
-        echo "User ID: " . $_SESSION['user_id'] . "<br>";
-        echo "Username: " . $_SESSION['username'] . "<br>";
-        echo "Profile ID: " . $_SESSION['profileId'] . "<br>";
-        echo "Profile Name: " . $_SESSION['profileName'] . "<br>";
-        echo "Suspended status from session: " . $_SESSION['isSuspended'] . "<br>";
-        */
-
         // Redirect based on profile
         if($result['user']['profile_name'] === 'User Admin') {
             header("Location: /CSIT314/boundary/UserAdmin/viewUA.php");
@@ -43,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }elseif($result['user']['profile_name'] === 'Cleaner'){
             header("Location: /CSIT314/boundary/viewCS.php");
         }elseif($result['user']['profile_name'] === 'Platform Management'){
-            header("Location: /CSIT314/boundary/PlatformMgmt/viewPC.php");
+            header("Location: /CSIT314/boundary/PlatformMgmt/viewSC.php");
         }else {
             header("Location: /CSIT314/boundary/userDashboard.php");
         }

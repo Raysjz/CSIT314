@@ -161,14 +161,6 @@ $totalPages = ceil($total / $perPage);
             color: white;
             border-color: #007bff;
         }
-        .message.success {
-            background-color: #28a745;
-            color: white;
-            padding: 10px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-            text-align: center;
-        }
         @media (max-width: 700px) {
             .container {
                 padding: 10px;
@@ -186,13 +178,6 @@ $totalPages = ceil($total / $perPage);
 <body>
 
 <div class="container">
-    <?php  
-    // Show success message if set
-    if (isset($_SESSION['success_message'])) {
-        echo '<div class="message success">' . htmlspecialchars($_SESSION['success_message']) . '</div>';
-        unset($_SESSION['success_message']);
-    }
-    ?>
 
     <!-- Search Form -->
     <div class="search-container">

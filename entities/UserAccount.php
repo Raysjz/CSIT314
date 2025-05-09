@@ -204,7 +204,7 @@ class UserAccount {
     }
 
     // Search user accounts with pagination
-    public static function searchUserAccounts($searchQuery, $perPage, $offset) {
+    public static function searchUserAccountsPaginated($searchQuery, $perPage, $offset) {
         $db = Database::getPDO();
         $pattern = "%$searchQuery%";
         $stmt = $db->prepare(

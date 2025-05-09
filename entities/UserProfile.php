@@ -129,7 +129,7 @@ class UserProfile {
     }
 
     // Search user profiles with pagination
-    public static function searchUserProfiles($searchQuery, $perPage, $offset) {
+    public static function searchUserProfilesPaginated($searchQuery, $perPage, $offset) {
         $db = Database::getPDO();
         $pattern = "%$searchQuery%";
         $stmt = $db->prepare(

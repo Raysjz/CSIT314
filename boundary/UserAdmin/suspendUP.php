@@ -103,7 +103,7 @@ if ($userID !== null) {
 <div class="container">
     <h1>Suspend User</h1>
     <?php if (!empty($message)): ?>
-        <div class="message<?php echo (strpos($message, '✅') !== false) ? ' success' : ''; ?>">
+        <div class="message <?php echo (strpos($message, '❌') !== false) ? 'error' : 'success'; ?>">
             <?php echo $message; ?>
         </div>
     <?php endif; ?>

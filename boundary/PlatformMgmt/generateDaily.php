@@ -1,11 +1,17 @@
 <?php
-session_start();
+// Daily Platform Report
+
+session_start(); // Start session
+
+// Redirect if not Platform Management
 if ($_SESSION['profileName'] !== 'Platform Management') {
     header('Location: ../login.php');
     exit();
 }
-require_once(__DIR__ . '/platformNavbar.php');
-require_once(__DIR__ . '/../../controllers/PlatformMgmt/dailyReportController.php');
+
+// Include dependencies
+require_once __DIR__ . '/platformNavbar.php';
+require_once __DIR__ . '/../../controllers/ServiceCategory/dailyReportController.php';
 
 // Initialize variables
 $shortlists = $dailyViews = $daily = null;

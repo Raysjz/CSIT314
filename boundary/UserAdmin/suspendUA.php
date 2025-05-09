@@ -106,9 +106,9 @@ if ($userID !== null) {
     <div class="container">
         <h1>Suspend User</h1>
         <?php if (!empty($message)): ?>
-            <div class="message<?php echo (strpos($message, '✅') !== false) ? ' success' : ''; ?>">
-                <?php echo $message; ?>
-            </div>
+        <div class="message <?php echo (strpos($message, '❌') !== false) ? 'error' : 'success'; ?>">
+            <?php echo $message; ?>
+        </div>
         <?php endif; ?>
         <div class="button-container">
             <a href="viewUA.php" class="back-button">Back</a>

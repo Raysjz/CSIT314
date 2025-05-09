@@ -1,38 +1,36 @@
 <?php
-// View User Profiles
+// View Service Categories
 
 session_start(); // Start session
 
-// Redirect if not User Admin
-if ($_SESSION["profileName"] !== "User Admin") {
-    header("Location: ../login.php");
+// Redirect if not Platform Management
+if ($_SESSION['profileName'] !== 'Platform Management') {
+    header('Location: ../login.php');
     exit();
 }
 
 // Include dependencies
-require_once __DIR__ . "/adminNavbar.php";
-require_once __DIR__ . "/../../controllers/UserAdmin/viewUPController.php";
-require_once __DIR__ . "/../../controllers/UserAdmin/searchUPController.php";
+require_once __DIR__ . '/platformNavbar.php';
+require_once __DIR__ . '/../../controllers/PlatformMgmt/searchScController.php';
+require_once __DIR__ . '/../../controllers/PlatformMgmt/viewScController.php';
 
-// Pagination parameters
 $perPage = 10;
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $offset = ($page - 1) * $perPage;
-$searchQuery = isset($_GET["search"]) ? trim($_GET["search"]) : null;
+$searchQuery = isset($_GET['search']) ? trim($_GET['search']) : null;
 
-// Instantiate controllers
-$viewController = new ViewUserProfileController();
-$searchController = new SearchUserProfileController();
+$viewController = new ViewServiceCategoryController();
+$searchController = new SearchServiceCategoryController();
 
-// Fetch user profiles (search or all)
 if ($searchQuery) {
-    $result = $searchController->searchUserProfiles($searchQuery, $perPage, $offset);
+    $result = $searchController->searchServiceCategory($searchQuery, $perPage, $offset);
 } else {
-    $result = $viewController->viewUserProfiles($perPage, $offset);
+    $result = $viewController->viewServiceCategory($perPage, $offset);
 }
-$userProfiles = $result['data'];
+$serviceCategories = $result['data'];
 $total = $result['total'];
 $totalPages = ceil($total / $perPage);
+
 ?>
 
 <!DOCTYPE html>
@@ -40,7 +38,7 @@ $totalPages = ceil($total / $perPage);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View User Profiles</title>
+    <title>View Service Categories</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -52,7 +50,7 @@ $totalPages = ceil($total / $perPage);
             background: #fff;
             padding: 24px;
             width: 100%;
-            max-width: 800px;
+            max-width: 900px;
             margin: 20px auto 0 auto;
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -80,7 +78,7 @@ $totalPages = ceil($total / $perPage);
         }
         .search-button {
             padding: 10px 20px;
-            background-color: #28a745;
+            background-color: #007bff;
             color: white;
             border: none;
             border-radius: 4px;
@@ -88,7 +86,7 @@ $totalPages = ceil($total / $perPage);
             transition: background 0.2s;
         }
         .search-button:hover {
-            background-color: #218838;
+            background-color: #0056b3;
         }
         .reset-button {
             padding: 10px 20px;
@@ -119,8 +117,8 @@ $totalPages = ceil($total / $perPage);
         .actions-buttons {
             display: flex;
             justify-content: center;
-            align-items: center;
             gap: 8px;
+            align-items: center;
         }
         .actions-buttons button {
             padding: 8px 12px;
@@ -130,7 +128,7 @@ $totalPages = ceil($total / $perPage);
             transition: opacity 0.2s;
         }
         .actions-buttons .update-button {
-            background-color: #007bff;
+            background-color: #28a745;
             color: white;
         }
         .actions-buttons .suspend-button {
@@ -184,63 +182,64 @@ $totalPages = ceil($total / $perPage);
     <div class="container">
         <!-- Search Form -->
         <div class="search-container">
-            <h2>Search</h2>
+            <h2>Search by Category Name or ID</h2>
             <form action="" method="GET">
-                <input type="text" class="search-input" name="search" placeholder="Enter Profile ID or Name" value="<?php echo htmlspecialchars($searchQuery); ?>">
+                <input type="text" class="search-input" name="search" placeholder="Enter category or category ID" value="<?php echo htmlspecialchars($searchQuery); ?>">
                 <button type="submit" class="search-button">Search</button>
                 <button type="button" class="reset-button" onclick="window.location.href = window.location.pathname;">Reset</button>
             </form>
         </div>
-        <h2>User Profile List</h2>
+
+        <h2>Service Categories List</h2>
         <table>
             <thead>
                 <tr>
-                    <th>User ID</th>
-                    <th>Profile Name</th>
-                    <th>Is Suspended</th>
+                    <th>Category ID</th>
+                    <th>Category Name</th>
+                    <th>Status</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <?php if (empty($userProfiles)): ?>
-                    <tr><td colspan="4" class="no-results">No results found.</td></tr>
-                <?php else: ?>
-                    <?php foreach ($userProfiles as $profile): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($profile->getProfileId()) ?></td>
-                            <td><?= htmlspecialchars($profile->getName()) ?></td>
-                            <td><?= $profile->getIsSuspended() ? "Yes" : "No" ?></td>
-                            <td class="actions-buttons">
-                                <button onclick="window.location.href='updateUP.php?userid=<?= $profile->getProfileId() ?>';" class="update-button">Update</button>
-                                <button onclick="return confirm('Are you sure you want to suspend this user?') ? window.location.href='suspendUP.php?userid=<?= $profile->getProfileId() ?>' : false;" class="suspend-button">Suspend</button>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php endif; ?>
+            <?php if (empty($serviceCategories)): ?>
+                <tr><td colspan="4" class="no-results">No results found.</td></tr>
+            <?php else: ?>
+                <?php foreach ($serviceCategories as $category): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($category->getId()) ?></td>
+                        <td><?= htmlspecialchars($category->getName()) ?></td>
+                        <td><?= $category->getIsSuspended() ? 'Yes' : 'No' ?></td>
+                        <td class="actions-buttons">
+                            <button onclick="window.location.href='updateSC.php?categoryid=<?= $category->getId() ?>';" class="update-button">Update</button>
+                            <button onclick="return confirm('Are you sure you want to suspend this category?') ? window.location.href='suspendSC.php?categoryid=<?= $category->getId() ?>' : false;" class="suspend-button">Suspend</button>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php endif; ?>
             </tbody>
         </table>
         <div class="pagination">
-        <?php
-        $adjacents = 2;
-        $start = max(1, $page - $adjacents);
-        $end = min($totalPages, $page + $adjacents);
+            <?php
+            $adjacents = 2;
+            $start = max(1, $page - $adjacents);
+            $end = min($totalPages, $page + $adjacents);
 
-        if ($page > 1) {
-            echo '<a href="?page=1' . ($searchQuery ? '&search=' . urlencode($searchQuery) : '') . '">First</a>';
-            echo '<a href="?page=' . ($page - 1) . ($searchQuery ? '&search=' . urlencode($searchQuery) : '') . '">Previous</a>';
-        }
-        for ($i = $start; $i <= $end; $i++) {
-            if ($i == $page) {
-                echo '<span class="active">' . $i . '</span>';
-            } else {
-                echo '<a href="?page=' . $i . ($searchQuery ? '&search=' . urlencode($searchQuery) : '') . '">' . $i . '</a>';
+            if ($page > 1) {
+                echo '<a href="?page=1' . ($searchQuery ? '&search=' . urlencode($searchQuery) : '') . '">First</a>';
+                echo '<a href="?page=' . ($page - 1) . ($searchQuery ? '&search=' . urlencode($searchQuery) : '') . '">Previous</a>';
             }
-        }
-        if ($page < $totalPages) {
-            echo '<a href="?page=' . ($page + 1) . ($searchQuery ? '&search=' . urlencode($searchQuery) : '') . '">Next</a>';
-            echo '<a href="?page=' . $totalPages . ($searchQuery ? '&search=' . urlencode($searchQuery) : '') . '">Last</a>';
-        }
-        ?>
+            for ($i = $start; $i <= $end; $i++) {
+                if ($i == $page) {
+                    echo '<span class="active">' . $i . '</span>';
+                } else {
+                    echo '<a href="?page=' . $i . ($searchQuery ? '&search=' . urlencode($searchQuery) : '') . '">' . $i . '</a>';
+                }
+            }
+            if ($page < $totalPages) {
+                echo '<a href="?page=' . ($page + 1) . ($searchQuery ? '&search=' . urlencode($searchQuery) : '') . '">Next</a>';
+                echo '<a href="?page=' . $totalPages . ($searchQuery ? '&search=' . urlencode($searchQuery) : '') . '">Last</a>';
+            }
+            ?>
         </div>
     </div>
 </body>

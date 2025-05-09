@@ -10,7 +10,7 @@ class SearchUserAccountController
     // Search user accounts by query string with pagination
     public function searchUserAccounts($searchQuery, $perPage = 10, $offset = 0)
     {
-        $accounts = UserAccount::searchUserAccounts($searchQuery, $perPage, $offset);
+        $accounts = UserAccount::searchUserAccountsPaginated($searchQuery, $perPage, $offset);
         $total = UserAccount::countSearchResults($searchQuery);
 
         return [

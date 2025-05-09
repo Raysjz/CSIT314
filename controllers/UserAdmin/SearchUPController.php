@@ -9,7 +9,7 @@ class SearchUserProfileController
     // Search user profiles by query with pagination
     public function searchUserProfiles($searchQuery, $perPage = 10, $offset = 0)
     {
-        $data = UserProfile::searchUserProfiles($searchQuery, $perPage, $offset);
+        $data = UserProfile::searchUserProfilesPaginated($searchQuery, $perPage, $offset);
         $total = UserProfile::countSearchProfiles($searchQuery);
         return [
             'data' => $data,

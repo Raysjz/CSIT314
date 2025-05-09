@@ -1,11 +1,17 @@
 <?php
-session_start();  // Start the session to access session variables
+// Monthly Platform Report
+
+session_start(); // Start session
+
+// Redirect if not Platform Management
 if ($_SESSION['profileName'] !== 'Platform Management') {
     header('Location: ../login.php');
     exit();
 }
-require_once(__DIR__ . '/platformNavbar.php');
-require_once(__DIR__ . '/../../controllers/PlatformMgmt/monthlyReportController.php');
+
+// Include dependencies
+require_once __DIR__ . '/platformNavbar.php';
+require_once __DIR__ . '/../../controllers/PlatformMgmt/monthlyReportController.php';
 
 // Initialize variables for report results
 $shortlists = $monthlyViews = $monthly = null;

@@ -1,8 +1,8 @@
 
 <div class="Navbar">
     <div class="navbar-left">
-        <a href="/CSIT314/boundary/PlatformMgmt/viewPC.php">View Service Categories</a>
-        <a href="/CSIT314/boundary/PlatformMgmt/createPC.php">Create Service Categories</a> 
+        <a href="/CSIT314/boundary/PlatformMgmt/viewSC.php">View Service Categories</a>
+        <a href="/CSIT314/boundary/PlatformMgmt/createSC.php">Create Service Categories</a> 
         <a href="/CSIT314/boundary/PlatformMgmt/generateDaily.php">Generate Daily Report</a>
         <a href="/CSIT314/boundary/PlatformMgmt/generateWeekly.php">Generate Weekly Report</a>
         <a href="/CSIT314/boundary/PlatformMgmt/generateMonthly.php">Generate Monthly Report</a> 
