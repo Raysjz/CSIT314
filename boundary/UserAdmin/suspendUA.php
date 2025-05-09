@@ -29,9 +29,9 @@ if ($userID !== null) {
         $user = $controller->getAccountUserById($userID);
         if ($user) {
             $username = $user->getUsername();
-            $message = "✅ User ID: <strong>" . htmlspecialchars($userID) . "</strong>, " . htmlspecialchars($username) . " has been successfully suspended!";
+            $message = "✅ User Account ID: <strong>" . htmlspecialchars($userID) . "</strong>, " . htmlspecialchars($username) . " has been successfully suspended!";
         } else {
-            $message = "✅ User with ID: " . htmlspecialchars($userID) . " has been successfully suspended!";
+            $message = "✅ User Account ID: " . htmlspecialchars($userID) . " has been successfully suspended!";
         }
     } else {
         $message = "❌ User not found or could not be suspended.";
@@ -95,6 +95,10 @@ if ($userID !== null) {
         }
         .message.success {
             background: #28a745;
+        }
+        .error {
+            background-color: #dc3545;
+            color: #fff;
         }
     </style>
 </head>

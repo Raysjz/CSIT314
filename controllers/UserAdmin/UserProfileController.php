@@ -1,14 +1,20 @@
 <?php
-require_once(__DIR__ . '/../../entities/UserProfile.php');
+// User Profile Controller (Misc)
 
-class UserProfileController {
+// Include dependencies
+require_once __DIR__ . '/../../entities/UserProfile.php';
+
+class UserProfileController
+{
     // Fetch all profiles (for dropdowns)
-    public function getProfiles() {
+    public function getProfiles()
+    {
         return UserProfile::getProfiles();
     }
 
     // Fetch profile ID by profile name
-    public function getProfileIdByName($profileName) {
+    public function getProfileIdByName($profileName)
+    {
         return UserProfile::getProfileIdByName($profileName);
     }
 }

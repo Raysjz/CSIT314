@@ -1,11 +1,16 @@
 <?php
-require_once(__DIR__ . '/../../entities/UserProfile.php');
+// Create User Profile Controller
 
-class CreateUserProfileController {
-    // Process the user creation
-    public function handleFormSubmission($data) {
+// Include dependencies
+require_once __DIR__ . '/../../entities/UserProfile.php';
+
+class CreateUserProfileController
+{
+    // Handle user profile creation
+    public function handleFormSubmission($data)
+    {
         $userProfile = new UserProfile(
-            null,  // ID is auto-generated
+            null, // ID is auto-generated
             $data['name'],
             isset($data['isSuspended']) ? $data['isSuspended'] : false
         );
@@ -13,13 +18,12 @@ class CreateUserProfileController {
         $validationResult = $userProfile->validateUP();
         if ($validationResult === "Validation passed.") {
             if ($userProfile->saveUserProfile()) {
-                return true; // Success
+                return true;
             } else {
                 return "Error saving profile.";
             }
-        } else {
-            return $validationResult;  // Return validation error message
         }
+        return $validationResult;
     }
 }
 ?>

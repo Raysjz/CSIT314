@@ -1,5 +1,5 @@
 <?php
-// Update User Accounts
+// Update User Account
 
 session_start(); // Start session
 
@@ -18,14 +18,14 @@ require_once __DIR__ . '/../../controllers/UserAdmin/UserProfileController.php';
 $userProfileController = new UserProfileController();
 $profiles = $userProfileController->getProfiles(); // Get all profiles
 
-$userIdToUpdate = $_GET['userid'] ?? null;
+$userID = $_GET['userid'] ?? null;
 $controller = new UpdateUserAccountController();
-$userToUpdate = $controller->getAccountUserById($userIdToUpdate);
+$userAccount = $controller->getAccountUserById($userID);
 $message = "";
 
 // Show error if user not found
-if (!$userToUpdate) {
-    echo "❌ No user found with ID: " . htmlspecialchars($userIdToUpdate);
+if (!$userAccount) {
+    echo "❌ No user found with ID: " . htmlspecialchars($userID);
     exit;
 }
 
@@ -129,26 +129,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <?php echo htmlspecialchars($message); ?>
         </div>
         <?php endif; ?>
-        <form action="updateUA.php?userid=<?php echo htmlspecialchars($userToUpdate->getId()); ?>" method="post">
+        <form action="updateUA.php?userid=<?php echo htmlspecialchars($userAccount->getId()); ?>" method="post">
             <label for="userid">User ID</label>
-            <input type="text" id="userid" name="userid" value="<?php echo htmlspecialchars($userToUpdate->getId()); ?>" readonly />
+            <input type="text" id="userid" name="userid" value="<?php echo htmlspecialchars($userAccount->getId()); ?>" readonly />
 
             <label for="fullname">Full Name</label>
-            <input type="text" id="fullname" name="fullname" value="<?php echo htmlspecialchars($userToUpdate->getFullName()); ?>" required />
+            <input type="text" id="fullname" name="fullname" value="<?php echo htmlspecialchars($userAccount->getFullName()); ?>" required />
 
             <label for="username">Username</label>
-            <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($userToUpdate->getUsername()); ?>" required />
+            <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($userAccount->getUsername()); ?>" required />
 
             <label for="email">Email</label>
-            <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($userToUpdate->getEmail()); ?>" required />
+            <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($userAccount->getEmail()); ?>" required />
 
             <label for="password">Password</label>
-            <input type="text" id="password" name="password" value="<?php echo htmlspecialchars($userToUpdate->getPassword()); ?>" required />
+            <input type="text" id="password" name="password" value="<?php echo htmlspecialchars($userAccount->getPassword()); ?>" required />
 
             <label for="profile_id">Profile</label>
             <select id="profile_id" name="profile_id" required onchange="updateProfileName()">
                 <?php
-                $currentProfile = $userToUpdate->getProfile();
+                $currentProfile = $userAccount->getProfile();
                 foreach ($profiles as $profile) {
                     $selected = ($profile['profile_name'] == $currentProfile) ? 'selected' : '';
                     echo "<option value='" . htmlspecialchars($profile['profile_id']) . "' $selected>" . htmlspecialchars($profile['profile_name']) . "</option>";
@@ -159,8 +159,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <label for="is_suspended">Is Suspended</label>
             <select id="is_suspended" name="is_suspended">
-                <option value="1" <?php echo $userToUpdate->getIsSuspended() ? 'selected' : ''; ?>>Yes</option>
-                <option value="0" <?php echo !$userToUpdate->getIsSuspended() ? 'selected' : ''; ?>>No</option>
+                <option value="1" <?php echo $userAccount->getIsSuspended() ? 'selected' : ''; ?>>Yes</option>
+                <option value="0" <?php echo !$userAccount->getIsSuspended() ? 'selected' : ''; ?>>No</option>
             </select>
 
             <div class="button-container">

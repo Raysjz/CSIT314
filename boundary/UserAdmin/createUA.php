@@ -1,5 +1,5 @@
 <?php
-// Create User Accounts
+// Create User Account
 
 session_start(); // Start session
 
