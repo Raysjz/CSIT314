@@ -1,14 +1,11 @@
 <?php
-session_start(); // Start the session to access session variables
-
-// Redirect if not User Admin
-if ($_SESSION["profileName"] !== "User Admin") {
-    header("Location: ../login.php");
+session_start();
+if ($_SESSION['profileName'] !== 'User Admin') {
+    header('Location: ../login.php');
     exit();
 }
-
 // Include necessary files
-require_once(__DIR__ . "/adminNavbar.php");
+require_once(__DIR__ . '/adminNavbar.php');
 require_once(__DIR__ . '/../../controllers/UserAdmin/suspendUAController.php');
 
 // Get the user ID from the URL query parameter
@@ -17,7 +14,7 @@ $userIdToSuspend = isset($_GET['userid']) ? $_GET['userid'] : null;
 // Instantiate the controller
 $controller = new SuspendUserAccountController();
 
-// Main logic for suspending user
+// Main logic
 if ($userIdToSuspend !== null) {
     $result = $controller->suspendUserAccount($userIdToSuspend);
 
@@ -40,36 +37,11 @@ if ($userIdToSuspend !== null) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Suspend User</title>
     <style>
-        body {
-            font-family: Arial;
-            background: #f4f4f4;
-            margin: 0;
-            padding: 40px;
-        }
-        .container {
-            background: white;
-            padding: 30px;
-            max-width: 500px;
-            margin: auto;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            position: relative;
-        }
+        body { font-family: Arial; background: #f4f4f4; margin: 0; padding: 40px; }
+        .container { background: white; padding: 30px; max-width: 500px; margin: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: relative; }
         h1 { margin-bottom: 20px; }
-        .button-container {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-        .back-button {
-            padding: 10px 20px;
-            border: none;
-            color: white;
-            border-radius: 4px;
-            cursor: pointer;
-            text-decoration: none;
-            background: #6c757d;
-        }
+        .button-container { display: flex; justify-content: space-between; margin-top: 20px; }
+        .back-button { padding: 10px 20px; border: none; color: white; border-radius: 4px; cursor: pointer; text-decoration: none; background: #6c757d; }
         .back-button:hover { background: #5a6268; }
     </style>
 </head>

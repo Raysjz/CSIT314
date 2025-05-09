@@ -1,9 +1,8 @@
 <?php
-// Include necessary files
 require_once(__DIR__ . '/../../entities/UserProfile.php');
 
 class CreateUserProfileController {
-    // Process the user profile creation form submission
+    // Process the user creation
     public function handleFormSubmission($data) {
         $userProfile = new UserProfile(
             null,  // ID is auto-generated

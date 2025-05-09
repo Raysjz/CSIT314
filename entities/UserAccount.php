@@ -1,5 +1,4 @@
 <?php
-// Include necessary files
 require_once(__DIR__ . '/ConnectiontoDB.php');
 
 class UserAccount {
@@ -12,11 +11,13 @@ class UserAccount {
     protected $profileId;
     protected $isSuspended;
 
-    // Constructor
+    /**
+     * UserAccount constructor.
+     */
     public function __construct($id, $username, $password, $fullName, $email, $profile, $profileId, $isSuspended) {
         $this->id = $id;
         $this->username = $username;
-        $this->password = $password;
+        $this->password = $password; 
         $this->fullName = $fullName;
         $this->email = $email;
         $this->profile = $profile;
@@ -25,6 +26,7 @@ class UserAccount {
     }
 
     // --- Getters ---
+
     public function getId() { return $this->id; }
     public function getUsername() { return $this->username; }
     public function getPassword() { return $this->password; }
@@ -34,7 +36,10 @@ class UserAccount {
     public function getProfileId() { return $this->profileId; }
     public function getIsSuspended() { return $this->isSuspended; }
 
-    // Validate login credentials
+    // --- Validation for Login ---
+    /**
+     * Validate login credentials.
+     */
     public function validateUser($username, $password, $profile) {
         $conn = Database::getPgConnect();
 
@@ -42,11 +47,12 @@ class UserAccount {
             return ['error' => 'Username and profile are required.'];
         }
 
+        // Use parameterized query to prevent SQL injection
         $result = pg_query_params($conn, "SELECT * FROM user_accounts WHERE ua_username = $1 AND profile_name = $2", [$username, $profile]);
         $user = pg_fetch_assoc($result);
 
         if ($user) {
-            // Use password_verify for real apps; here it's plain comparison
+            // Use password_verify if passwords are hashed!
             if ($password === $user['ua_password']) {
                 if ($user['is_suspended'] === 't') {
                     return ['error' => '❌ Your account is suspended. Please contact support.'];
@@ -60,7 +66,10 @@ class UserAccount {
         }
     }
 
-    // Validate user account data before saving
+    // --- Validation for Account Creation ---
+    /**
+     * Validate user account data before saving.
+     */
     public function validateUserAccount() {
         if (empty($this->fullName) || empty($this->username) || empty($this->email) || empty($this->password)) {
             return "All fields are required.";
@@ -93,13 +102,17 @@ class UserAccount {
         return "Validation passed.";
     }
 
-    // Save user account to the database
+    // --- Save User Account ---
+    /**
+     * Save user account to the database.
+     */
     public function saveUserAccount() {
         $db = Database::getPDO();
 
         $stmt = $db->prepare("INSERT INTO user_accounts 
             (ua_username, ua_password, full_name, email, profile_name, profile_id, is_suspended) 
-            VALUES (:ua_username, :ua_password, :full_name, :email, :profile_name, :profile_id, :is_suspended)");
+            VALUES 
+            (:ua_username, :ua_password, :full_name, :email, :profile_name, :profile_id, :is_suspended)");
 
         $stmt->bindParam(':ua_username', $this->username);
         $stmt->bindParam(':ua_password', $this->password);
@@ -112,7 +125,36 @@ class UserAccount {
         return $stmt->execute();
     }
 
-    // Get user account by ID
+
+
+    /**
+     * View all user accounts (ordered by ID ascending).
+     */
+    public static function viewUserAccounts() {
+        $db = Database::getPDO();
+        $stmt = $db->prepare("SELECT * FROM user_accounts ORDER BY account_id ASC");
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $userAccounts = [];
+        foreach ($result as $row) {
+            $userAccounts[] = new UserAccount(
+                $row['account_id'],
+                $row['ua_username'],
+                $row['ua_password'],
+                $row['full_name'],
+                $row['email'],
+                $row['profile_name'],
+                $row['profile_id'],
+                isset($row['is_suspended']) ? (bool)$row['is_suspended'] : false
+            );
+        }
+        return $userAccounts;
+    }
+
+    /**
+     * Fetch a user account by ID.
+     */
     public static function getAccountUserById($id) {
         $db = Database::getPDO();
         $stmt = $db->prepare("SELECT * FROM user_accounts WHERE account_id = :id");
@@ -135,9 +177,17 @@ class UserAccount {
         return null;
     }
 
-    // Update user account in the database
+    /**
+     * Update this user account in the database.
+     */
     public function updateUserAccount() {
         $db = Database::getPDO();
+
+        // Hash password if it's not already hashed (optional: add logic to check)
+        $hashedPassword = $this->password;
+        if (password_get_info($this->password)['algo'] === 0) {
+            $hashedPassword = password_hash($this->password, PASSWORD_DEFAULT);
+        }
 
         $stmt = $db->prepare("UPDATE user_accounts 
             SET ua_username = :username,
@@ -151,7 +201,7 @@ class UserAccount {
 
         $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
         $stmt->bindParam(':username', $this->username);
-        $stmt->bindParam(':password', $this->password);
+        $stmt->bindParam(':password', $hashedPassword);
         $stmt->bindParam(':fullName', $this->fullName);
         $stmt->bindParam(':email', $this->email);
         $stmt->bindParam(':profile', $this->profile);
@@ -161,7 +211,9 @@ class UserAccount {
         return $stmt->execute();
     }
 
-    // Suspend this user account
+    /**
+     * Suspend this user account (set is_suspended to true).
+     */
     public function suspendUserAccount() {
         $db = Database::getPDO();
         $stmt = $db->prepare("UPDATE user_accounts SET is_suspended = true WHERE account_id = :id");
@@ -169,7 +221,9 @@ class UserAccount {
         return $stmt->execute();
     }
 
-    // Get paginated user accounts
+    /**
+     * Get paginated user accounts.
+     */
     public static function getPaginatedAccounts($perPage = 10, $offset = 0) {
         $db = Database::getPDO();
         $stmt = $db->prepare("SELECT * FROM user_accounts ORDER BY account_id ASC LIMIT :limit OFFSET :offset");
@@ -194,14 +248,19 @@ class UserAccount {
         return $userAccounts;
     }
 
-    // Count all user accounts
+    /**
+     * Count all user accounts.
+     * @return int
+     */
     public static function countAllUsers() {
         $db = Database::getPDO();
         $stmt = $db->query("SELECT COUNT(*) FROM user_accounts");
         return (int)$stmt->fetchColumn();
     }
 
-    // Search user accounts with pagination
+    /**
+     * Search user accounts with pagination.
+     */
     public static function searchUserAccounts($searchQuery, $perPage, $offset) {
         $db = Database::getPDO();
         $pattern = "%$searchQuery%";
@@ -236,7 +295,9 @@ class UserAccount {
         return $accounts;
     }
 
-    // Count the number of accounts matching a search query
+    /**
+     * Count search results.
+     */
     public static function countSearchResults($searchQuery) {
         $db = Database::getPDO();
         $pattern = "%$searchQuery%";
@@ -251,5 +312,10 @@ class UserAccount {
         $stmt->execute();
         return (int)$stmt->fetchColumn();
     }
+
+
 }
+
+
+
 ?>
