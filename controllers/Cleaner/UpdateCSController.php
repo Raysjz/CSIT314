@@ -1,15 +1,20 @@
 <?php
+// Update Cleaning Service Controller
+
 // Include dependencies
 require_once __DIR__ . '/../../entities/CleaningService.php';
 
-class UpdateCleaningServiceController {
+class UpdateCleaningServiceController
+{
     // Fetch cleaning service by ID
-    public function getCleaningServiceById($serviceId) {
-        return CleaningService::getCleaningServiceById($serviceId);  // Ensure this returns a valid CleaningService object
+    public function getCleaningServiceById($serviceId)
+    {
+        return CleaningService::getCleaningServiceById($serviceId);
     }
 
-    // Update the cleaning service with the new data
-    public function updateCleaningService($data) {
+    // Update the cleaning service with new data
+    public function updateCleaningService($data)
+    {
         $service = new CleaningService(
             $data['service_id'],          // Service ID
             $data['cleaner_account_id'],  // Cleaner Account ID
@@ -22,8 +27,7 @@ class UpdateCleaningServiceController {
             isset($data['created_at']) ? $data['created_at'] : null,      // Created At (optional)
             isset($data['updated_at']) ? $data['updated_at'] : null       // Updated At (optional)
         );
-
-        return $service->updateCleaningService();  // Return true if update is successful
+        return $service->updateCleaningService();
     }
 }
 ?>

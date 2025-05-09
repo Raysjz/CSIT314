@@ -1,28 +1,34 @@
 <?php
+// Create Cleaning Service Controller
+
 // Include dependencies
 require_once __DIR__ . '/../../entities/CleaningService.php';
 
-class CreateCleaningServiceController {
+class CreateCleaningServiceController
+{
     private $cleaningService;
 
-    public function __construct($cleaningService = null) {
+    public function __construct($cleaningService = null)
+    {
         $this->cleaningService = $cleaningService;
     }
 
-    public function processCleaningServiceCreation() {
+    // Validate and save the cleaning service
+    public function processCleaningServiceCreation()
+    {
         $validationResult = $this->cleaningService->validateCleaningService();
         if ($validationResult === "Validation passed.") {
             if ($this->cleaningService->saveCleaningService()) {
                 return true;
-            } else {
-                return "Error saving cleaning service.";
             }
-        } else {
-            return $validationResult;
+            return "Error saving cleaning service.";
         }
+        return $validationResult;
     }
 
-    public function handleFormSubmission($data) {
+    // Handle form submission, create entity, and process creation
+    public function handleFormSubmission($data)
+    {
         $this->cleaningService = new CleaningService(
             null, // ID auto-generated
             $data['cleaner_account_id'],
@@ -31,7 +37,7 @@ class CreateCleaningServiceController {
             $data['description'],
             $data['price'],
             $data['availability'],
-            $data['is_suspended']
+            isset($data['is_suspended']) ? $data['is_suspended'] : false
         );
         return $this->processCleaningServiceCreation();
     }

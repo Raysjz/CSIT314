@@ -1,11 +1,15 @@
 <?php
+// View Cleaner Matches Controller
+
 // Include dependencies
 require_once __DIR__ . '/../../entities/MatchingBooking.php';
 
-class viewCleanerMatchesController {
-    public function viewCleanerMatches($accountId) {
+class ViewCleanerMatchesController
+{
+    // Retrieve all matches for a given cleaner account
+    public function viewCleanerMatches($accountId)
+    {
         return MatchingBooking::viewCleanerMatches($accountId);
     }
-    
 }
 ?>
