@@ -1,32 +1,25 @@
 <?php
+// Include necessary files
 require_once(__DIR__ . '/../../entities/UserAccount.php');
 
-/**
- * Controller for updating user accounts.
- */
 class UpdateUserAccountController {
-    /**
-     * Retrieve a user account by ID.
-     */
+    // Retrieve a user account by ID
     public function getAccountUserById($userId) {
         return UserAccount::getAccountUserById($userId);
     }
 
-    /**
-     * Handle updating the user account.
-     */
+    // Update the user account with new data
     public function updateUserAccount($data) {
         $user = new UserAccount(
-            $data['userid'],                // User ID
-            $data['username'],              // Username
-            $data['password'],              // Password (should be hashed in entity if changed)
+            $data['userid'],
+            $data['username'],
+            $data['password'],
             $data['fullname'],
             $data['email'],
             $data['profileName'],
             $data['profileId'],
             isset($data['isSuspended']) ? $data['isSuspended'] : false
         );
-
         return $user->updateUserAccount();
     }
 }

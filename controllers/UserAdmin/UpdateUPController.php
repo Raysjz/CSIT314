@@ -1,4 +1,5 @@
 <?php
+// Include necessary files
 require_once(__DIR__ . '/../../entities/UserProfile.php');
 
 class UpdateUserProfileController {
@@ -10,9 +11,9 @@ class UpdateUserProfileController {
     // Update the user profile with the new data
     public function updateUserProfile($data) {
         $user = new UserProfile(
-            $data['id'],              // Profile ID
-            $data['name'],            // Profile Name
-            (bool)$data['isSuspended'] // Ensure its boolean
+            $data['id'],               // Profile ID
+            $data['name'],             // Profile Name
+            (bool)$data['isSuspended'] // Ensure it's boolean
         );
         return $user->updateUserProfile();
     }

@@ -1,13 +1,9 @@
 <?php
+// Include necessary files
 require_once(__DIR__ . '/../../entities/UserAccount.php');
 
-/**
- * Controller for creating user accounts (User Admin).
- */
 class CreateUserAccountController {
-    /**
-     * Handles form submission and user account creation.
-     */
+    // Handle form submission and create user account
     public function handleFormSubmission($data) {
         $userAccount = new UserAccount(
             null,  // ID is auto-generated
