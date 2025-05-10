@@ -166,22 +166,26 @@ class MatchingBooking {
     }
 
 
-    public static function viewHomeownerBookings($homeownerAccountId) {
+    // Paginated: View all bookings for a specific homeowner
+    public static function getPaginatedHomeownerBookings($homeownerAccountId, $perPage = 10, $offset = 0) {
         $db = Database::getPDO();
         $sql = "SELECT mb.*, 
-                       ua.full_name AS cleaner_name, 
-                       sc.category_name
+                    ua.full_name AS cleaner_name, 
+                    sc.category_name
                 FROM matching_bookings mb
                 JOIN user_accounts ua ON mb.cleaner_account_id = ua.account_id
                 JOIN service_categories sc ON mb.category_id = sc.category_id
                 WHERE mb.homeowner_account_id = :homeowner_id
-                  AND mb.is_deleted = FALSE
-                ORDER BY mb.created_at DESC";
+                AND mb.is_deleted = FALSE
+                ORDER BY mb.created_at DESC
+                LIMIT :limit OFFSET :offset";
         $stmt = $db->prepare($sql);
-        $stmt->bindParam(':homeowner_id', $homeownerAccountId, PDO::PARAM_INT);
+        $stmt->bindValue(':homeowner_id', $homeownerAccountId, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', (int)$perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+
         $bookings = [];
         foreach ($result as $row) {
             $bookings[] = new MatchingBooking(
@@ -198,23 +202,35 @@ class MatchingBooking {
         }
         return $bookings;
     }
-    
-    public static function searchHOBooking($homeownerAccountId, $categoryId = null, $startDate = null, $endDate = null) {
+
+    // Count all bookings for a specific homeowner
+    public static function countHomeownerBookings($homeownerAccountId) {
+        $db = Database::getPDO();
+        $sql = "SELECT COUNT(*) FROM matching_bookings
+                WHERE homeowner_account_id = :homeowner_id
+                AND is_deleted = FALSE";
+        $stmt = $db->prepare($sql);
+        $stmt->bindValue(':homeowner_id', $homeownerAccountId, PDO::PARAM_INT);
+        $stmt->execute();
+        return (int)$stmt->fetchColumn();
+    }
+
+    // Paginated: Search bookings for a specific homeowner with filters
+    public static function searchHomeownerBookingsPaginated($homeownerAccountId, $categoryId = null, $startDate = null, $endDate = null, $perPage = 10, $offset = 0) {
         $db = Database::getPDO();
         $sql = "SELECT mb.*, cs.title, cs.price, cs.category_id, 
-                       sc.category_name, ua.full_name AS cleaner_name
+                    sc.category_name, ua.full_name AS cleaner_name
                 FROM matching_bookings mb
                 JOIN cleaner_services cs ON mb.service_id = cs.service_id
                 JOIN service_categories sc ON mb.category_id = sc.category_id
                 JOIN user_accounts ua ON mb.cleaner_account_id = ua.account_id
                 WHERE mb.homeowner_account_id = :homeowner_id
-                  AND mb.is_deleted = FALSE";
-    
+                AND mb.is_deleted = FALSE";
         $params = [':homeowner_id' => $homeownerAccountId];
         if ($categoryId !== null && $categoryId !== '') {
             $sql .= " AND mb.category_id = :categoryId";
             $params[':categoryId'] = $categoryId;
-        }        
+        }
         if ($startDate !== null && $startDate !== '') {
             $sql .= " AND mb.booking_date >= :startDate";
             $params[':startDate'] = $startDate;
@@ -223,15 +239,16 @@ class MatchingBooking {
             $sql .= " AND mb.booking_date <= :endDate";
             $params[':endDate'] = $endDate;
         }
-        $sql .= " ORDER BY mb.created_at DESC";
+        $sql .= " ORDER BY mb.created_at DESC LIMIT :limit OFFSET :offset";
         $stmt = $db->prepare($sql);
         foreach ($params as $key => $value) {
             $stmt->bindValue($key, $value, is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR);
         }
+        $stmt->bindValue(':limit', (int)$perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-        // Map to MatchingBooking objects
+
         $bookings = [];
         foreach ($result as $row) {
             $bookings[] = new MatchingBooking(
@@ -248,6 +265,34 @@ class MatchingBooking {
         }
         return $bookings;
     }
+
+    // Count search results for homeowner bookings
+    public static function countSearchHomeownerBookings($homeownerAccountId, $categoryId = null, $startDate = null, $endDate = null) {
+        $db = Database::getPDO();
+        $sql = "SELECT COUNT(*) FROM matching_bookings
+                WHERE homeowner_account_id = :homeowner_id
+                AND is_deleted = FALSE";
+        $params = [':homeowner_id' => $homeownerAccountId];
+        if ($categoryId !== null && $categoryId !== '') {
+            $sql .= " AND category_id = :categoryId";
+            $params[':categoryId'] = $categoryId;
+        }
+        if ($startDate !== null && $startDate !== '') {
+            $sql .= " AND booking_date >= :startDate";
+            $params[':startDate'] = $startDate;
+        }
+        if ($endDate !== null && $endDate !== '') {
+            $sql .= " AND booking_date <= :endDate";
+            $params[':endDate'] = $endDate;
+        }
+        $stmt = $db->prepare($sql);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value, is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR);
+        }
+        $stmt->execute();
+        return (int)$stmt->fetchColumn();
+    }
+
     
     
     

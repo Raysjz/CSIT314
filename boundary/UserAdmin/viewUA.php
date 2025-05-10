@@ -44,14 +44,16 @@ $totalPages = ceil($total / $perPage);
             font-family: Arial, sans-serif;
             background: #f4f4f4;
             margin: 0;
-            padding: 10px;
+            padding: 20px 40px; /* You can increase horizontal padding if needed */
+            max-width: 100vw; /* Ensure body does not exceed viewport width */
+            box-sizing: border-box;
         }
         .container {
             background: #fff;
             padding: 24px;
             width: 100%;
-            max-width: 1100px;
-            margin: 20px auto 0 auto;
+            max-width: 1400px; /* Increase max-width to allow wider content */
+            margin: 20px auto 0 auto; /* Center container horizontally */
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             box-sizing: border-box;
@@ -105,6 +107,7 @@ $totalPages = ceil($total / $perPage);
             border: 1px solid #ddd;
             padding: 10px;
             text-align: left;
+            vertical-align: top;
         }
         th {
             background-color: #f2f2f2;
@@ -116,6 +119,8 @@ $totalPages = ceil($total / $perPage);
             align-items: center;
             gap: 8px;
             white-space: nowrap;
+            align-items: stretch;
+            height: 100%;
         }
         .actions-buttons button {
             padding: 8px 12px;
@@ -123,6 +128,7 @@ $totalPages = ceil($total / $perPage);
             border-radius: 4px;
             cursor: pointer;
             transition: opacity 0.2s;
+            height: 100%;
         }
         .update-button {
             background-color: #007bff;

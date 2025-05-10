@@ -317,16 +317,19 @@ class CleaningService
         return $services;
     }
 
-    // View all Cleaning Services for Homeowners (not suspended)
-    public static function viewHOCleaningServices()
+    // --- Paginated: View all Cleaning Services for Homeowners (not suspended) ---
+    public static function getPaginatedHOCleaningServices($perPage = 10, $offset = 0)
     {
         $db = Database::getPDO();
         $sql = "SELECT cs.*, sc.category_name
                 FROM cleaner_services cs
                 JOIN service_categories sc ON cs.category_id = sc.category_id
                 WHERE cs.is_suspended = false
-                ORDER BY cs.service_id ASC";
+                ORDER BY cs.service_id ASC
+                LIMIT :limit OFFSET :offset";
         $stmt = $db->prepare($sql);
+        $stmt->bindValue(':limit', (int)$perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -348,8 +351,17 @@ class CleaningService
         return $cleaningServices;
     }
 
-    // Search Cleaning Services for Homeowners (not suspended)
-    public static function searchHOCleaningServices($searchQuery)
+    // --- Count all available Cleaning Services for Homeowners ---
+    public static function countHOCleaningServices()
+    {
+        $db = Database::getPDO();
+        $sql = "SELECT COUNT(*) FROM cleaner_services WHERE is_suspended = false";
+        $stmt = $db->query($sql);
+        return (int)$stmt->fetchColumn();
+    }
+
+    // --- Paginated: Search Cleaning Services for Homeowners (not suspended) ---
+    public static function searchHOCleaningServicesPaginated($searchQuery, $perPage = 10, $offset = 0)
     {
         $db = Database::getPDO();
         $searchLike = "%" . $searchQuery . "%";
@@ -357,13 +369,16 @@ class CleaningService
                 FROM cleaner_services cs
                 JOIN service_categories sc ON cs.category_id = sc.category_id
                 WHERE cs.is_suspended = false
-                  AND (cs.title ILIKE :search OR cs.service_id::text ILIKE :search)";
-        $params = [':search' => $searchLike];
-
+                AND (cs.title ILIKE :search OR cs.service_id::text ILIKE :search)
+                ORDER BY cs.service_id ASC
+                LIMIT :limit OFFSET :offset";
         $stmt = $db->prepare($sql);
-        $stmt->execute($params);
-
+        $stmt->bindValue(':search', $searchLike, PDO::PARAM_STR);
+        $stmt->bindValue(':limit', (int)$perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
         $cleaningServices = [];
         foreach ($result as $row) {
             $cleaningServices[] = new CleaningService(
@@ -381,6 +396,21 @@ class CleaningService
         }
         return $cleaningServices;
     }
+
+    // --- Count search results for Homeowner Cleaning Services ---
+    public static function countSearchHOCleaningServices($searchQuery)
+    {
+        $db = Database::getPDO();
+        $searchLike = "%" . $searchQuery . "%";
+        $sql = "SELECT COUNT(*) FROM cleaner_services
+                WHERE is_suspended = false
+                AND (title ILIKE :search OR service_id::text ILIKE :search)";
+        $stmt = $db->prepare($sql);
+        $stmt->bindValue(':search', $searchLike, PDO::PARAM_STR);
+        $stmt->execute();
+        return (int)$stmt->fetchColumn();
+    }
+
 
     //---------Platform Generate Report-----------------
         public static function countCreatedDaily() {

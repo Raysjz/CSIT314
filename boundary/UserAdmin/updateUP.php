@@ -18,12 +18,25 @@ $userID = isset($_GET['userid']) ? $_GET['userid'] : null;
 
 $controller = new UpdateUserProfileController();
 $userProfile = $controller->getUserProfileById($userID);
-$message = "";
+
 
 // Show error if user not found
 if (!$userProfile) {
     echo "❌ No user found with ID: " . htmlspecialchars($userID);
     exit;
+}
+
+// Handle flash messages
+$message = "";
+$messageClass = "";
+if (isset($_SESSION['flash_success'])) {
+    $message = $_SESSION['flash_success'];
+    $messageClass = "success";
+    unset($_SESSION['flash_success']);
+} else if (isset($_SESSION['flash_error'])) {
+    $message = $_SESSION['flash_error'];
+    $messageClass = "error";
+    unset($_SESSION['flash_error']);
 }
 
 // Handle form submission for updating user data
@@ -37,9 +50,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $result = $controller->updateUserProfile($data);
 
-    $message = $result
-        ? "✅ Profile successfully updated!"
-        : "❌ Error updating profile.";
+    if ($result) {
+        $_SESSION['flash_success'] = "✅ User Profile successfully updated!";
+    } else {
+        $_SESSION['flash_error'] = "❌ Error updating User Profile.";
+    }
+    header("Location: updateUP.php?userid=" . urlencode($userID));
+    exit();
 }
 ?>
 <!DOCTYPE html>
@@ -68,8 +85,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <div class="container">
     <h1>Update Profile</h1>
     <?php if ($message): ?>
-        <div class="message <?php echo (strpos($message, '❌') !== false) ? 'error' : 'success'; ?>">
-            <?php echo htmlspecialchars($message); ?>
+        <div class="message <?php echo $messageClass; ?>">
+            <?php echo $message; ?>
         </div>
     <?php endif; ?>
     <form action="updateUP.php?userid=<?php echo htmlspecialchars($userProfile->getProfileId()); ?>" method="post">

@@ -4,9 +4,15 @@
 require_once __DIR__ . '/../../entities/CleaningService.php';
 
 class ViewHOCleaningServicesController {
-    // Method to retrieve all available (not suspended) cleaning services
-    public static function viewHOCleaningServices() {
-        return CleaningService::viewHOCleaningServices();
+    // Retrieve paginated available (not suspended) cleaning services
+    public function viewHOCleaningServices($perPage = 10, $offset = 0) {
+        $data = CleaningService::getPaginatedHOCleaningServices($perPage, $offset);
+        $total = CleaningService::countHOCleaningServices();
+        return [
+            'data' => $data,
+            'total' => $total
+        ];
     }
 }
+
 ?>

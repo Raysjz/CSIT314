@@ -26,8 +26,18 @@ if (!$categoryToUpdate) {
     exit;
 }
 
-// Initialize message variable
+// Handle flash messages
 $message = "";
+$messageClass = "";
+if (isset($_SESSION['flash_success'])) {
+    $message = $_SESSION['flash_success'];
+    $messageClass = "success";
+    unset($_SESSION['flash_success']);
+} else if (isset($_SESSION['flash_error'])) {
+    $message = $_SESSION['flash_error'];
+    $messageClass = "error";
+    unset($_SESSION['flash_error']);
+}
 
 // Handle form submission for updating category data
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -41,10 +51,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $result = $controller->updateServiceCategory($data);
 
     if ($result) {
-        $message = "✅ Category successfully updated!";
+        $_SESSION['flash_success'] = "✅ Service successfully updated!";
     } else {
-        $message = "❌ Error updating category.";
+        $_SESSION['flash_error'] = "❌ Error updating service.";
     }
+    header("Location: updateSC.php?categoryid=" . urlencode($categoryId));
+    exit();
 }
 ?>
 <!DOCTYPE html>
@@ -72,13 +84,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <body>
 <div class="container">
     <h1>Update Service Category</h1>
-
     <?php if ($message): ?>
-        <div class="message <?php echo (strpos($message, '❌') !== false) ? 'error' : 'success'; ?>">
-            <?php echo htmlspecialchars($message); ?>
+        <div class="message <?php echo $messageClass; ?>">
+            <?php echo $message; ?>
         </div>
     <?php endif; ?>
-
     <form action="updateSC.php?categoryid=<?php echo htmlspecialchars($categoryToUpdate->getId()); ?>" method="post">
         <input type="hidden" name="id" value="<?php echo htmlspecialchars($categoryToUpdate->getId()); ?>">
 

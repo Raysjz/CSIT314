@@ -21,13 +21,26 @@ $profiles = $userProfileController->getProfiles(); // Get all profiles
 $userID = $_GET['userid'] ?? null;
 $controller = new UpdateUserAccountController();
 $userAccount = $controller->getAccountUserById($userID);
-$message = "";
 
 // Show error if user not found
 if (!$userAccount) {
     echo "❌ No user found with ID: " . htmlspecialchars($userID);
     exit;
 }
+
+// Handle flash messages
+$message = "";
+$messageClass = "";
+if (isset($_SESSION['flash_success'])) {
+    $message = $_SESSION['flash_success'];
+    $messageClass = "success";
+    unset($_SESSION['flash_success']);
+} else if (isset($_SESSION['flash_error'])) {
+    $message = $_SESSION['flash_error'];
+    $messageClass = "error";
+    unset($_SESSION['flash_error']);
+}
+
 
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -45,10 +58,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $result = $controller->updateUserAccount($data);
 
     if ($result) {
-        $message = "✅ Profile successfully updated!";
+        $_SESSION['flash_success'] = "✅ Service successfully updated!";
     } else {
-        $message = "❌ Error updating profile.";
+        $_SESSION['flash_error'] = "❌ Error updating service.";
     }
+    header("Location: updateUA.php?userid=" . urlencode($userID));
+    exit();
 }
 ?>
 <!DOCTYPE html>
@@ -125,8 +140,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="container">
         <h1>Update User</h1>
         <?php if ($message): ?>
-        <div class="message <?php echo (strpos($message, '❌') !== false) ? 'error' : 'success'; ?>">
-            <?php echo htmlspecialchars($message); ?>
+        <div class="message <?php echo $messageClass; ?>">
+            <?php echo $message; ?>
         </div>
         <?php endif; ?>
         <form action="updateUA.php?userid=<?php echo htmlspecialchars($userAccount->getId()); ?>" method="post">

@@ -46,110 +46,186 @@ if ($searchQuery !== '') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Shortlist</title>
     <style>
-        body { font-family: Arial; background: #f4f4f4; margin: 0; padding: 40px; }
-        .container { background: white; padding: 30px; width: 100%; margin-top: 80px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); box-sizing: border-box; }
-        h1, h2 { margin-bottom: 20px; }
-        .search-container {display: flex; flex-direction:column; margin-right: 20px;}
-        .search-container input[type="text"] {padding: 8px;border: 1px solid #ccc;border-radius: 4px 0 0 4px;width: 300px; /* Adjust width as needed */font-family: Arial, sans-serif;}
-        .search-button {
-            padding: 10px 20px;
-            background-color: #28a745; /* Bootstrap green */
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
+        body {
+            font-family: Arial;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0 40px 40px 40px;
+            /* No top padding, keep left/right/bottom */
         }
-        .message {
-            padding: 10px;
-            margin: 20px 0;
-            border-radius: 5px;
-            text-align: center;
+        .container{
+            background:white;
+            padding:30px;
+            width:100%;
+            max-width:1200px;
+            /* wider container */
+            margin:20px auto 0 auto;
+            border-radius:8px;
+            box-shadow:0 2px 8px rgba(0,0,0,0.1);
+            box-sizing:border-box;
+            overflow-x:auto;
+            /* allow horizontal scroll on small screens */
         }
-        .success {
-            background-color: #28a745;
-            color: white;
+        h1,h2{
+            margin-bottom:20px
         }
-        .error {
-            background-color: #ffc107;
-            color: #856404;
+        .search-container{
+            display:flex;
+            flex-direction:column;
+            margin-right:20px
         }
-        .search-button:hover {
-            background-color: #218838; /* darker green on hover */
+        .search-container input[type="text"]{
+            padding:8px;
+            border:1px solid #ccc;
+            border-radius:4px 0 0 4px;
+            width:300px;
+            /* Adjust width as needed */
+            font-family:Arial,sans-serif
         }
-        .reset-button {padding: 10px 20px;background-color: #808080; color: white; border: none;border-radius: 4px;cursor: pointer;}
-        .reset-button:hover {background-color: #565656;}
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-        th { background-color: #f2f2f2; font-weight: bold; }
-        .no-results { text-align: center; font-style: italic; color: #777; }
-        .desc-cell { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .action-links {
-            display: flex;
-            flex-direction: row;     /* Ensure horizontal layout */
-            justify-content: center; /* Center horizontally in the cell */
-            align-items: center;     /* Center vertically in the cell */
-            gap: 8px;                /* Space between buttons */
-            height: 100%;
+        .search-button{
+            padding:10px 20px;
+            background-color:#28a745;
+            /* Bootstrap green */
+            color:white;
+            border:none;
+            border-radius:4px;
+            cursor:pointer
         }
-        .action-links a { margin-right: 8px; text-decoration: none; color: #007bff; }
-        .action-links a:hover { text-decoration: underline; }
-        .action-links a {
-            display: flex;                /* Use flexbox for the link itself */
-    align-items: center;          /* Center vertically */
-    justify-content: center; 
-            width: 140px;      /* Fixed width for all buttons */
-            height: 50px;      /* Fixed height for all buttons */
-            text-align: center;
-            justify-content: center;
-            padding: 8px 6px;
-            border: none;
-            border-radius: 4px;
-            color: white !important;
-            font-weight: bold;
-            font-size: 1rem;
-            text-decoration: none;
-            background-color: #007bff;
-            box-sizing: border-box;
-            white-space: normal;      /* Allow text to wrap */
-            word-break: break-word;   /* Break long words if needed */
-            vertical-align: middle;
-            line-height: normal;
+        .message{
+            padding:10px;
+            margin:20px 0;
+            border-radius:5px;
+            text-align:center
         }
-
-        .action-links a.view-details {
-            background-color: #007bff;
+        .success{
+            background-color:#28a745;
+            color:white
         }
-        .action-links a.view-details:hover {
-            background-color: #0056b3;
+        .error{
+            background-color:#ffc107;
+            color:#856404
         }
-
-        .action-links a.add-shortlist {
-            background-color: #28a745; /* green */
+        .search-button:hover{
+            background-color:#218838;
+            /* darker green on hover */
         }
-        .action-links a.add-shortlist:hover {
-            background-color: #218838;
+        .reset-button{
+            padding:10px 20px;
+            background-color:#808080;
+            color:white;
+            border:none;
+            border-radius:4px;
+            cursor:pointer
         }
-
-        .action-links a.remove-shortlist {
-            background-color: #dc3545; /* red */
+        .reset-button:hover{
+            background-color:#565656
         }
-        .action-links a.remove-shortlist:hover {
-            background-color: #a71d2a;
+        table{
+            width:100%;
+            min-width:1100px;
+            /* prevent squishing */
+            border-collapse:collapse;
+            margin-top:20px
         }
-
-        .action-links a:hover {
-            background-color: #0056b3;
-            text-decoration: none;
+        th,td{
+            border:1px solid #ddd;
+            padding:10px;
+            text-align:left
         }
-
-        .action-links a.remove-shortlist {
-            background-color: #dc3545; /* Red for remove */
+        th{
+            background-color:#f2f2f2;
+            font-weight:bold
         }
-
-        .action-links a.remove-shortlist:hover {
-            background-color: #a71d2a;
+        .no-results{
+            text-align:center;
+            font-style:italic;
+            color:#777
         }
-        
+        .desc-cell{
+            max-width:300px;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:nowrap
+        }
+        .action-links{
+            display:flex;
+            flex-direction:row;
+            /* Ensure horizontal layout */
+            justify-content:center;
+            /* Center horizontally in the cell */
+            align-items:center;
+            /* Center vertically in the cell */
+            gap:8px;
+            /* Space between buttons */
+            height:100%
+        }
+        .action-links a{
+            margin-right:8px;
+            text-decoration:none;
+            color:#007bff
+        }
+        .action-links a:hover{
+            text-decoration:underline
+        }
+        .action-links a{
+            display:flex;
+            /* Use flexbox for the link itself */
+            align-items:center;
+            /* Center vertically */
+            justify-content:center;
+            width:140px;
+            /* Fixed width for all buttons */
+            height:50px;
+            /* Fixed height for all buttons */
+            text-align:center;
+            justify-content:center;
+            padding:8px 6px;
+            border:none;
+            border-radius:4px;
+            color:white !important;
+            font-weight:bold;
+            font-size:1rem;
+            text-decoration:none;
+            background-color:#007bff;
+            box-sizing:border-box;
+            white-space:normal;
+            /* Allow text to wrap */
+            word-break:break-word;
+            /* Break long words if needed */
+            vertical-align:middle;
+            line-height:normal
+        }
+        .action-links a.view-details{
+            background-color:#007bff
+        }
+        .action-links a.view-details:hover{
+            background-color:#0056b3
+        }
+        .action-links a.add-shortlist{
+            background-color:#28a745;
+            /* green */
+        }
+        .action-links a.add-shortlist:hover{
+            background-color:#218838
+        }
+        .action-links a.remove-shortlist{
+            background-color:#dc3545;
+            /* red */
+        }
+        .action-links a.remove-shortlist:hover{
+            background-color:#a71d2a
+        }
+        .action-links a:hover{
+            background-color:#0056b3;
+            text-decoration:none
+        }
+        .action-links a.remove-shortlist{
+            background-color:#dc3545;
+            /* Red for remove */
+        }
+        .action-links a.remove-shortlist:hover{
+            background-color:#a71d2a
+        }
     </style>
 </head>
 <body>
@@ -197,7 +273,7 @@ if ($searchQuery !== '') {
                     echo "<td>" . htmlspecialchars($service->availability) . "</td>";
                     echo "<td class='action-links'>
                             <a href='viewHOshortlistDetails.php?id=" . $service->shortlist_id . "' class = 'view-details'>View Details</a>
-                            | <a href='removeShortlist.php?shortlist_id=" . $service->shortlist_id . "' class='remove-shortlist'>Remove</a>
+                            <a href='removeShortlist.php?shortlist_id=" . $service->shortlist_id . "' class='remove-shortlist'>Remove</a>
                           </td>";
                     echo "</tr>";
                 }

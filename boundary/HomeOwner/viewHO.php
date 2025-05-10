@@ -30,13 +30,7 @@ if (isset($_GET['removed']) && $_GET['removed'] == 1) {
 $searchQuery = isset($_GET['search']) ? $_GET['search'] : '';
 $displayedServices = [];
 
-if ($searchQuery !== '') {
-    $controller = new SearchHOCleaningServicesController();
-    $displayedServices = $controller->searchHOCleaningServices($searchQuery);
-} else {
-    $viewController = new ViewHOCleaningServicesController();
-    $displayedServices = $viewController->viewHOCleaningServices();
-}
+
 
 $homeownerAccountId = $_SESSION['user_id'];
 $shortlistController = new ShortlistController();
@@ -47,7 +41,20 @@ $shortlistedIds = array_map(function($svc) {
     return is_object($svc) ? $svc->service_id : $svc['service_id'];
 }, $shortlistedServices);
 
+$perPage = 10;
+$page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+$offset = ($page - 1) * $perPage;
 
+if ($searchQuery !== '') {
+    $controller = new SearchHOCleaningServicesController();
+    $result = $controller->searchHOCleaningServices($searchQuery, $perPage, $offset);
+} else {
+    $viewController = new ViewHOCleaningServicesController();
+    $result = $viewController->viewHOCleaningServices($perPage, $offset);
+}
+$displayedServices = $result['data'];
+$total = $result['total'];
+$totalPages = ceil($total / $perPage);
 
 
 ?>  
@@ -58,118 +65,185 @@ $shortlistedIds = array_map(function($svc) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Cleaning Services</title>
     <style>
-        body { font-family: Arial; background: #f4f4f4; margin: 0; padding: 40px; }
-        .container { background: white; padding: 30px; width: 100%; margin-top: 80px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); box-sizing: border-box; }
-        h1, h2 { margin-bottom: 20px; }
-        .search-container {display: flex; flex-direction:column; margin-right: 20px;}
-        .search-container input[type="text"] {padding: 8px;border: 1px solid #ccc;border-radius: 4px 0 0 4px;width: 300px; /* Adjust width as needed */font-family: Arial, sans-serif;}
-        .search-button {
+        body{
+            font-family: Arial,sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 20px
+        }
+        .container{
+            background: white;
+            padding: 20px;
+            max-width: 100vw;
+            margin: 0 auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            overflow-x: hidden;
+            /* Prevent horizontal scroll */
+        }
+        h1,h2{
+            margin-bottom: 20px
+        }
+        .search-container{
+            display: flex;
+            flex-direction: column;
+            margin-right: 20px
+        }
+        .search-container input[type="text"]{
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px 0 0 4px;
+            width: 300px;
+            /* Adjust width as needed */
+            font-family: Arial,sans-serif
+        }
+        .search-button{
             padding: 10px 20px;
-            background-color: #28a745; /* Bootstrap green */
+            background-color: #28a745;
+            /* Bootstrap green */
             color: white;
             border: none;
             border-radius: 4px;
-            cursor: pointer;
+            cursor: pointer
         }
-        .search-button:hover {
-            background-color: #218838; /* darker green on hover */
+        .search-button:hover{
+            background-color: #218838;
+            /* darker green on hover */
         }
-        .reset-button {padding: 10px 20px;background-color: #808080; color: white; border: none;border-radius: 4px;cursor: pointer;}
-        .reset-button:hover {background-color: #565656;}
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-        th { background-color: #f2f2f2; font-weight: bold; }
-        .no-results { text-align: center; font-style: italic; color: #777; }
-        .desc-cell { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .action-links {
-            display: flex;
-            flex-direction: row;     /* Ensure horizontal layout */
-            justify-content: center; /* Center horizontally in the cell */
-            align-items: center;     /* Center vertically in the cell */
-            gap: 8px;                /* Space between buttons */
-            height: 100%;
-        }
-        .action-links a { margin-right: 8px; text-decoration: none; color: #007bff; }
-        .action-links a:hover { text-decoration: underline; }
-        .action-links a {
-            display: flex;                /* Use flexbox for the link itself */
-    align-items: center;          /* Center vertically */
-    justify-content: center; 
-            width: 140px;      /* Fixed width for all buttons */
-            height: 50px;      /* Fixed height for all buttons */
-            text-align: center;
-            justify-content: center;
-            padding: 8px 6px;
+        .reset-button{
+            padding: 10px 20px;
+            background-color: #808080;
+            color: white;
             border: none;
+            border-radius: 4px;
+            cursor: pointer
+        }
+        .reset-button:hover{
+            background-color: #565656
+        }
+        table{
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: auto;
+            min-width: 0 !important
+        }
+        th,td{
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align:left;
+            white-space: normal;
+            word-break: break-word
+        }
+        .desc-cell{
+            white-space: normal;
+            word-break: break-word;
+            max-width: none
+        }
+        .action-links{
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center
+        }
+        .action-links a{
+            flex: 1 1 auto;
+            min-width: 80px;
+            padding: 8px 10px;
+            text-align: center;
+            white-space: normal;
+            word-break: break-word;
             border-radius: 4px;
             color: white !important;
             font-weight: bold;
             font-size: 1rem;
-            text-decoration: none;
             background-color: #007bff;
+            text-decoration: none;
             box-sizing: border-box;
-            white-space: normal;      /* Allow text to wrap */
-            word-break: break-word;   /* Break long words if needed */
-            vertical-align: middle;
-            line-height: normal;
+            transition: background 0.2s
         }
-        .message {
+        .action-links a.view-details{
+            background-color: #007bff
+        }
+        .action-links a.view-details:hover{
+            background-color: #0056b3
+        }
+        .action-links a.add-shortlist{
+            background-color: #28a745
+        }
+        .action-links a.add-shortlist:hover{
+            background-color: #218838
+        }
+        .action-links a.remove-shortlist{
+            background-color: #dc3545
+        }
+        .action-links a.remove-shortlist:hover{
+            background-color: #a71d2a
+        }
+        .message{
             padding: 10px;
             margin: 20px 0;
             border-radius: 5px;
-            text-align: center;
+            text-align: center
         }
-        .success {
+        .success{
             background-color: #28a745;
-            color: white;
+            color: white
         }
-        .error {
+        .error{
             background-color: #ffc107;
-            color: #856404;
+            color: #856404
         }
-        .shortlist-button, .remove-button, .back-button {
+        .shortlist-button,.remove-button,.back-button{
             padding: 10px 20px;
             border: none;
             border-radius: 4px;
             color: white;
             text-decoration: none;
             margin-right: 10px;
-            cursor: pointer;
+            cursor: pointer
         }
-        .action-links a.view-details {
-            background-color: #007bff;
+        .no-results{
+            text-align: center;
+            font-style: italic;
+            color: #777
         }
-        .action-links a.view-details:hover {
-            background-color: #0056b3;
+        .pagination{
+            margin-top: 20px;
+            text-align: center
         }
-
-        .action-links a.add-shortlist {
-            background-color: #28a745; /* green */
-        }
-        .action-links a.add-shortlist:hover {
-            background-color: #218838;
-        }
-
-        .action-links a.remove-shortlist {
-            background-color: #dc3545; /* red */
-        }
-        .action-links a.remove-shortlist:hover {
-            background-color: #a71d2a;
-        }
-
-        .action-links a:hover {
-            background-color: #0056b3;
+        .pagination a,.pagination span{
+            padding: 8px 16px;
+            margin: 0 4px;
+            border: 1px solid #ddd;
             text-decoration: none;
+            color: #007bff;
+            border-radius: 4px;
+            transition: background 0.2s
         }
-
-        .action-links a.remove-shortlist {
-            background-color: #dc3545; /* Red for remove */
+        .pagination a:hover{
+            background-color: #f2f2f2
         }
-
-        .action-links a.remove-shortlist:hover {
-            background-color: #a71d2a;
+        .pagination .active{
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff
         }
-        
+        @media (max-width: 900px){
+                .container{
+                    padding: 10px
+            }
+                table,th,td{
+                    font-size: 12px
+            }
+                .desc-cell{
+                    max-width: 150px
+            }
+                .action-links a{
+                    min-width: 70px;
+                    font-size: 0.9rem
+            }
+        }
     </style>
 </head>
 <body>
@@ -238,6 +312,31 @@ $shortlistedIds = array_map(function($svc) {
                 ?>
             </tbody>
         </table>
+        <div class="pagination" style="margin-top: 20px; text-align: center;">
+    <?php
+    $adjacents = 2;
+    $start = max(1, $page - $adjacents);
+    $end = min($totalPages, $page + $adjacents);
+    $queryString = $searchQuery !== '' ? '&search=' . urlencode($searchQuery) : '';
+
+    if ($page > 1) {
+        echo '<a href="?page=1' . $queryString . '">First</a>';
+        echo '<a href="?page=' . ($page - 1) . $queryString . '">Previous</a>';
+    }
+    for ($i = $start; $i <= $end; $i++) {
+        if ($i == $page) {
+            echo '<span class="active" style="background:#007bff;color:#fff;border-color:#007bff;padding:8px 16px;margin:0 4px;border-radius:4px;">' . $i . '</span>';
+        } else {
+            echo '<a href="?page=' . $i . $queryString . '">' . $i . '</a>';
+        }
+    }
+    if ($page < $totalPages) {
+        echo '<a href="?page=' . ($page + 1) . $queryString . '">Next</a>';
+        echo '<a href="?page=' . $totalPages . $queryString . '">Last</a>';
+    }
+    ?>
+</div>
+
     </div>
 </body>
 </html>
