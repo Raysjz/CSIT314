@@ -11,7 +11,7 @@ if ($_SESSION['profileName'] !== 'Platform Management') {
 
 // Include dependencies
 require_once __DIR__ . '/platformNavbar.php';
-require_once __DIR__ . '/../../controllers/ServiceCategory/dailyReportController.php';
+require_once __DIR__ . '/../../controllers/PlatformMgmt/dailyReportController.php';
 
 // Initialize variables
 $shortlists = $dailyViews = $daily = null;
