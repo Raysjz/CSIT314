@@ -78,7 +78,7 @@ class UserProfile {
     // Suspend this user profile
     public function suspendUserProfile() {
         $db = Database::getPDO();
-        $stmt = $db->prepare("UPDATE user_profiles SET is_suspended = true WHERE profile_id = :id");
+        $stmt = $db->prepare("UPDATE user_profiles SET is_suspended = true WHERE profile_id = :id ORDER BY profile_id ASC");
         $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $stmt->execute();
     }
@@ -86,7 +86,7 @@ class UserProfile {
     // Get all active (not suspended) profiles
     public static function getProfiles() {
         $db = Database::getPDO();
-        $stmt = $db->prepare("SELECT profile_id, profile_name FROM user_profiles WHERE is_suspended = false");
+        $stmt = $db->prepare("SELECT profile_id, profile_name FROM user_profiles WHERE is_suspended = false ORDER BY profile_id ASC");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

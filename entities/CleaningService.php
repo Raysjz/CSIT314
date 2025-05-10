@@ -91,24 +91,26 @@ class CleaningService
         return $stmt->execute();
     }
 
-    // View all cleaning services, optionally filtered by cleaner account ID
-    public static function viewCleaningServices($accountId = null)
+    // --- View Cleaning Services (Paginated) ---
+    public static function getPaginatedCleaningServices($perPage = 10, $offset = 0, $accountId = null)
     {
         $db = Database::getPDO();
         $sql = "SELECT cs.*, sc.category_name
                 FROM cleaner_services cs
                 JOIN service_categories sc ON cs.category_id = sc.category_id";
+        $params = [];
         if ($accountId !== null) {
             $sql .= " WHERE cs.cleaner_account_id = :account_id";
+            $params[':account_id'] = $accountId;
         }
-        $sql .= " ORDER BY cs.service_id ASC";
-
+        $sql .= " ORDER BY cs.service_id ASC LIMIT :limit OFFSET :offset";
         $stmt = $db->prepare($sql);
-        if ($accountId !== null) {
-            $stmt->execute([':account_id' => $accountId]);
-        } else {
-            $stmt->execute();
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value, PDO::PARAM_INT);
         }
+        $stmt->bindValue(':limit', (int)$perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $stmt->execute();
 
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $cleaningServices = [];
@@ -129,8 +131,22 @@ class CleaningService
         return $cleaningServices;
     }
 
-    // Search cleaning services by title or ID, optionally filtered by account ID
-    public static function searchCleaningServices($searchQuery, $accountId = null)
+    // --- Count All Cleaning Services (optionally filtered by account) ---
+    public static function countAllCleaningServices($accountId = null)
+    {
+        $db = Database::getPDO();
+        if ($accountId !== null) {
+            $stmt = $db->prepare("SELECT COUNT(*) FROM cleaner_services WHERE cleaner_account_id = :account_id");
+            $stmt->bindValue(':account_id', $accountId, PDO::PARAM_INT);
+            $stmt->execute();
+        } else {
+            $stmt = $db->query("SELECT COUNT(*) FROM cleaner_services");
+        }
+        return (int)($accountId !== null ? $stmt->fetchColumn() : $stmt->fetchColumn());
+    }
+
+    // --- Search Cleaning Services (Paginated) ---
+    public static function searchCleaningServicesPaginated($searchQuery, $perPage, $offset, $accountId = null)
     {
         $db = Database::getPDO();
         $searchLike = "%" . $searchQuery . "%";
@@ -142,8 +158,14 @@ class CleaningService
             $params[':accountId'] = $accountId;
         }
 
+        $sql .= " ORDER BY service_id ASC LIMIT :limit OFFSET :offset";
         $stmt = $db->prepare($sql);
-        $stmt->execute($params);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value, is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR);
+        }
+        $stmt->bindValue(':limit', (int)$perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $stmt->execute();
 
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $cleaningServices = [];
@@ -163,6 +185,28 @@ class CleaningService
         }
         return $cleaningServices;
     }
+
+    // --- Count Search Results ---
+    public static function countSearchCleaningServices($searchQuery, $accountId = null)
+    {
+        $db = Database::getPDO();
+        $searchLike = "%" . $searchQuery . "%";
+        $sql = "SELECT COUNT(*) FROM cleaner_services WHERE (title ILIKE :search OR service_id::text ILIKE :search)";
+        $params = [':search' => $searchLike];
+
+        if ($accountId !== null) {
+            $sql .= " AND cleaner_account_id = :accountId";
+            $params[':accountId'] = $accountId;
+        }
+
+        $stmt = $db->prepare($sql);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value, is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR);
+        }
+        $stmt->execute();
+        return (int)$stmt->fetchColumn();
+    }
+
 
     // Get a single cleaning service by its ID
     public static function getCleaningServiceById($id)
@@ -273,8 +317,9 @@ class CleaningService
         return $services;
     }
 
-     // Views all Cleaning Services   
-     public static function viewHOCleaningServices() {
+    // View all Cleaning Services for Homeowners (not suspended)
+    public static function viewHOCleaningServices()
+    {
         $db = Database::getPDO();
         $sql = "SELECT cs.*, sc.category_name
                 FROM cleaner_services cs
@@ -284,7 +329,7 @@ class CleaningService
         $stmt = $db->prepare($sql);
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+
         $cleaningServices = [];
         foreach ($result as $row) {
             $cleaningServices[] = new CleaningService(
@@ -302,38 +347,34 @@ class CleaningService
         }
         return $cleaningServices;
     }
-    
 
-    // Search Cleaning Services   
-    public static function searchHOCleaningServices($searchQuery) {
+    // Search Cleaning Services for Homeowners (not suspended)
+    public static function searchHOCleaningServices($searchQuery)
+    {
         $db = Database::getPDO();
-    
-        // Prepare the search string for partial matching
         $searchLike = "%" . $searchQuery . "%";
-    
-        // Only show not suspended services
-        $sql = "SELECT cs.* , sc.category_name
+        $sql = "SELECT cs.*, sc.category_name
                 FROM cleaner_services cs
                 JOIN service_categories sc ON cs.category_id = sc.category_id
                 WHERE cs.is_suspended = false
-                  AND (title ILIKE :search OR service_id::text ILIKE :search)";
+                  AND (cs.title ILIKE :search OR cs.service_id::text ILIKE :search)";
         $params = [':search' => $searchLike];
-    
+
         $stmt = $db->prepare($sql);
         $stmt->execute($params);
-    
+
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $cleaningServices = [];
-    
         foreach ($result as $row) {
             $cleaningServices[] = new CleaningService(
                 $row['service_id'],
+                $row['cleaner_account_id'],
                 $row['category_id'],
-                $row['category_name'],
                 $row['title'],
                 $row['description'],
                 $row['price'],
                 $row['availability'],
+                $row['is_suspended'],
                 $row['created_at'],
                 $row['updated_at']
             );
@@ -341,6 +382,35 @@ class CleaningService
         return $cleaningServices;
     }
 
-  
+    //---------Platform Generate Report-----------------
+        public static function countCreatedDaily() {
+            $db = Database::getPDO();
+            $sql = "SELECT COUNT(*) AS new_services_created
+                    FROM cleaner_services
+                    WHERE created_at::date = CURRENT_DATE";
+            $stmt = $db->query($sql);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $row ? (int)$row['new_services_created'] : 0;
+        }
+    
+        public static function countCreatedWeekly() {
+            $db = Database::getPDO();
+            $sql = "SELECT COUNT(*) AS new_services_created
+                    FROM cleaner_services
+                    WHERE created_at >= CURRENT_DATE - INTERVAL '6 days'";
+            $stmt = $db->query($sql);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $row ? (int)$row['new_services_created'] : 0;
+        }
+    
+        public static function countCreatedMonthly() {
+            $db = Database::getPDO();
+            $sql = "SELECT COUNT(*) AS new_services_created
+                    FROM cleaner_services
+                    WHERE DATE_TRUNC('month', created_at) = DATE_TRUNC('month', CURRENT_DATE)";
+            $stmt = $db->query($sql);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $row ? (int)$row['new_services_created'] : 0;
+        }
 }
 ?>

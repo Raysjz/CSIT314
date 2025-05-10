@@ -6,10 +6,16 @@ require_once __DIR__ . '/../../entities/CleaningService.php';
 
 class SearchCleaningServicesController
 {
-    // Search for cleaning services based on query and (optionally) cleaner account ID
-    public function searchCleaningServices($searchQuery, $accountId = null)
+    // Search for cleaning services with pagination and optional account filter
+    public function searchCleaningServices($searchQuery, $perPage = 10, $offset = 0, $accountId = null)
     {
-        return CleaningService::searchCleaningServices($searchQuery, $accountId);
+        $data = CleaningService::searchCleaningServicesPaginated($searchQuery, $perPage, $offset, $accountId);
+        $total = CleaningService::countSearchCleaningServices($searchQuery, $accountId);
+        return [
+            'data' => $data,
+            'total' => $total
+        ];
     }
 }
+
 ?>

@@ -1,5 +1,5 @@
 <?php
-// Suspend Cleaning Service
+// Cleaner Suspend Cleaning Service
 
 session_start(); // Start session
 
@@ -11,7 +11,6 @@ if ($_SESSION['profileName'] !== 'Cleaner') {
 // Include dependencies
 require_once __DIR__ . '/cleanerNavbar.php';
 require_once __DIR__ . '/../../controllers/Cleaner/SuspendCSController.php';
-
 
 // Get service ID from query
 $serviceID = isset($_GET['serviceid']) ? $_GET['serviceid'] : null;
@@ -25,7 +24,7 @@ if ($serviceID !== null) {
     if ($result) {
         $service = $controller->getCleaningServiceById($serviceID);
         $name = $service ? $service->getTitle() : '';
-        $message = "✅ Service ID: <strong>" . htmlspecialchars($serviceID) . "</strong> , " . htmlspecialchars($name) . " has been successfully suspended!";
+        $message = "✅ Service ID: <strong>" . htmlspecialchars($serviceID) . "</strong>, " . htmlspecialchars($name) . " has been successfully suspended!";
     } else {
         $message = "❌ Service not found or could not be suspended.";
     }
@@ -39,28 +38,15 @@ if ($serviceID !== null) {
     <meta charset="UTF-8">
     <title>Suspend Cleaning Service</title>
     <style>
-        body { font-family: Arial; background: #f4f4f4; margin: 0; padding: 40px; }
-        .container { background: white; padding: 30px; max-width: 500px; margin: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 40px; }
+        .container { background: #fff; padding: 30px; max-width: 500px; margin: 80px auto 0; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         h1 { margin-bottom: 20px; }
         .button-container { display: flex; justify-content: space-between; margin-top: 20px; }
         .back-button { padding: 10px 20px; border: none; color: white; border-radius: 4px; cursor: pointer; background: #6c757d; text-decoration: none; }
         .back-button:hover { background: #5a6268; }
-        .message {
-            margin-bottom: 20px;
-            padding: 10px;
-            border-radius: 5px;
-            text-align: center;
-            font-weight: bold;
-            background: #dc3545;
-            color: #fff;
-        }
-        .message.success {
-            background: #28a745;
-        }
-        .error {
-            background-color: #dc3545;
-            color: #fff;
-        }
+        .message { margin-bottom: 20px; padding: 10px; border-radius: 5px; text-align: center; font-weight: bold; }
+        .success { background: #28a745; color: #fff; }
+        .error { background: #dc3545; color: #fff; }
     </style>
 </head>
 <body>

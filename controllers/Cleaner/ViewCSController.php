@@ -6,10 +6,16 @@ require_once __DIR__ . '/../../entities/CleaningService.php';
 
 class ViewCleaningServicesController
 {
-    // Retrieve all cleaning services for a given account (or all if null)
-    public static function viewCleaningServices($accountId = null)
+    // Retrieve paginated cleaning services for a given account (or all if null)
+    public function viewCleaningServices($perPage = 10, $offset = 0, $accountId = null)
     {
-        return CleaningService::viewCleaningServices($accountId);
+        $data = CleaningService::getPaginatedCleaningServices($perPage, $offset, $accountId);
+        $total = CleaningService::countAllCleaningServices($accountId);
+        return [
+            'data' => $data,
+            'total' => $total
+        ];
     }
 }
+
 ?>

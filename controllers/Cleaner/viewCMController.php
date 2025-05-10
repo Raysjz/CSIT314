@@ -6,10 +6,16 @@ require_once __DIR__ . '/../../entities/MatchingBooking.php';
 
 class ViewCleanerMatchesController
 {
-    // Retrieve all matches for a given cleaner account
-    public function viewCleanerMatches($accountId)
+    // Retrieve paginated matches for a given cleaner account
+    public function viewCleanerMatches($accountId, $perPage = 10, $offset = 0)
     {
-        return MatchingBooking::viewCleanerMatches($accountId);
+        $data = MatchingBooking::getPaginatedCleanerMatches($accountId, $perPage, $offset);
+        $total = MatchingBooking::countCleanerMatches($accountId);
+        return [
+            'data' => $data,
+            'total' => $total
+        ];
     }
 }
+
 ?>
