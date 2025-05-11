@@ -5,10 +5,7 @@
 require_once(__DIR__ . '/../entities/UserAccount.php');
 
 class UserAccountController {
-    public function authenticate($username, $password, $profile) {
-        // Establish database connection
-        $conn = Database::getPgConnect();
-        
+    public function authenticate($username, $password, $profile) {        
         // Create a new UserAccount instance before calling the validateUser method
         $userAccount = new UserAccount(null, $username, $password, null, null,  $profile, null, false);  // ID is null initially
 
