@@ -1,45 +1,48 @@
 <?php
-session_start();
+// View HO Cleaner Details
+
+session_start(); // Start session
+
+// Redirect if not Homeowner
 if ($_SESSION['profileName'] !== 'Homeowner') {
     header('Location: ../login.php');
     exit();
 }
+
 // Include dependencies
 require_once __DIR__ . '/homeownerNavbar.php';
 require_once __DIR__ . '/../../controllers/UserAdmin/UserAccountController.php';
 require_once __DIR__ . '/../../controllers/PlatformMgmt/ServiceCategoryController.php';
 require_once __DIR__ . '/../../controllers/HomeOwner/viewHOcleanerDetailsController.php';
 
-// 1. Get the service_id from URL
+// Get the service_id from URL
 $serviceId = isset($_GET['service_id']) ? (int)$_GET['service_id'] : null;
 if (!$serviceId) {
     echo "<p>No service selected.</p>";
     exit;
 }
 
-
 $controller = new ViewHOcleanerDetailsController();
 
-// 2. Fetch the service object
+// Fetch the service object
 $service = $controller->getService($serviceId);
 if (!$service) {
     echo "<p>Service not found.</p>";
     exit;
 }
 
-// 3. Get the cleaner's user ID from the service
+// Get the cleaner's user ID from the service
 $cleanerId = $service->getCleanerAccountId();
 
-// 4. Fetch the cleaner's profile
+// Fetch the cleaner's profile
 $cleaner = $controller->getCleanerByService($serviceId);
 if (!$cleaner) {
     echo "<p>Cleaner not found.</p>";
     exit;
 }
 
-// 5. Fetch all services by this cleaner
+// Fetch all services by this cleaner
 $services = $controller->getServicesByCleaner($cleanerId);
-
 
 ?>
 <!DOCTYPE html>
@@ -78,7 +81,7 @@ $services = $controller->getServicesByCleaner($cleanerId);
     </div>
 
     <div class="service-list">
-        <h3>Services Offered by <?php echo htmlspecialchars($cleaner->name ?? $cleaner->fullname ?? ''); ?></h3>
+        <h3>Services Offered by <?php echo htmlspecialchars($cleaner->full_name ?? $cleaner->fullname ?? ''); ?></h3>
         <table class="service-table">
             <thead>
                 <tr>
@@ -93,22 +96,15 @@ $services = $controller->getServicesByCleaner($cleanerId);
             <tbody>
             <?php
             if (empty($services)) {
-                echo "<tr><td colspan='8' style='text-align:center; color:#888;'>No services found.</td></tr>";
+                echo "<tr><td colspan='6' style='text-align:center; color:#888;'>No services found.</td></tr>";
             } else {
+                $categoryController = new ServiceCategoryController();
                 foreach ($services as $svc) {
-                    // Numeric error safeguard
-                    $price = $service->getPrice();
-                    $priceValue = is_numeric($price) ? (float)$price : 0.00;
-
-                    $categoryController = new ServiceCategoryController();
-                    $category = $categoryController->getCategoryById($service->getCategoryId());
-
-                    // For each service, get the cleaner's info (should be same for all, but for robustness)
-                    $svcCleaner = CleaningService::getCleanerByServiceId($svc->getServiceId());
+                    $category = $categoryController->getCategoryById($svc->getCategoryId());
                     echo "<tr>";
                     echo "<td>" . htmlspecialchars($svc->getServiceId()) . "</td>";
                     echo "<td>" . htmlspecialchars($svc->getTitle()) . "</td>";
-                    echo "<td>" . htmlspecialchars($category->getName()) . "</td>";
+                    echo "<td>" . htmlspecialchars($category ? $category->getName() : '') . "</td>";
                     echo "<td>" . htmlspecialchars($svc->getDescription()) . "</td>";
                     echo "<td>$" . htmlspecialchars(number_format($svc->getPrice(), 2)) . "</td>";
                     echo "<td>" . htmlspecialchars($svc->getAvailability()) . "</td>";

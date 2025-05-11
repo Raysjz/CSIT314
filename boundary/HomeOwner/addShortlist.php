@@ -1,5 +1,16 @@
 <?php
-session_start();
+// Add to shortlist Details
+
+session_start(); // Start session
+
+// Redirect if not Homeowner
+if ($_SESSION['profileName'] !== 'Homeowner') {
+    header('Location: ../login.php');
+    exit();
+}
+
+
+// Include dependencies
 require_once(__DIR__ . '/../../controllers/ShortlistController.php');
 
 // Check if user is logged in and is a Homeowner
@@ -22,8 +33,6 @@ if ($serviceId) {
         header("Location: $redirectUrl?error=already_shortlisted");
     }
     exit();
-
-
 } else {
     header('Location: viewHO.php');
     exit();

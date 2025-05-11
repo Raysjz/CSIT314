@@ -1,5 +1,16 @@
 <?php
-session_start();
+// Remove from shortlist Details
+
+session_start(); // Start session
+
+// Redirect if not Homeowner
+if ($_SESSION['profileName'] !== 'Homeowner') {
+    header('Location: ../login.php');
+    exit();
+}
+
+
+// Include dependencies
 require_once(__DIR__ . '/../../controllers/ShortlistController.php');
 
 $controller = new ShortlistController();

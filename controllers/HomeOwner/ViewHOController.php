@@ -1,11 +1,14 @@
 <?php
+// View HO Cleaning Services Controller
 
 // Include dependencies
 require_once __DIR__ . '/../../entities/CleaningService.php';
 
-class ViewHOCleaningServicesController {
+class ViewHOCleaningServicesController
+{
     // Retrieve paginated available (not suspended) cleaning services
-    public function viewHOCleaningServices($perPage = 10, $offset = 0) {
+    public function viewHOCleaningServices($perPage = 10, $offset = 0)
+    {
         $data = CleaningService::getPaginatedHOCleaningServices($perPage, $offset);
         $total = CleaningService::countHOCleaningServices();
         return [
@@ -14,5 +17,4 @@ class ViewHOCleaningServicesController {
         ];
     }
 }
-
 ?>

@@ -1,17 +1,27 @@
 <?php
+// View HO Short List Controller
 
+// Include dependencies
 require_once(__DIR__ . '/../../entities/Shortlist.php');
 
-class ViewHOShortlistController {
-    public function getShortlistedServices($homeownerAccountId) {
+class ViewHOShortlistController
+{
+    // Get all shortlisted services for a homeowner
+    public function getShortlistedServices($homeownerAccountId)
+    {
         return Shortlist::getShortlistedServices($homeownerAccountId);
     }
-    public function getShortlistId($homeownerAccountId, $serviceId) {
+
+    // Get shortlist ID for a homeowner and service
+    public function getShortlistId($homeownerAccountId, $serviceId)
+    {
         return Shortlist::getShortlistId($homeownerAccountId, $serviceId);
     }
-    public function getShortlistById($shortlistId) {
+
+    // Get shortlist by its ID
+    public function getShortlistById($shortlistId)
+    {
         return Shortlist::getById($shortlistId);
     }
-    
 }
 ?>
