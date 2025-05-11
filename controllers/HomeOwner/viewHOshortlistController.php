@@ -2,7 +2,7 @@
 // View HO Short List Controller
 
 // Include dependencies
-require_once(__DIR__ . '/../../entities/Shortlist.php');
+require_once __DIR__ . '/../../entities/Shortlist.php';
 
 class ViewHOShortlistController
 {
