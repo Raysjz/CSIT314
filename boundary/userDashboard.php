@@ -1,13 +1,18 @@
 <?php
-session_start();
+// Other Users Dashboard
+
+session_start(); // Start session
+
+// Redirect to login if other user not logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Dashboard</title>
     <style>
         body { font-family: Arial; background: #f4f4f4; margin: 0; padding: 40px; }
@@ -56,6 +61,7 @@ if (!isset($_SESSION['user_id'])) {
     </style>
 </head>
 <body>
+    <!-- Navigation Bar -->
     <div class="navbar">
         <div class="navbar-left">
             <!-- Add left-side links here if needed -->
@@ -69,6 +75,7 @@ if (!isset($_SESSION['user_id'])) {
             <a href="/CSIT314/logout.php">Logout</a>
         </div>
     </div>
+    <!-- Main Dashboard Content -->
     <div class="dashboard-content">
         <h2>
             Your Profile logged in as:

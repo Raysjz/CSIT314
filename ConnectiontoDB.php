@@ -1,5 +1,6 @@
 <?php
 // Database connection
+
 class Database {
     #private static $host = 'aws-0-ap-southeast-1.pooler.supabase.com';
     #private static $port = '5432';

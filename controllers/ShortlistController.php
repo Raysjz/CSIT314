@@ -1,6 +1,7 @@
 <?php
+// Shortlist Controller
 
-// controllers/ShortlistController.php
+// Include dependencies
 require_once(__DIR__ . '/../entities/Shortlist.php');
 
 class ShortlistController {

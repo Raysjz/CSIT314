@@ -1,136 +1,71 @@
 <?php
+// Login UI
+
+session_start(); // Start session
+
+// Include dependencies
 require_once(__DIR__ . '/controllers/loginController.php');
 require_once(__DIR__ . '/controllers/UserAdmin/UserProfileController.php');
-session_start();
 
 // Instantiate the UserProfileController
 $userProfileController = new UserProfileController();
-
-// Fetch profiles for the dropdown
-$profiles = $userProfileController->getProfiles();  // Get all profiles from the database
+$profiles = $userProfileController->getProfiles(); // Fetch all profiles for dropdown
 
 $login_error = '';
 
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // The controller will handle the login logic
-    $controller = new UserAccountController();  // Correctly instantiate the controller
+    $controller = new UserAccountController();
     $result = $controller->authenticate($_POST['username'], $_POST['password'], $_POST['profile_name']);
 
     if (isset($result['success']) && $result['success']) {
-        // Handle success (redirect)
+        // Set session variables
         $_SESSION['user_id'] = $result['user']['account_id'];
         $_SESSION['username'] = $result['user']['ua_username'];
         $_SESSION['profileId'] = $result['user']['profile_id'];
         $_SESSION['profileName'] = $result['user']['profile_name'];
-        $_SESSION['isSuspended'] = $result['user']['is_suspended']; // Save the suspension status in session
+        $_SESSION['isSuspended'] = $result['user']['is_suspended'];
 
-        
         // Redirect based on profile
-        if($result['user']['profile_name'] === 'User Admin') {
-            header("Location: /CSIT314/boundary/UserAdmin/viewUA.php");
-        }elseif($result['user']['profile_name'] === 'Homeowner'){
-            header("Location: /CSIT314/boundary/HomeOwner/viewHO.php");
-        }elseif($result['user']['profile_name'] === 'Cleaner'){
-            header("Location: /CSIT314/boundary/Cleaner/viewCS.php");
-        }elseif($result['user']['profile_name'] === 'Platform Management'){
-            header("Location: /CSIT314/boundary/PlatformMgmt/viewSC.php");
-        }else {
-            header("Location: /CSIT314/boundary/userDashboard.php");
+        switch ($result['user']['profile_name']) {
+            case 'User Admin':
+                header("Location: /CSIT314/boundary/UserAdmin/viewUA.php");
+                break;
+            case 'Homeowner':
+                header("Location: /CSIT314/boundary/HomeOwner/viewHO.php");
+                break;
+            case 'Cleaner':
+                header("Location: /CSIT314/boundary/Cleaner/viewCS.php");
+                break;
+            case 'Platform Management':
+                header("Location: /CSIT314/boundary/PlatformMgmt/viewSC.php");
+                break;
+            default:
+                header("Location: /CSIT314/boundary/userDashboard.php");
         }
         exit;
-        } else {
-            // Show error if login failed
-            $login_error = $result['error'];
-        }
-        
+    } else {
+        // Show error if login failed
+        $login_error = $result['error'];
+    }
 }
-
-
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Group 07 Login</title>
     <style>
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #f8f9fa;
-        }
-
-        .container {
-            display: flex;
-            height: 100vh;
-        }
-
-        .left-panel {
-            flex: 2;
-            background-color: #e0e0e0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 0 40px 40px 0;
-        }
-
-        .left-panel h1 {
-            font-size: 36px;
-            text-align: center;
-            line-height: 1.5;
-            color: #333;
-        }
-
-        .right-panel {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .login-box {
-            background-color: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            text-align: center;
-            width: 100%;
-            max-width: 300px;
-        }
-
-        .login-box h2 {
-            margin-bottom: 20px;
-        }
-
-        .login-box input[type="text"],
-        .login-box input[type="password"],
-        .login-box select {
-            width: 90%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .login-box input[type="submit"] {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            background-color: #333;
-            color: white;
-            cursor: pointer;
-        }
-
-        .login-box input[type="submit"]:hover {
-            background-color: #555;
-        }
-
-        .error {
-            color: red;
-            font-size: 0.9em;
-            margin-bottom: 10px;
-        }
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background-color: #f8f9fa; }
+        .container { display: flex; height: 100vh; }
+        .left-panel { flex: 2; background-color: #e0e0e0; display: flex; justify-content: center; align-items: center; border-radius: 0 40px 40px 0; }
+        .left-panel h1 { font-size: 36px; text-align: center; line-height: 1.5; color: #333; }
+        .right-panel { flex: 1; display: flex; justify-content: center; align-items: center; }
+        .login-box { background-color: white; padding: 40px; border-radius: 20px; box-shadow: 0 0 20px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 300px; }
+        .login-box h2 { margin-bottom: 20px; }
+        .login-box input[type="text"], .login-box input[type="password"], .login-box select { width: 90%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .login-box input[type="submit"] { padding: 10px 20px; border: none; border-radius: 5px; background-color: #333; color: white; cursor: pointer; }
+        .login-box input[type="submit"]:hover { background-color: #555; }
+        .error { color: red; font-size: 0.9em; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -144,32 +79,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php if ($login_error): ?>
                     <div class="error"><?= htmlspecialchars($login_error) ?></div>
                 <?php endif; ?>
-
                 <input type="text" name="username" placeholder="Username" required><br>
                 <input type="password" name="password" placeholder="Password" required><br>
-
                 <label for="profile">Profile</label>
                 <select id="profile_id" name="profile_id" required onchange="updateProfileName()">
-                <option value="">-- Select Profile --</option>
-                <?php
-                // Dynamically populate profile options from the database
-                foreach ($profiles as $profile) {
-                    echo "<option value='" . htmlspecialchars($profile['profile_id']) . "'>" . htmlspecialchars($profile['profile_name']) . "</option>";}?>
+                    <option value="">-- Select Profile --</option>
+                    <?php foreach ($profiles as $profile): ?>
+                        <option value="<?= htmlspecialchars($profile['profile_id']) ?>">
+                            <?= htmlspecialchars($profile['profile_name']) ?>
+                        </option>
+                    <?php endforeach; ?>
                 </select>
                 <input type="hidden" id="profile_name" name="profile_name">
-
                 <input type="submit" value="Login">
             </form>
         </div>
-        <script>
+    </div>
+    <script>
         function updateProfileName() {
             var profileSelect = document.getElementById('profile_id');
             var profileName = profileSelect.options[profileSelect.selectedIndex].text;
             document.getElementById('profile_name').value = profileName;
         }
         window.onload = updateProfileName;
-        </script>
-
-    </div>
+    </script>
 </body>
 </html>

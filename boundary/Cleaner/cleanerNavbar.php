@@ -1,7 +1,7 @@
 <div class="Navbar">
     <div class="navbar-left">
         <a href="/CSIT314/boundary/Cleaner/viewCS.php">My Services</a>
-        <a href="/CSIT314/boundary/Cleaner/viewCleanerMatches.php">Bookings</a>
+        <a href="/CSIT314/boundary/Cleaner/viewCM.php">Bookings</a>
     </div>
     <div class="navbar-center">
         <text>Welcome, <?php echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'; ?></text>

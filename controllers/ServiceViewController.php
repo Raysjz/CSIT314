@@ -1,5 +1,7 @@
 <?php
-//ServiceViewController.php
+// Service View Controller
+
+// Include dependencies
 require_once(__DIR__ . '/../entities/ServiceView.php');
 
 class ServiceViewController {

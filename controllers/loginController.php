@@ -1,4 +1,7 @@
 <?php
+// Login User Account Controller
+
+// Include dependencies
 require_once(__DIR__ . '/../entities/UserAccount.php');
 
 class UserAccountController {
