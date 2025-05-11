@@ -12,11 +12,7 @@ class ViewHOshortlistDetailsController
         $service = CleaningService::getCleaningServiceById($serviceId);
         if (!$service) return [null, null];
 
-        // If you want to fetch cleaner details, uncomment and use your user controller
-        // $userController = new UserAccountController();
-        // $cleaner = $userController->getUserById($service->getCleanerAccountId());
-
-        $cleaner = null; // Placeholder if not fetching cleaner details
+        $cleaner = null; 
         return [$service, $cleaner];
     }
 }
