@@ -4,8 +4,8 @@
 session_start(); // Start session
 
 // Include dependencies
-require_once(__DIR__ . '/controllers/loginController.php');
-require_once(__DIR__ . '/controllers/UserAdmin/UserProfileController.php');
+require_once(__DIR__ . '/../controllers/loginController.php');
+require_once(__DIR__ . '/../controllers/UserAdmin/UserProfileController.php');
 
 // Instantiate the UserProfileController
 $userProfileController = new UserProfileController();
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="container">
         <div class="left-panel">
-            <h1>Group 07<br>Services..</h1>
+            <h1>Cleaning<br>Services 007</h1>
         </div>
         <div class="right-panel">
             <form class="login-box" method="post" action="">

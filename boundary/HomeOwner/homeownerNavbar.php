@@ -8,7 +8,7 @@
         <text>Welcome, <?php echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'; ?></text>
     </div>
     <div class="navbar-right">
-        <a href="/CSIT314/logout.php">Logout</a>
+        <a href="/CSIT314/boundary/logout.php">Logout</a>
     </div>
 </div>
 
