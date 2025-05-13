@@ -29,6 +29,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_report'])) {
 <head>
     <title>Generate Weekly Report Details</title>
     <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 40px; }
+        .container { background: #fff; padding: 30px; max-width: 500px; margin: 80px auto 0; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        h1 { margin-bottom: 20px; }
+        label { display: block; margin-top: 15px; font-weight: bold; }
+        input, select { width: 100%; padding: 10px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; box-sizing: border-box; }
+        .message { padding: 10px; margin: 20px 0; border-radius: 5px; text-align: center; font-weight: bold; }
+        .success { background-color: #28a745; color: white; }
+        .error { background-color: #dc3545; color: white; }
+        .button-container { display: flex; justify-content: space-between; margin-top: 20px; }
+        .back-button, .update-button { padding: 10px 20px; border: none; color: white; border-radius: 4px; cursor: pointer; text-decoration: none; }
+        .back-button { background: #6c757d; }
+        .back-button:hover { background: #5a6268; }
+        .update-button { background: #28a745; }
+        .update-button:hover { background: #218838; }
         .details-container { max-width: 600px; margin: 40px auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         .details-container h2 { margin-top: 0; }
         .details-row { margin-bottom: 18px; }
