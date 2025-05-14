@@ -78,7 +78,7 @@ class UserProfile {
     // Suspend this user profile
     public function suspendUserProfile() {
         $db = Database::getPDO();
-        $stmt = $db->prepare("UPDATE user_profiles SET is_suspended = true WHERE profile_id = :id ORDER BY profile_id ASC");
+        $stmt = $db->prepare("UPDATE user_profiles SET is_suspended = true WHERE profile_id = :id");
         $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $stmt->execute();
     }
