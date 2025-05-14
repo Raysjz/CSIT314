@@ -196,7 +196,7 @@ $totalPages = ceil($total / $perPage);
                 <tr>
                     <th>Category ID</th>
                     <th>Category Name</th>
-                    <th>Status</th>
+                    <th>Suspended</th>
                     <th>Actions</th>
                 </tr>
             </thead>
