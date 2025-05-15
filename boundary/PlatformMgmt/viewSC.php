@@ -13,22 +13,24 @@ if ($_SESSION['profileName'] !== 'Platform Management') {
 require_once __DIR__ . '/platformNavbar.php';
 require_once __DIR__ . '/../../controllers/PlatformMgmt/searchScController.php';
 require_once __DIR__ . '/../../controllers/PlatformMgmt/viewScController.php';
+require_once __DIR__ . '/../../controllers/PlatformMgmt/ServiceCategoryMiscController.php';
 
 $perPage = 10;
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $offset = ($page - 1) * $perPage;
 $searchQuery = isset($_GET['search']) ? trim($_GET['search']) : null;
 
-$viewController = new ViewServiceCategoryController();
-$searchController = new SearchServiceCategoryController();
+$miscController = new ServiceCategoryMiscController();
 
 if ($searchQuery) {
-    $result = $searchController->searchServiceCategory($searchQuery, $perPage, $offset);
+    $searchController = new SearchServiceCategoryController();
+    $serviceCategories = $searchController->searchServiceCategory($searchQuery, $perPage, $offset);
+    $total = $miscController->countSearchServiceCategory($searchQuery);
 } else {
-    $result = $viewController->viewServiceCategory($perPage, $offset);
+    $viewController = new ViewServiceCategoryController();
+    $serviceCategories = $viewController->viewServiceCategory($perPage, $offset);
+    $total = $miscController->countAllCategories();
 }
-$serviceCategories = $result['data'];
-$total = $result['total'];
 $totalPages = ceil($total / $perPage);
 
 ?>
