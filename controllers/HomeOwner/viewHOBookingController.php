@@ -9,9 +9,8 @@ class viewHomeOwnerBookingsController
     // View paginated bookings for a homeowner
     public function viewHomeownerBookings($homeownerAccountId, $perPage = 10, $offset = 0)
     {
-        $data = MatchingBooking::getPaginatedHomeownerBookings($homeownerAccountId, $perPage, $offset);
-        $total = MatchingBooking::countHomeownerBookings($homeownerAccountId);
-        return ['data' => $data, 'total' => $total];
+        // Only return the paginated array of MatchingBooking objects
+        return MatchingBooking::getPaginatedHomeownerBookings($homeownerAccountId, $perPage, $offset);
     }
 }
 ?>

@@ -9,12 +9,8 @@ class SearchHOCleaningServicesController
     // Search for paginated cleaning services for homeowners
     public function searchHOCleaningServices($searchQuery, $perPage = 10, $offset = 0)
     {
-        $data = CleaningService::searchHOCleaningServicesPaginated($searchQuery, $perPage, $offset);
-        $total = CleaningService::countSearchHOCleaningServices($searchQuery);
-        return [
-            'data' => $data,
-            'total' => $total
-        ];
+        // Only return the paginated array of CleaningService objects
+        return CleaningService::searchHOCleaningServicesPaginated($searchQuery, $perPage, $offset);
     }
 }
 ?>

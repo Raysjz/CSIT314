@@ -100,24 +100,28 @@ cleaner_service_inserts = []
 service_id_to_cleaner_and_category = dict()
 service_id_list = []
 service_id = 1
-for acc_id in cleaner_account_ids:
-    for _ in range(random.randint(1, 3)):
-        category_id = random.choice(category_ids)
-        title = random.choice(service_titles)
-        description = random.choice(service_descriptions)
-        price = round(random.uniform(40, 250), 2)
-        availability = random.choice(availabilities)
-        is_suspended = random.choices(['TRUE', 'FALSE'], weights=[1, 9], k=1)[0]
-        created_at = fake.date_time_between(start_date=one_month_ago, end_date=now)
-        updated_at = created_at
-        cleaner_service_inserts.append(
-            f"INSERT INTO cleaner_services (cleaner_account_id, category_id, title, description, price, availability, is_suspended, created_at, updated_at) "
-            f"VALUES ({acc_id}, {category_id}, '{title}', '{description}', {price}, '{availability}', {is_suspended}, '{created_at}', '{updated_at}');"
-        )
-        service_id_to_cleaner_and_category[service_id] = (acc_id, category_id)
-        service_id_list.append(service_id)
-        service_id += 1
+total_services_needed = 100
+services_created = 0
 
+while services_created < total_services_needed:
+    acc_id = random.choice(cleaner_account_ids)
+    category_id = random.choice(category_ids)
+    title = random.choice(service_titles)
+    description = random.choice(service_descriptions)
+    price = round(random.uniform(40, 250), 2)
+    availability = random.choice(availabilities)
+    is_suspended = random.choices(['TRUE', 'FALSE'], weights=[1, 9], k=1)[0]
+    created_at = fake.date_time_between(start_date=one_month_ago, end_date=now)
+    updated_at = created_at
+    cleaner_service_inserts.append(
+        f"INSERT INTO cleaner_services (cleaner_account_id, category_id, title, description, price, availability, is_suspended, created_at, updated_at) "
+        f"VALUES ({acc_id}, {category_id}, '{title}', '{description}', {price}, '{availability}', {is_suspended}, '{created_at}', '{updated_at}');"
+    )
+    service_id_to_cleaner_and_category[service_id] = (acc_id, category_id)
+    service_id_list.append(service_id)
+    service_id += 1
+    services_created += 1
+    
 # --- 5. Service Views ---
 service_views_inserts = []
 all_pairs = [(s, v) for s in service_id_list for v in homeowner_account_ids]

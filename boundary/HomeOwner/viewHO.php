@@ -13,6 +13,7 @@ if ($_SESSION['profileName'] !== 'Homeowner') {
 require_once __DIR__ . '/homeownerNavbar.php';
 require_once __DIR__ . '/../../controllers/HomeOwner/ViewHOController.php';
 require_once __DIR__ . '/../../controllers/HomeOwner/SearchHOController.php';
+require_once __DIR__ . '/../../controllers/HomeOwner/HOCleaningServicesMiscController.php';
 require_once __DIR__ . '/../../controllers/PlatformMgmt/ServiceCategoryController.php';
 require_once __DIR__ . '/../../controllers/ShortlistController.php';
 
@@ -44,16 +45,19 @@ $shortlistedIds = array_map(function($svc) {
 $perPage = 10;
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $offset = ($page - 1) * $perPage;
+$searchQuery = isset($_GET['search']) ? $_GET['search'] : '';
+
+$miscController = new HOCleaningServicesMiscController();
 
 if ($searchQuery !== '') {
     $controller = new SearchHOCleaningServicesController();
-    $result = $controller->searchHOCleaningServices($searchQuery, $perPage, $offset);
+    $displayedServices = $controller->searchHOCleaningServices($searchQuery, $perPage, $offset);
+    $total = $miscController->countSearchHOCleaningServices($searchQuery);
 } else {
     $viewController = new ViewHOCleaningServicesController();
-    $result = $viewController->viewHOCleaningServices($perPage, $offset);
+    $displayedServices = $viewController->viewHOCleaningServices($perPage, $offset);
+    $total = $miscController->countHOCleaningServices();
 }
-$displayedServices = $result['data'];
-$total = $result['total'];
 $totalPages = ceil($total / $perPage);
 ?>
 <!DOCTYPE html>

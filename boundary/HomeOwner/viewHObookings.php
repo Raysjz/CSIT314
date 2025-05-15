@@ -15,6 +15,7 @@ require_once __DIR__ . '/../../controllers/UserAdmin/UserAccountController.php';
 require_once __DIR__ . '/../../controllers/PlatformMgmt/ServiceCategoryController.php';
 require_once __DIR__ . '/../../controllers/HomeOwner/viewHOBookingController.php';
 require_once __DIR__ . '/../../controllers/HomeOwner/SearchHOBookingController.php';
+require_once __DIR__ . '/../../controllers/HomeOwner/HOBookingMiscController.php';
 
 // Get filter values
 $accountId = $_SESSION['user_id'] ?? null;
@@ -31,17 +32,19 @@ $userAccountController = new UserAccountController();
 $categoryController = new ServiceCategoryController();
 $categories = $categoryController->getAllCategories();
 
-$viewController = new viewHomeOwnerBookingsController();
+$miscController = new HOBookingMiscController();
 
 if (empty($categoryId) && empty($startDate) && empty($endDate)) {
-    $result = $viewController->viewHomeownerBookings($accountId, $perPage, $offset);
+    $viewController = new viewHomeOwnerBookingsController();
+    $bookings = $viewController->viewHomeownerBookings($accountId, $perPage, $offset);
+    $total = $miscController->countHomeownerBookings($accountId);
 } else {
     $searchController = new searchHOBookingController();
-    $result = $searchController->searchHOBooking($accountId, $categoryId, $startDate, $endDate, $perPage, $offset);
+    $bookings = $searchController->searchHOBooking($accountId, $categoryId, $startDate, $endDate, $perPage, $offset);
+    $total = $miscController->countSearchHomeownerBookings($accountId, $categoryId, $startDate, $endDate);
 }
-$bookings = $result['data'];
-$total = $result['total'];
 $totalPages = ceil($total / $perPage);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
