@@ -4,17 +4,15 @@
 // Include dependencies
 require_once __DIR__ . '/../../entities/UserProfile.php';
 
+// Controller for searching user profiles with pagination
 class SearchUserProfileController
 {
-    // Search user profiles by query with pagination
+    // Search user profiles by query with pagination (returns array of objects)
     public function searchUserProfiles($searchQuery, $perPage = 10, $offset = 0)
     {
-        $data = UserProfile::searchUserProfilesPaginated($searchQuery, $perPage, $offset);
-        $total = UserProfile::countSearchProfiles($searchQuery);
-        return [
-            'data' => $data,
-            'total' => $total
-        ];
+        // Only return the paginated array of UserProfile objects matching the search
+        return UserProfile::searchUserProfilesPaginated($searchQuery, $perPage, $offset);
     }
 }
 ?>
+

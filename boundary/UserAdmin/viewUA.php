@@ -13,6 +13,7 @@ if ($_SESSION["profileName"] !== "User Admin") {
 require_once __DIR__ . "/adminNavbar.php";
 require_once __DIR__ . '/../../controllers/UserAdmin/viewUAController.php';
 require_once __DIR__ . '/../../controllers/UserAdmin/SearchUAController.php';
+require_once __DIR__ . '/../../controllers/UserAdmin/UserAccountMiscController.php';
 
 // Pagination and search parameters
 $perPage = 10;
@@ -20,17 +21,19 @@ $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $offset = ($page - 1) * $perPage;
 $searchQuery = isset($_GET['search']) ? trim($_GET['search']) : null;
 
-// Fetch user accounts (with or without search)
+$miscController = new UserAccountMiscController();
+
 if ($searchQuery) {
     $searchController = new SearchUserAccountController();
-    $result = $searchController->searchUserAccounts($searchQuery, $perPage, $offset);
+    $userAccounts = $searchController->searchUserAccounts($searchQuery, $perPage, $offset);
+    $total = $miscController->countSearchResults($searchQuery);
 } else {
     $viewController = new ViewUserAccountController();
-    $result = $viewController->viewUserAccounts($perPage, $offset);
+    $userAccounts = $viewController->viewUserAccounts($perPage, $offset);
+    $total = $miscController->countAllUsers();
 }
-$userAccounts = $result['data'];
-$total = $result['total'];
 $totalPages = ceil($total / $perPage);
+
 ?>
 
 <!DOCTYPE html>

@@ -13,6 +13,7 @@ if ($_SESSION["profileName"] !== "User Admin") {
 require_once __DIR__ . "/adminNavbar.php";
 require_once __DIR__ . "/../../controllers/UserAdmin/viewUPController.php";
 require_once __DIR__ . "/../../controllers/UserAdmin/searchUPController.php";
+require_once __DIR__ . "/../../controllers/UserAdmin/UserProfileMiscController.php";
 
 // Pagination parameters
 $perPage = 10;
@@ -20,18 +21,17 @@ $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $offset = ($page - 1) * $perPage;
 $searchQuery = isset($_GET["search"]) ? trim($_GET["search"]) : null;
 
-// Instantiate controllers
-$viewController = new ViewUserProfileController();
-$searchController = new SearchUserProfileController();
+$miscController = new UserProfileMiscController();
 
-// Fetch user profiles (search or all)
 if ($searchQuery) {
-    $result = $searchController->searchUserProfiles($searchQuery, $perPage, $offset);
+    $searchController = new SearchUserProfileController();
+    $userProfiles = $searchController->searchUserProfiles($searchQuery, $perPage, $offset);
+    $total = $miscController->countSearchProfiles($searchQuery);
 } else {
-    $result = $viewController->viewUserProfiles($perPage, $offset);
+    $viewController = new ViewUserProfileController();
+    $userProfiles = $viewController->viewUserProfiles($perPage, $offset);
+    $total = $miscController->countAllProfiles();
 }
-$userProfiles = $result['data'];
-$total = $result['total'];
 $totalPages = ceil($total / $perPage);
 ?>
 

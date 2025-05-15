@@ -7,15 +7,14 @@ require_once __DIR__ . '/../../entities/UserProfile.php';
 // Controller for viewing user profiles with pagination
 class ViewUserProfileController
 {
-    // Retrieve paginated user profiles
+    // Retrieve paginated user profiles (returns array of objects)
     public function viewUserProfiles($perPage = 10, $offset = 0)
     {
-        $data = UserProfile::getPaginatedProfiles($perPage, $offset);
-        $total = UserProfile::countAllProfiles();
-        return [
-            'data' => $data,
-            'total' => $total
-        ];
+        // Only return the paginated data
+        return UserProfile::getPaginatedProfiles($perPage, $offset);
     }
 }
 ?>
+
+
+
