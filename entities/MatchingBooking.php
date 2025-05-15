@@ -1,4 +1,6 @@
 <?php
+// Matching Booking Entity
+
 // Include dependencies
 require_once(__DIR__ . '/../ConnectiontoDB.php');
 
@@ -49,7 +51,7 @@ class MatchingBooking {
                 JOIN service_categories sc ON mb.category_id = sc.category_id
                 WHERE mb.cleaner_account_id = :cleaner_id
                 AND mb.is_deleted = FALSE
-                ORDER BY mb.created_at DESC
+                ORDER BY mb.booking_date DESC
                 LIMIT :limit OFFSET :offset";
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':cleaner_id', $cleanerAccountId, PDO::PARAM_INT);
@@ -177,7 +179,7 @@ class MatchingBooking {
                 JOIN service_categories sc ON mb.category_id = sc.category_id
                 WHERE mb.homeowner_account_id = :homeowner_id
                 AND mb.is_deleted = FALSE
-                ORDER BY mb.created_at DESC
+                ORDER BY mb.booking_date DESC
                 LIMIT :limit OFFSET :offset";
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':homeowner_id', $homeownerAccountId, PDO::PARAM_INT);

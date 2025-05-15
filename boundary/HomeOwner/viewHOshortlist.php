@@ -12,10 +12,17 @@ if ($_SESSION['profileName'] !== 'Homeowner') {
 // Include dependencies
 require_once __DIR__ . '/homeownerNavbar.php';
 require_once __DIR__ . '/../../controllers/HomeOwner/ViewHOShortlistController.php';
+require_once __DIR__ . '/../../controllers/HomeOwner/searchHOShortlistController.php';
 
+// Get Homeowner ID
 $homeownerAccountId = $_SESSION['user_id'];
-$controller = new ViewHOShortlistController();
-$shortlistedServices = $controller->getShortlistedServices($homeownerAccountId);
+
+// Get search query from GET
+$searchQuery = isset($_GET['search']) ? trim($_GET['search']) : '';
+
+// Instantiate controllers
+$viewController = new ViewHOShortlistController();
+$searchController = new SearchHOShortlistController();
 
 // Handle shortlist messages
 $message = "";
@@ -29,16 +36,13 @@ if (isset($_GET['removed']) && $_GET['removed'] == 1) {
     $message = "✅ Service removed from your shortlist.";
 }
 
-// Shortlist search
-$searchQuery = isset($_GET['search']) ? trim($_GET['search']) : '';
-$filteredServices = $shortlistedServices;
+// Get shortlist data (search or view all)
 if ($searchQuery !== '') {
-    $filteredServices = array_filter($shortlistedServices, function($service) use ($searchQuery) {
-        return stripos((string)$service->shortlist_id, $searchQuery) !== false
-            || stripos((string)$service->service_id, $searchQuery) !== false
-            || stripos($service->title, $searchQuery) !== false;
-    });
+    $shortlistedServices = $searchController->searchShortlistedServices($homeownerAccountId, $searchQuery);
+} else {
+    $shortlistedServices = $viewController->getShortlistedServices($homeownerAccountId);
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -108,10 +112,10 @@ if ($searchQuery !== '') {
             </thead>
             <tbody>
             <?php
-            if (empty($filteredServices)) {
+            if (empty($shortlistedServices)) {
                 echo "<tr><td colspan='7' class='no-results'>No results found.</td></tr>";
             } else {
-                foreach ($filteredServices as $service) {
+                foreach ($shortlistedServices as $service) {
                     echo "<tr>";
                     echo "<td>" . htmlspecialchars($service->shortlist_id) . "</td>";
                     echo "<td>" . htmlspecialchars($service->service_id) . "</td>";

@@ -2,18 +2,14 @@
 // View HO Short List Details Controller
 
 // Include dependencies
-require_once __DIR__ . '/../../entities/CleaningService.php';
+require_once __DIR__ . '/../../entities/Shortlist.php';
 
-class ViewHOshortlistDetailsController
+class viewHOshortlistDetailsController
 {
-    // Get a cleaning service and its cleaner (returns [service, cleaner])
-    public function getServiceAndCleaner($serviceId)
+    // Get shortlist by its ID
+    public function getShortlistById($shortlistId)
     {
-        $service = CleaningService::getCleaningServiceById($serviceId);
-        if (!$service) return [null, null];
-
-        $cleaner = null; 
-        return [$service, $cleaner];
+        return Shortlist::getById($shortlistId);
     }
 }
 ?>

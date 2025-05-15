@@ -13,32 +13,39 @@ if ($_SESSION['profileName'] !== 'Homeowner') {
 require_once __DIR__ . '/homeownerNavbar.php';
 require_once __DIR__ . '/../../controllers/ShortlistController.php';
 require_once __DIR__ . '/../../controllers/ServiceViewController.php';
+require_once __DIR__ . '/../../controllers/Cleaner/CleaningServiceController.php';
 require_once __DIR__ . '/../../controllers/HomeOwner/viewHOshortlistDetailsController.php';
+require_once __DIR__ . '/../../controllers/PlatformMgmt/ServiceCategoryController.php';
 
+// --- 1. Get Request Parameters and Session Data ---
 $homeownerAccountId = $_SESSION['user_id'];
 $shortlistId = isset($_GET['id']) ? (int)$_GET['id'] : null;
 
-// Fetch shortlist entry by shortlist_id
-$shortlistEntry = Shortlist::getById($shortlistId);
+// --- 2. Fetch Shortlist Entry ---
+$shortlistController = new viewHOshortlistDetailsController();
+$shortlistEntry = $shortlistController->getShortlistById($shortlistId);
 
-// Security check: does this entry belong to the current user?
 if (!$shortlistEntry || $shortlistEntry->homeowner_account_id != $homeownerAccountId) {
     echo "<p>Shortlist entry not found or access denied.</p>";
     exit;
 }
 
-// Fetch service details using service_id from shortlist entry
+// --- 3. Fetch Service Details ---
 $serviceId = $shortlistEntry->service_id;
-$service = CleaningService::getCleaningServiceById($serviceId);
+$cleaningServiceController = new CleaningServiceController();
+$service = $cleaningServiceController->getCleaningServiceById($serviceId);
 
 if (!$service) {
     echo "<p>Service not found.</p>";
     exit;
 }
 
-$categoryName = method_exists($service, 'getCategoryName') ? $service->getCategoryName() : '';
+// --- 4. Fetch Category Name ---
+$categoryController = new ServiceCategoryController();
+$category = $categoryController->getCategoryById($service->getCategoryId());
+$categoryName = $category ? $category->getName() : '';
 
-// Log view only once per session per service
+// --- 5. Log Service View (once per session per service) ---
 $viewerAccountId = $_SESSION['user_id'] ?? null;
 $viewController = new ServiceViewController();
 $viewedKey = 'viewed_service_' . $serviceId;
@@ -47,21 +54,21 @@ if (empty($_SESSION[$viewedKey])) {
     $_SESSION[$viewedKey] = true;
 }
 
-// Handle shortlist messages
+// --- 7. Handle Shortlist Messages ---
 $message = "";
 if (isset($_GET['success']) && $_GET['success'] == 1) {
     $message = "✅ Service successfully added to your shortlist!";
-}
-if (isset($_GET['error']) && $_GET['error'] === 'already_shortlisted') {
+} elseif (isset($_GET['error']) && $_GET['error'] === 'already_shortlisted') {
     $message = "⚠️ This service is already in your shortlist.";
-}
-if (isset($_GET['removed']) && $_GET['removed'] == 1) {
+} elseif (isset($_GET['removed']) && $_GET['removed'] == 1) {
     $message = "✅ Service removed from your shortlist.";
 }
 
-// For the details page, you can check if this service is in the user's shortlist
-$isShortlisted = true; // Since this page is for a specific shortlist entry
+// --- 8. Shortlist Status ---
+$isShortlisted = true; // Always true on this details page
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
