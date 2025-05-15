@@ -9,12 +9,8 @@ class ViewCleaningServicesController
     // Retrieve paginated cleaning services for a given account (or all if null)
     public function viewCleaningServices($perPage = 10, $offset = 0, $accountId = null)
     {
-        $data = CleaningService::getPaginatedCleaningServices($perPage, $offset, $accountId);
-        $total = CleaningService::countAllCleaningServices($accountId);
-        return [
-            'data' => $data,
-            'total' => $total
-        ];
+        // Only return the paginated array of CleaningService objects
+        return CleaningService::getPaginatedCleaningServices($perPage, $offset, $accountId);
     }
 }
 

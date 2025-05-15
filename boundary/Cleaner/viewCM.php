@@ -14,7 +14,7 @@ require_once __DIR__ . '/../../controllers/UserAdmin/UserAccountController.php';
 require_once __DIR__ . '/../../controllers/PlatformMgmt/ServiceCategoryController.php';
 require_once __DIR__ . '/../../controllers/Cleaner/viewCMController.php';
 require_once __DIR__ . '/../../controllers/Cleaner/SearchCMController.php';
-
+require_once __DIR__ . '/../../controllers/Cleaner/CleanerMatchesMiscController.php';
 
 // Get all categories for dropdown
 $userAccountController = new UserAccountController();
@@ -30,23 +30,17 @@ $categoryId = (isset($_GET['category_id']) && $_GET['category_id'] !== '') ? $_G
 $startDate = (isset($_GET['start_date']) && $_GET['start_date'] !== '') ? $_GET['start_date'] : null;
 $endDate = (isset($_GET['end_date']) && $_GET['end_date'] !== '') ? $_GET['end_date'] : null;
 
-$viewController = new ViewCleanerMatchesController();
+$miscController = new CleanerMatchesMiscController();
 
 if (empty($categoryId) && empty($startDate) && empty($endDate)) {
-    $result = $viewController->viewCleanerMatches($accountId, $perPage, $offset);
+    $viewController = new ViewCleanerMatchesController();
+    $bookings = $viewController->viewCleanerMatches($accountId, $perPage, $offset);
+    $total = $miscController->countCleanerMatches($accountId);
 } else {
     $searchController = new SearchCleanerMatchesController();
-    $result = $searchController->searchCleanerMatches(
-        $accountId,
-        $categoryId,
-        $startDate,
-        $endDate,
-        $perPage,
-        $offset
-    );
+    $bookings = $searchController->searchCleanerMatches($accountId, $categoryId, $startDate, $endDate, $perPage, $offset);
+    $total = $miscController->countSearchCleanerMatches($accountId, $categoryId, $startDate, $endDate);
 }
-$bookings = $result['data'];
-$total = $result['total'];
 $totalPages = ceil($total / $perPage);
 
 ?>

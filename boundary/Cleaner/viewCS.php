@@ -13,6 +13,7 @@ if ($_SESSION['profileName'] !== 'Cleaner') {
 require_once __DIR__ . '/cleanerNavbar.php';
 require_once __DIR__ . '/../../controllers/Cleaner/ViewCSController.php';
 require_once __DIR__ . '/../../controllers/Cleaner/SearchCSController.php';
+require_once __DIR__ . '/../../controllers/Cleaner/CleaningServicesMiscController.php';
 require_once __DIR__ . '/../../controllers/PlatformMgmt/ServiceCategoryController.php';
 require_once __DIR__ . '/../../controllers/ShortlistController.php';
 require_once __DIR__ . '/../../controllers/ServiceViewController.php';
@@ -25,20 +26,23 @@ $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $offset = ($page - 1) * $perPage;
 $searchQuery = isset($_GET['search']) ? trim($_GET['search']) : null;
 
-$viewController = new ViewCleaningServicesController();
-$searchController = new SearchCleaningServicesController();
+
 $shortlistController = new ShortlistController();
 $sviewController = new ServiceViewController();
 $categoryController = new ServiceCategoryController();
+$miscController = new CleaningServicesMiscController();
 
 if ($searchQuery) {
-    $result = $searchController->searchCleaningServices($searchQuery, $perPage, $offset, $accountId);
+    $searchController = new SearchCleaningServicesController();
+    $cleaningServices = $searchController->searchCleaningServices($searchQuery, $perPage, $offset, $accountId);
+    $total = $miscController->countSearchCleaningServices($searchQuery, $accountId);
 } else {
-    $result = $viewController->viewCleaningServices($perPage, $offset, $accountId);
+    $viewController = new ViewCleaningServicesController();
+    $cleaningServices = $viewController->viewCleaningServices($perPage, $offset, $accountId);
+    $total = $miscController->countAllCleaningServices($accountId);
 }
-$cleaningServices = $result['data'];
-$total = $result['total'];
 $totalPages = ceil($total / $perPage);
+
 ?>
 
 <!DOCTYPE html>

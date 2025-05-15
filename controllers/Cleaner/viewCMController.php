@@ -9,12 +9,8 @@ class ViewCleanerMatchesController
     // Retrieve paginated matches for a given cleaner account
     public function viewCleanerMatches($accountId, $perPage = 10, $offset = 0)
     {
-        $data = MatchingBooking::getPaginatedCleanerMatches($accountId, $perPage, $offset);
-        $total = MatchingBooking::countCleanerMatches($accountId);
-        return [
-            'data' => $data,
-            'total' => $total
-        ];
+        // Only return the paginated array of MatchingBooking objects
+        return MatchingBooking::getPaginatedCleanerMatches($accountId, $perPage, $offset);
     }
 }
 
