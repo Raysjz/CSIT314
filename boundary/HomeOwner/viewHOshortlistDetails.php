@@ -13,7 +13,7 @@ if ($_SESSION['profileName'] !== 'Homeowner') {
 require_once __DIR__ . '/homeownerNavbar.php';
 require_once __DIR__ . '/../../controllers/ShortlistController.php';
 require_once __DIR__ . '/../../controllers/ServiceViewController.php';
-require_once __DIR__ . '/../../controllers/Cleaner/CleaningServiceController.php';
+require_once __DIR__ . '/../../controllers/CleaningServiceController.php';
 require_once __DIR__ . '/../../controllers/HomeOwner/viewHOshortlistDetailsController.php';
 require_once __DIR__ . '/../../controllers/PlatformMgmt/ServiceCategoryController.php';
 
