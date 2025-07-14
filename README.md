@@ -26,6 +26,7 @@ CleanConnect is a web-based platform designed to connect homeowners with freelan
 
 **Technology Stack**
 - PHP – Backend programming language
+    - https://windows.php.net/download/
 - PostgreSQL (via Supabase) – Database service
 - Supabase – Backend-as-a-service platform
 - XAMPP – Local server environment
@@ -35,6 +36,7 @@ CleanConnect is a web-based platform designed to connect homeowners with freelan
 - GitLab – Version control and repository hosting
 - Supabase Studio – Database management interface
 - XAMPP Control Panel – Local server management
+    - https://www.apachefriends.org/download.html
 - VS Code – Code editor
 - Web Browser – For accessing dashboards and testing
 
