@@ -1,23 +1,27 @@
-# CSIT314 
+# CSIT314 Software Development Methodologies
+
+## Project Details
+In this project, your team is asked to design and develop a system for C2C freelance home cleaners matching to home owners who require such services. The system should support at least the following key aspects. 
+1. Support and manage different types of users and user profiles (i.e. user admin, cleaner, home owner, platform management). 
+2. Support cleaners to manage their services 
+3. Support home owner to search, view, save (into a shortlist or favourite list) potential cleaners 
+4. Support cleaners to track the potential interests on their services (i.e. the number of views, the number of times being shortlisted) 
+5. Support cleaners to search and view history of the confirm matches, filtered by services, date period 
+6. Support home owners to search and view history of the cleaner services used, filtered by services, date period 
+7. Support platform management to manage categories for cleaning services and get reports (daily, weekly, monthly)
+
 
 ## Getting started
 
 ### Installation Required
 1. Download github Desktop
-2. Clone repository from internet
- - https://gitlab.com/Barrette5276/csit314.git
- - Use access token as password and own username as username
+2. Clone repository from internet  
+    - https://gitlab.com/Barrette5276/csit314.git
+    - Use access token as password and own username as username
 3. Install PHP
-- https://www.youtube.com/watch?v=n04w2SzGr_U
+    - https://www.youtube.com/watch?v=n04w2SzGr_U
 4. Serverless PHP (Using supabase)
 
-
-## Getting started
-User Stories
-No read - View
-Delete -> Suspend
-
-Shortlist -> search for cleaning services
 
 <details><summary>Differences of UA and UP</summary>
 - USER ACCOUNT
@@ -36,13 +40,3 @@ dropdown list
 4. platform management
 </details>
 
-
-<details><summary>Archived</summary>
-~~5 Install PostgreSQL
-Important : During installation , put password as 1234 when installing 
-Remember to save password when creating server with password 1234 too
-- https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
-- https://www.youtube.com/watch?v=WFT5MaZN6g4~~
-6 Connecting PostgreSQL to PHP with XAMPP
-- https://www.youtube.com/watch?v=wD2E8IdBQIE&t=217s~~
-</details>
