@@ -7,7 +7,7 @@
 **Description:**  
 CleanConnect is a web-based platform designed to connect homeowners with freelance home cleaners. It supports multiple user roles (admin, cleaner, homeowner, platform manager), service management, search and shortlist features, booking history, and reporting. The project is developed using agile methodologies, with a focus on object-oriented design, test-driven development, and CI/CD practices.
 
-**Status:** Completed
+**Status:** Completed as of 19 May 2025 (T02 Group)
 
 **Key Features:**
 - User profile management
@@ -24,9 +24,19 @@ CleanConnect is a web-based platform designed to connect homeowners with freelan
 - Lester
 - Yehuda
 
+**Technology Stack**
+- PHP – Backend programming language
+- PostgreSQL (via Supabase) – Database service
+- Supabase – Backend-as-a-service platform
+- XAMPP – Local server environment
+- Taiga – Agile project management framework
 
-**Technologies Used:**  
-Python (Django), React, PostgreSQL, Docker, Taiga (for Agile management)
+**Development Tools**
+- GitLab – Version control and repository hosting
+- Supabase Studio – Database management interface
+- XAMPP Control Panel – Local server management
+- VS Code – Code editor
+- Web Browser – For accessing dashboards and testing
 
 ---
 
