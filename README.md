@@ -1,23 +1,63 @@
 # CSIT314 Software Development Methodologies
 
-## Project Details
-In this project, your team is asked to design and develop a system for C2C freelance home cleaners matching to home owners who require such services. The system should support at least the following key aspects. 
-1. Support and manage different types of users and user profiles (i.e. user admin, cleaner, home owner, platform management). 
-2. Support cleaners to manage their services 
-3. Support home owner to search, view, save (into a shortlist or favourite list) potential cleaners 
-4. Support cleaners to track the potential interests on their services (i.e. the number of views, the number of times being shortlisted) 
-5. Support cleaners to search and view history of the confirm matches, filtered by services, date period 
-6. Support home owners to search and view history of the cleaner services used, filtered by services, date period 
-7. Support platform management to manage categories for cleaning services and get reports (daily, weekly, monthly)
+## Project Information
+
+**Project Title:** CleanConnect: C2C Home Cleaning Services Platform
+
+**Description:**  
+CleanConnect is a web-based platform designed to connect homeowners with freelance home cleaners. It supports multiple user roles (admin, cleaner, homeowner, platform manager), service management, search and shortlist features, booking history, and reporting. The project is developed using agile methodologies, with a focus on object-oriented design, test-driven development, and CI/CD practices.
+
+**Status:** Completed
+
+**Key Features:**
+- User profile management
+- Cleaner service listings
+- Homeowner search and shortlist
+- Booking and history tracking
+- Service category management
+
+**Team Members:**
+- Ray
+- Jeremy
+- Kishore
+- Ryan
+- Lester
+- Yehuda
 
 
-## Getting started
+**Technologies Used:**  
+Python (Django), React, PostgreSQL, Docker, Taiga (for Agile management)
 
-### Installation Required
-1. Download github Desktop
-2. Clone repository from internet  
-    - https://gitlab.com/Barrette5276/csit314.git
-    - Use access token as password and own username as username
-3. Install PHP
-    - https://www.youtube.com/watch?v=n04w2SzGr_U
-4. Serverless PHP (Using supabase)
+---
+
+## Project Requirement Details
+
+This project involves designing and developing a system to match freelance home cleaners with homeowners seeking cleaning services. The system includes:
+
+1. Support and management of different user types and profiles (admin, cleaner, homeowner, platform manager)
+2. Service management for cleaners
+3. Search, view, and shortlist functionality for homeowners
+4. Analytics for cleaners (views, times shortlisted)
+5. Match history and filtering for cleaners (by service, date)
+6. Service usage history and filtering for homeowners
+7. Management of cleaning service categories and reporting for platform managers
+
+---
+
+## Getting Started
+
+### Installation Requirements
+
+1. Download GitHub Desktop
+2. Clone the repository:
+    - `[Repository URL]`
+    - Use your username and access token as credentials
+3. Install PHP  
+   [YouTube guide](https://www.youtube.com/watch?v=n04w2SzGr_U)
+4. Set up serverless PHP (using Supabase)
+
+---
+
+## License
+
+This project has no license.
