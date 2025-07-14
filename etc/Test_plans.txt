@@ -1,0 +1,40 @@
+Test plans 
+Testcase template
+ -Testcases -> by other users from the programmer
+
+100 Test data -> need be suspended
+4 user profiles 
+
+
+Test Driven development 
+- Unit test php 
+- Do for login
+- Test calculator for sprint 1 / sprint 2 
+- capture the result and insert into the document and show it works ( positive or negative testing)
+- assert true or false
+
+CICD 
+- just show ss of pushing 
+
+
+DDD
+identify a feature of your software application that can be developed using data driven software development
+
+Ethical issues (lecture)
+- product and process ( half a page) 
+
+
+Split sprint in taiga for user stories
+
+
+State diagram 
+
+
+
+
+
+Questions to ask professor
+- 100 matches? 
+- if shortlisted by home owners = matches in cleaner list 
+- 100 Test data -> need be suspended?
+- ask about my entity where correct ? 
