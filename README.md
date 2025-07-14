@@ -62,8 +62,6 @@ This project involves designing and developing a system to match freelance home 
    [YouTube guide](https://www.youtube.com/watch?v=n04w2SzGr_U)
 4. Set up serverless PHP (using Supabase)
 
----
-
 ## License
 
 This project has no license.
