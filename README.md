@@ -38,8 +38,6 @@ CleanConnect is a web-based platform designed to connect homeowners with freelan
 - VS Code – Code editor
 - Web Browser – For accessing dashboards and testing
 
----
-
 ## Project Requirement Details
 
 This project involves designing and developing a system to match freelance home cleaners with homeowners seeking cleaning services. The system includes:
