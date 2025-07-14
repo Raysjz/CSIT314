@@ -7,7 +7,7 @@
 **Description:**  
 CleanConnect is a web-based platform designed to connect homeowners with freelance home cleaners. It supports multiple user roles (admin, cleaner, homeowner, platform manager), service management, search and shortlist features, booking history, and reporting. The project is developed using agile methodologies, with a focus on object-oriented design, test-driven development, and CI/CD practices.
 
-**Status:** Completed as of 19 May 2025 (T02 Group)
+**Status:** Completed as of 19 May 2025 (T02 Group 07)
 
 **Key Features:**
 - User profile management
