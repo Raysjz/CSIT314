@@ -50,8 +50,6 @@ This project involves designing and developing a system to match freelance home 
 6. Service usage history and filtering for homeowners
 7. Management of cleaning service categories and reporting for platform managers
 
----
-
 ## Getting Started
 
 ### Installation Requirements
