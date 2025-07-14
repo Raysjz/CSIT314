@@ -21,22 +21,3 @@ In this project, your team is asked to design and develop a system for C2C freel
 3. Install PHP
     - https://www.youtube.com/watch?v=n04w2SzGr_U
 4. Serverless PHP (Using supabase)
-
-
-<details><summary>Differences of UA and UP</summary>
-- USER ACCOUNT
-
-1. username
-2. id
-3. address
-4. password
-
-- USER PROFILE [ category of profile]
-
-dropdown list
-1. user admin
-2. home owner
-3. cleaner
-4. platform management
-</details>
-
