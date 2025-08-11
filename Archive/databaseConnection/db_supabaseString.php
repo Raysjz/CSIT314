@@ -1,17 +1,12 @@
 <?php
 // Connecting via Transaction pooler connection details from Supabase
-//$host = 'aws-0-ap-southeast-1.pooler.supabase.com';
-//$port = '5432';  // Default PostgreSQL port
-//$dbname = 'postgres';  // Default Supabase database
-//$user = 'postgres.bbmigbyghmmvuhijwuww';  // Supabase PostgreSQL user
-//$password = 'Xx2hraKeUvM4';  // Use your Supabase password
 
 //TestDB
 $host = 'aws-0-ap-southeast-1.pooler.supabase.com';
 $port = '5432';  // Default PostgreSQL port
 $dbname = 'postgres';  // Default Supabase database
-$user = 'postgres.askzobvbrkuceqdnndpn';  // Supabase PostgreSQL user
-$password = 'Xx2hraKeUvM4';  // Use your Supabase password
+$user = '';  // Supabase PostgreSQL user
+$password = '';  // Use your Supabase password
 
 // Create a connection string
 $conn_str = "pgsql:host=$host;port=$port;dbname=$dbname;user=$user;password=$password";
