@@ -2,11 +2,11 @@
 // Database connection
 
 class Database {
-    private static $host = 'aws-0-ap-southeast-1.pooler.supabase.com';
+    private static $host = '';
     private static $port = '5432';
     private static $dbname = 'postgres';  
-    private static $user = 'postgres.bbmigbyghmmvuhijwuww';
-    private static $password = 'Xx2hraKeUvM4';  
+    private static $user = '';
+    private static $password = '';  
 
     // 1)PDO connection (OOP-friendly)
     public static function getPDO() {
